@@ -14,6 +14,7 @@ import com.demn.plugincore.CategoryExtrasKey
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.toOperationResult
+import com.demn.plugins.CorePluginsProvider
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -56,10 +57,10 @@ class MockPluginRepository : PluginRepository {
     override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
         return emptyList()
     }
-
 }
 
 class PluginRepositoryImpl(
+    private val corePluginsProvider: CorePluginsProvider,
     private val context: Context
 ) : PluginRepository {
     @OptIn(DelicateCoroutinesApi::class)
@@ -83,7 +84,7 @@ class PluginRepositoryImpl(
         val list =
             packageManager.queryIntentServices(baseIntent, PackageManager.GET_RESOLVED_FILTER)
 
-        list.forEachIndexed { id, resolveInfo ->
+        list.forEach { resolveInfo ->
             val serviceInfo = resolveInfo.serviceInfo
 
             val pluginService = PluginService(
@@ -95,9 +96,7 @@ class PluginRepositoryImpl(
 
             val metadata = fetchPluginMetadata(pluginService)
 
-
-            val plugin = Plugin(
-                id = id,
+            val plugin = ExternalPlugin(
                 pluginService = pluginService,
                 metadata = metadata
             )
@@ -107,20 +106,22 @@ class PluginRepositoryImpl(
     }
 
     override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
+        return when (plugin) {
+            is ExternalPlugin -> getAnyResultsWithExternalPlugin(plugin, input)
+
+            is BuiltInPlugin -> getAnyResultsWithBuiltInPlugin(input, plugin)
+        }
+    }
+
+    private suspend fun getAnyResultsWithExternalPlugin(
+        plugin: ExternalPlugin,
+        input: String
+    ): List<OperationResult> {
         val intent = getIntentForPlugin(plugin.pluginService)
 
         return suspendCoroutine { continuation ->
             val serviceConnection = getServiceConnectionForPlugin { operation ->
                 val results = operation.executeAnyInput(input).map { parcelableOperationResult ->
-                    println(parcelableOperationResult.intent)
-
-
-                    if (parcelableOperationResult.intent != null) {
-                        context.startActivity(parcelableOperationResult.intent?.apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        })
-                    }
-
                     parcelableOperationResult.toOperationResult()
                 }
 
@@ -129,6 +130,15 @@ class PluginRepositoryImpl(
 
             context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
+    }
+
+    private suspend fun getAnyResultsWithBuiltInPlugin(
+        input: String,
+        plugin: BuiltInPlugin,
+    ): List<OperationResult> {
+        val results = corePluginsProvider.invokeAnyInput(input, plugin.metadata.pluginUuid)
+
+        return results
     }
 
     override suspend fun invokePluginCommand(
@@ -144,6 +154,24 @@ class PluginRepositoryImpl(
             return PluginInvocationResult.Failure()
         }
 
+        val results = when (plugin) {
+            is ExternalPlugin -> {
+                invokeExternalPluginCommand(input, commandUuid, plugin)
+            }
+
+            is BuiltInPlugin -> {
+                invokeBuiltInPluginCommand(input, commandUuid, plugin)
+            }
+        }
+
+        return PluginInvocationResult.Success(results)
+    }
+
+    private suspend fun invokeExternalPluginCommand(
+        input: String,
+        commandUuid: UUID,
+        plugin: ExternalPlugin
+    ): List<OperationResult> {
         val intent = getIntentForPlugin(plugin.pluginService)
 
         return suspendCoroutine { continuation ->
@@ -151,12 +179,25 @@ class PluginRepositoryImpl(
                 val results = operation.executeCommand(commandUuid.toString(), input)
                     .map { it.toOperationResult() }
 
-                val invocationResult = PluginInvocationResult.Success(results)
-                continuation.resume(invocationResult)
+                continuation.resume(results)
             }
 
             context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
+    }
+
+    private suspend fun invokeBuiltInPluginCommand(
+        input: String,
+        commandUuid: UUID,
+        plugin: BuiltInPlugin,
+    ): List<OperationResult> {
+        val results = corePluginsProvider.invokePluginCommand(
+            input = input,
+            pluginCommandId = plugin.metadata.pluginUuid,
+            uuid = commandUuid
+        )
+
+        return results
     }
 
     private fun getCategories(resolveInfo: ResolveInfo): List<String> {

@@ -56,7 +56,8 @@ fun ParcelableOperationResult.toOperationResult(): OperationResult {
     if (text != null) {
         return BasicOperationResult(
             text,
-            description
+            description,
+            intent
         )
     }
 

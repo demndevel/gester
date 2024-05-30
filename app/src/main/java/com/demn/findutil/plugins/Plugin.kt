@@ -2,11 +2,18 @@ package com.demn.findutil.plugins
 
 import com.demn.plugincore.PluginMetadata
 
-data class Plugin internal constructor(
-    val id: Int,
-    val metadata: PluginMetadata,
+sealed interface Plugin {
+    val metadata: PluginMetadata
+}
+
+data class BuiltInPlugin internal constructor(
+    override val metadata: PluginMetadata
+): Plugin
+
+data class ExternalPlugin internal constructor(
+    override val metadata: PluginMetadata,
     internal val pluginService: PluginService
-)
+) : Plugin
 
 internal data class PluginService(
     val packageName: String,

@@ -15,6 +15,7 @@ import java.util.UUID
  */
 @Parcelize
 data class PluginMetadata internal constructor(
+    val pluginUuid: UUID,
     val pluginName: String,
     val description: String? = null,
     val version: String,
@@ -38,8 +39,8 @@ data class PluginCommand internal constructor(
     val triggerRegex: String
 ) : Parcelable
 
-fun buildPluginMetadata(pluginName: String, block: PluginMetadataBuilder.() -> Unit) =
-    PluginMetadataBuilder().apply(block).build(pluginName)
+fun buildPluginMetadata(pluginUuid: UUID, pluginName: String, block: PluginMetadataBuilder.() -> Unit) =
+    PluginMetadataBuilder().apply(block).build(pluginUuid, pluginName)
 
 class PluginMetadataBuilder {
     private val commands = mutableListOf<PluginCommand>()
@@ -56,7 +57,8 @@ class PluginMetadataBuilder {
         )
     }
 
-    fun build(pluginName: String) = PluginMetadata(
+    fun build(pluginUuid: UUID, pluginName: String) = PluginMetadata(
+        pluginUuid = pluginUuid,
         pluginName = pluginName,
         version = version,
         consumeAnyInput = consumeAnyInput,
