@@ -6,6 +6,7 @@ import android.os.IBinder
 import com.demn.aidl.IOperation
 import com.demn.plugincore.ParcelableOperationResult
 import com.demn.plugincore.PluginMetadata
+import com.demn.plugincore.operation_result.BasicOperationResult
 
 class BarPluginService : Service() {
     override fun onBind(intent: Intent?): IBinder {
@@ -19,15 +20,16 @@ class BarPluginService : Service() {
                 input: String?
             ): MutableList<ParcelableOperationResult> {
                 return mutableListOf(
-                    ParcelableOperationResult(
-                        text = "bar 1 result"
+                    ParcelableOperationResult.buildParcelableOperationResult(
+                        BasicOperationResult(
+                            text = "bar 2 result"
+                        )
                     ),
-                    ParcelableOperationResult(
-                        text = "bar 2 result"
-                    ),
-                    ParcelableOperationResult(
-                        text = "bar 3 result :("
-                    ),
+                    ParcelableOperationResult.buildParcelableOperationResult(
+                        BasicOperationResult(
+                            text = "bar 3 result :("
+                        )
+                    )
                 )
             }
 
