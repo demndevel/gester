@@ -44,7 +44,7 @@ class FooPluginService : Service() {
                 return mutableListOf(
                     buildParcelableOperationResult(
                         BasicOperationResult(
-                            text = "funny result 1 found",
+                            text = "github.com",
                             intent = getLaunchWebPageIntent("https://github.com")
                         )
                     ),

@@ -11,9 +11,11 @@ import android.os.IBinder
 import com.demn.aidl.IOperation
 import com.demn.plugincore.ACTION_PICK_PLUGIN
 import com.demn.plugincore.CategoryExtrasKey
+import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.toOperationResult
+import com.demn.plugins.BuiltInPlugin
 import com.demn.plugins.CorePluginsProvider
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -69,14 +71,14 @@ class PluginRepositoryImpl(
     private inner class PackageBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             scope.launch(Dispatchers.IO) {
-                fillPluginServiceList()
+                getPluginList()
             }
         }
     }
 
     private val pluginList = mutableListOf<Plugin>()
 
-    private suspend fun fillPluginServiceList() {
+    private suspend fun fillExternalPlugins(): List<ExternalPlugin> {
         val packageManager = context.packageManager
         val baseIntent = Intent(ACTION_PICK_PLUGIN).apply {
             flags = Intent.FLAG_DEBUG_LOG_RESOLUTION
@@ -84,7 +86,7 @@ class PluginRepositoryImpl(
         val list =
             packageManager.queryIntentServices(baseIntent, PackageManager.GET_RESOLVED_FILTER)
 
-        list.forEach { resolveInfo ->
+        return list.map { resolveInfo ->
             val serviceInfo = resolveInfo.serviceInfo
 
             val pluginService = PluginService(
@@ -96,12 +98,10 @@ class PluginRepositoryImpl(
 
             val metadata = fetchPluginMetadata(pluginService)
 
-            val plugin = ExternalPlugin(
+            ExternalPlugin(
                 pluginService = pluginService,
                 metadata = metadata
             )
-
-            pluginList.add(plugin)
         }
     }
 
@@ -110,6 +110,8 @@ class PluginRepositoryImpl(
             is ExternalPlugin -> getAnyResultsWithExternalPlugin(plugin, input)
 
             is BuiltInPlugin -> getAnyResultsWithBuiltInPlugin(input, plugin)
+
+            else -> emptyList()
         }
     }
 
@@ -162,6 +164,8 @@ class PluginRepositoryImpl(
             is BuiltInPlugin -> {
                 invokeBuiltInPluginCommand(input, commandUuid, plugin)
             }
+
+            else -> emptyList()
         }
 
         return PluginInvocationResult.Success(results)
@@ -218,7 +222,11 @@ class PluginRepositoryImpl(
 
     override suspend fun getPluginList(): List<Plugin> {
         pluginList.clear()
-        fillPluginServiceList()
+        val externalPlugins = fillExternalPlugins() as List<Plugin>
+        val corePlugins = corePluginsProvider.getPlugins() as List<Plugin>
+
+        pluginList.addAll(externalPlugins + corePlugins)
+
         return pluginList
     }
 

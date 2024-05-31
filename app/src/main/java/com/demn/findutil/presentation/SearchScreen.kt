@@ -1,5 +1,6 @@
 package com.demn.findutil.presentation
 
+import android.content.Intent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.demn.findutil.plugins.MockPluginRepository
@@ -44,6 +47,7 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     vm: SearchScreenViewModel = koinViewModel<SearchScreenViewModel>(),
 ) {
+    val context = LocalContext.current
     val state by vm.state.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -72,6 +76,9 @@ fun SearchScreen(
 
         ResultList(
             results = state.searchResults,
+            onResultClick = {
+                context.startActivity(it)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .animateContentSize()
@@ -116,6 +123,7 @@ fun SearchBar(
 @Composable
 fun ResultList(
     results: List<OperationResult>,
+    onResultClick: (Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -127,8 +135,7 @@ fun ResultList(
                 BasicResult(
                     text = result.text,
                     description = result.description,
-                    onResultClick = {
-                    }
+                    onResultClick = { result.intent?.let { onResultClick(it) } }
                 )
             }
 
@@ -210,7 +217,7 @@ fun ConversionResult(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Divider()
+            HorizontalDivider()
 
             Spacer(modifier = Modifier.height(8.dp))
 

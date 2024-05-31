@@ -1,14 +1,7 @@
 package com.demn.findutil.plugins
 
+import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginMetadata
-
-sealed interface Plugin {
-    val metadata: PluginMetadata
-}
-
-data class BuiltInPlugin internal constructor(
-    override val metadata: PluginMetadata
-): Plugin
 
 data class ExternalPlugin internal constructor(
     override val metadata: PluginMetadata,

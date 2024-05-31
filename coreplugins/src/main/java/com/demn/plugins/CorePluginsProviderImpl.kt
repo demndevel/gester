@@ -5,7 +5,7 @@ import com.demn.plugins.core_plugins.AppSearchingPlugin
 import java.util.UUID
 
 interface CorePluginsProvider {
-    fun getPlugins(): List<CorePlugin>
+    fun getPlugins(): List<BuiltInPlugin>
 
     suspend fun invokeAnyInput(input: String, uuid: UUID): List<OperationResult>
 
@@ -17,7 +17,7 @@ interface CorePluginsProvider {
 }
 
 class MockCorePluginsProvider : CorePluginsProvider {
-    override fun getPlugins(): List<CorePlugin> {
+    override fun getPlugins(): List<BuiltInPlugin> {
         return emptyList()
     }
 
@@ -25,7 +25,11 @@ class MockCorePluginsProvider : CorePluginsProvider {
         return emptyList()
     }
 
-    override suspend fun invokePluginCommand(input: String, pluginCommandId: UUID, uuid: UUID): List<OperationResult> {
+    override suspend fun invokePluginCommand(
+        input: String,
+        pluginCommandId: UUID,
+        uuid: UUID
+    ): List<OperationResult> {
         return emptyList()
     }
 }
@@ -33,8 +37,9 @@ class MockCorePluginsProvider : CorePluginsProvider {
 class CorePluginsProviderImpl : CorePluginsProvider {
     private val plugins = listOf<CorePlugin>(AppSearchingPlugin())
 
-    override fun getPlugins(): List<CorePlugin> {
+    override fun getPlugins(): List<BuiltInPlugin> {
         return plugins
+            .map { BuiltInPlugin(it.metadata) }
     }
 
     override suspend fun invokeAnyInput(input: String, uuid: UUID): List<OperationResult> {
@@ -46,7 +51,11 @@ class CorePluginsProviderImpl : CorePluginsProvider {
         return plugin.invokeAnyInput(input)
     }
 
-    override suspend fun invokePluginCommand(input: String, pluginCommandId: UUID, uuid: UUID): List<OperationResult> {
+    override suspend fun invokePluginCommand(
+        input: String,
+        pluginCommandId: UUID,
+        uuid: UUID
+    ): List<OperationResult> {
         val plugin = plugins
             .find { it.metadata.pluginUuid == uuid }
 

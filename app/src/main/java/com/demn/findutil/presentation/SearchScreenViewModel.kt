@@ -2,10 +2,9 @@ package com.demn.findutil.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.demn.findutil.plugins.Plugin
 import com.demn.findutil.plugins.PluginRepository
 import com.demn.findutil.usecase.ProcessQueryUseCase
-import com.demn.plugincore.PluginMetadata
+import com.demn.plugincore.Plugin
 import com.demn.plugincore.operation_result.OperationResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
