@@ -65,7 +65,7 @@ fun SearchScreen(
         LazyColumn(Modifier) {
             items(state.pluginList) {
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(it.id.toString())
+                Text(it.metadata.pluginUuid.toString())
                 Text(it.metadata.pluginName)
             }
         }

@@ -9,6 +9,6 @@ import org.koin.dsl.module
 
 val appModule = module {
     factory<ProcessQueryUseCase> { ProcessQueryUseCaseImpl(get()) }
-    single<PluginRepository> { PluginRepositoryImpl(get()) }
+    single<PluginRepository> { PluginRepositoryImpl(get(), get()) }
     factory { SearchScreenViewModel(get(), get()) }
 }

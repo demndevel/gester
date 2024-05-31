@@ -31,7 +31,7 @@ class MockCorePluginsProvider : CorePluginsProvider {
 }
 
 class CorePluginsProviderImpl : CorePluginsProvider {
-    val plugins = listOf(AppSearchingPlugin())
+    private val plugins = listOf<CorePlugin>(AppSearchingPlugin())
 
     override fun getPlugins(): List<CorePlugin> {
         return plugins
