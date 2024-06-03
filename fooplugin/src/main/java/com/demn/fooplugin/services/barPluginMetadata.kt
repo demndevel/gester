@@ -11,11 +11,11 @@ val barPluginMetadata = buildPluginMetadata(
     consumeAnyInput = false
     version = "2.3"
 
-    command("barfy", "todo4") {
+    command(UUID.randomUUID(), "todo4", "^bar") {
         description = "meh some desc for barfy plugin"
     }
 
-    command("barfel", "todo3") {
+    command(UUID.randomUUID(), "todo3", "^bar") {
         description = "meow barfel plugin :("
     }
 }
