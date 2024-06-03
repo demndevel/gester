@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
  * @param[text] primary text that will be displayed in the results of the processed input query
  * @param[description] optional description for the operation result
  */
-class BasicOperationResult(
+data class BasicOperationResult(
     val text: String,
     val description: String? = null,
     val intent: Intent? = null

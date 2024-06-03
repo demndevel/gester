@@ -39,7 +39,11 @@ data class PluginCommand internal constructor(
     val triggerRegex: String
 ) : Parcelable
 
-fun buildPluginMetadata(pluginUuid: UUID, pluginName: String, block: PluginMetadataBuilder.() -> Unit) =
+fun buildPluginMetadata(
+    pluginUuid: UUID,
+    pluginName: String,
+    block: PluginMetadataBuilder.() -> Unit = {}
+) =
     PluginMetadataBuilder().apply(block).build(pluginUuid, pluginName)
 
 class PluginMetadataBuilder {
@@ -49,11 +53,16 @@ class PluginMetadataBuilder {
     var description: String? = null
     var consumeAnyInput: Boolean = false
 
-    fun command(name: String, triggerRegex: String, block: PluginCommandBuilder.() -> Unit) {
+    fun command(
+        uuid: UUID,
+        name: String,
+        triggerRegex: String,
+        block: PluginCommandBuilder.() -> Unit = {}
+    ) {
         commands.add(
             PluginCommandBuilder()
                 .apply(block)
-                .build(name, triggerRegex = triggerRegex)
+                .build(uuid = uuid, name, triggerRegex = triggerRegex)
         )
     }
 
@@ -70,8 +79,8 @@ class PluginMetadataBuilder {
 class PluginCommandBuilder {
     var description: String? = null
 
-    fun build(name: String, triggerRegex: String) = PluginCommand(
-        id = UUID.randomUUID(),
+    fun build(uuid: UUID, name: String, triggerRegex: String) = PluginCommand(
+        id = uuid,
         name = name,
         triggerRegex = triggerRegex,
     )

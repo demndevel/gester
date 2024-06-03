@@ -12,6 +12,7 @@ import com.demn.aidl.IOperation
 import com.demn.plugincore.ACTION_PICK_PLUGIN
 import com.demn.plugincore.CategoryExtrasKey
 import com.demn.plugincore.Plugin
+import com.demn.plugincore.PluginCommand
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.toOperationResult
@@ -42,6 +43,8 @@ interface PluginRepository {
     ): PluginInvocationResult<List<OperationResult>>
 
     suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult>
+
+    suspend fun getAllPluginCommands(): List<PluginCommand>
 }
 
 class MockPluginRepository : PluginRepository {
@@ -57,6 +60,10 @@ class MockPluginRepository : PluginRepository {
     }
 
     override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
+        return emptyList()
+    }
+
+    override suspend fun getAllPluginCommands(): List<PluginCommand> {
         return emptyList()
     }
 }
@@ -115,6 +122,14 @@ class PluginRepositoryImpl(
         }
     }
 
+    override suspend fun getAllPluginCommands(): List<PluginCommand> {
+        val commands = pluginList
+            .map { it.metadata.commands }
+            .flatten()
+
+        return commands
+    }
+
     private suspend fun getAnyResultsWithExternalPlugin(
         plugin: ExternalPlugin,
         input: String
@@ -149,7 +164,9 @@ class PluginRepositoryImpl(
     ): PluginInvocationResult<List<OperationResult>> {
         val plugin = pluginList
             .find { plugin ->
-                plugin.metadata.commands.any { it.id == commandUuid }
+                plugin.metadata.commands.any {
+                    it.id == commandUuid
+                }
             }
 
         if (plugin == null) {
@@ -197,8 +214,8 @@ class PluginRepositoryImpl(
     ): List<OperationResult> {
         val results = corePluginsProvider.invokePluginCommand(
             input = input,
-            pluginCommandId = plugin.metadata.pluginUuid,
-            uuid = commandUuid
+            pluginCommandId = commandUuid,
+            pluginUuid = plugin.metadata.pluginUuid
         )
 
         return results

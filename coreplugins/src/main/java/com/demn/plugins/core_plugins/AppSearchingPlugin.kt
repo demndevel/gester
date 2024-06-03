@@ -1,5 +1,8 @@
 package com.demn.plugins.core_plugins
 
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.buildPluginMetadata
 import com.demn.plugincore.operation_result.BasicOperationResult
@@ -16,24 +19,40 @@ val appSearchingMetadata = buildPluginMetadata(
     consumeAnyInput = true
 }
 
-class AppSearchingPlugin : CorePlugin {
+class AppSearchingPlugin(
+    context: Context
+) : CorePlugin {
     override val metadata: PluginMetadata = appSearchingMetadata
 
+    private val packageManager = context.packageManager
+
     override fun invokeAnyInput(input: String): List<OperationResult> {
-        return listOf(
+        val results = getAllApps()
+
+        val filteredResults = results.filter {
+            it.text.lowercase().contains(input.lowercase())
+        } // TODO
+
+        return filteredResults
+    }
+
+    private fun getAllApps(): List<BasicOperationResult> {
+        val mainIntent = Intent(Intent.ACTION_MAIN)
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+        val apps = packageManager.queryIntentActivities(mainIntent, PackageManager.MATCH_ALL)
+        val results = apps.map { resolveInfo ->
+            // todo
+
+            val label = resolveInfo.loadLabel(packageManager).toString()
+            val intent = packageManager.getLaunchIntentForPackage(resolveInfo.activityInfo.packageName)
+
             BasicOperationResult(
-                text = "Nekogram"
-            ),
-            BasicOperationResult(
-                text = "Google Photo"
-            ),
-            BasicOperationResult(
-                text = "GTA V"
-            ),
-            BasicOperationResult(
-                text = "Amogus"
+                text = label,
+                intent = intent
             )
-        )
+        }
+
+        return results
     }
 
     override fun invokePluginCommand(input: String, uuid: UUID): List<OperationResult> {

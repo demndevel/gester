@@ -33,13 +33,16 @@ android {
 }
 
 dependencies {
+    implementation(project(":plugincore"))
+
     implementation(libs.koin.core)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(project(":plugincore"))
-    testImplementation(libs.junit)
+
+    testImplementation(kotlin("test"))
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

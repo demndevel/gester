@@ -1,7 +1,9 @@
 package com.demn.plugins
 
+import android.content.Context
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugins.core_plugins.AppSearchingPlugin
+import com.demn.plugins.core_plugins.CurrenciesPlugin
 import java.util.UUID
 
 interface CorePluginsProvider {
@@ -12,7 +14,7 @@ interface CorePluginsProvider {
     suspend fun invokePluginCommand(
         input: String,
         pluginCommandId: UUID,
-        uuid: UUID
+        pluginUuid: UUID
     ): List<OperationResult>
 }
 
@@ -28,15 +30,16 @@ class MockCorePluginsProvider : CorePluginsProvider {
     override suspend fun invokePluginCommand(
         input: String,
         pluginCommandId: UUID,
-        uuid: UUID
+        pluginUuid: UUID
     ): List<OperationResult> {
         return emptyList()
     }
 }
 
-class CorePluginsProviderImpl : CorePluginsProvider {
-    private val plugins = listOf<CorePlugin>(AppSearchingPlugin())
-
+class CorePluginsProviderImpl(
+    private val plugins: List<CorePlugin>
+) :
+    CorePluginsProvider {
     override fun getPlugins(): List<BuiltInPlugin> {
         return plugins
             .map { BuiltInPlugin(it.metadata) }
@@ -54,12 +57,14 @@ class CorePluginsProviderImpl : CorePluginsProvider {
     override suspend fun invokePluginCommand(
         input: String,
         pluginCommandId: UUID,
-        uuid: UUID
+        pluginUuid: UUID
     ): List<OperationResult> {
         val plugin = plugins
-            .find { it.metadata.pluginUuid == uuid }
+            .find { it.metadata.pluginUuid == pluginUuid }
 
-        if (plugin == null) return emptyList()
+        if (plugin == null) {
+            return emptyList()
+        }
 
         return plugin.invokePluginCommand(input, pluginCommandId)
     }

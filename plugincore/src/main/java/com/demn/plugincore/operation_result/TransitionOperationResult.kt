@@ -10,7 +10,7 @@ package com.demn.plugincore.operation_result
  * @param[finalText] final result of the transition of the [initialText]
  * @param[finalDescription] description for the [finalText]
  */
-class TransitionOperationResult(
+data class TransitionOperationResult(
     val initialText: String,
     val initialDescription: String? = null,
     val finalText: String,
