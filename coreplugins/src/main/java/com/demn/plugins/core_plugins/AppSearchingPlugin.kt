@@ -30,7 +30,13 @@ class AppSearchingPlugin(
         val results = getAllApps()
 
         val filteredResults = results.filter {
-            it.text.lowercase().contains(input.lowercase())
+            val lowercaseInput = input
+                .lowercase()
+                .trim()
+
+            it.text
+                .lowercase()
+                .contains(lowercaseInput)
         } // TODO
 
         return filteredResults
@@ -41,10 +47,9 @@ class AppSearchingPlugin(
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
         val apps = packageManager.queryIntentActivities(mainIntent, PackageManager.MATCH_ALL)
         val results = apps.map { resolveInfo ->
-            // todo
-
             val label = resolveInfo.loadLabel(packageManager).toString()
-            val intent = packageManager.getLaunchIntentForPackage(resolveInfo.activityInfo.packageName)
+            val intent =
+                packageManager.getLaunchIntentForPackage(resolveInfo.activityInfo.packageName)
 
             BasicOperationResult(
                 text = label,
