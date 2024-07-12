@@ -12,6 +12,7 @@ import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.PluginSettingType
 import com.demn.plugincore.operation_result.BasicOperationResult
+import com.demn.plugincore.operation_result.OperationResultPriority
 import java.util.UUID
 
 class FooPluginService : Service() {
@@ -68,19 +69,10 @@ class FooPluginService : Service() {
                     buildParcelableOperationResult(
                         BasicOperationResult(
                             text = "github.com",
-                            intent = getLaunchWebPageIntent("https://github.com")
+                            intent = getLaunchWebPageIntent("https://github.com"),
+                            priority = OperationResultPriority.WebLink
                         )
-                    ),
-                    buildParcelableOperationResult(
-                        BasicOperationResult(
-                            text = "funny result 2 found",
-                        )
-                    ),
-                    buildParcelableOperationResult(
-                        BasicOperationResult(
-                            text = "funny result 3 found",
-                        )
-                    ),
+                    )
                 )
             }
 

@@ -8,6 +8,7 @@ import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.buildPluginMetadata
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operation_result.OperationResultPriority
 import com.demn.plugins.CorePlugin
 import java.util.UUID
 
@@ -58,7 +59,8 @@ class AppSearchingPlugin(
 
             BasicOperationResult(
                 text = label,
-                intent = intent
+                intent = intent,
+                priority = OperationResultPriority.Application
             )
         }
 

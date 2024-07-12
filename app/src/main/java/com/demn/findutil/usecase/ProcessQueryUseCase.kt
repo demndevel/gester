@@ -1,7 +1,9 @@
 package com.demn.findutil.usecase
 
 import com.demn.plugincore.Plugin
+import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operation_result.TransitionOperationResult
 import com.demn.pluginloading.PluginInvocationResult
 import com.demn.pluginloading.PluginRepository
 import java.util.regex.Pattern
@@ -45,8 +47,11 @@ class ProcessQueryUseCaseImpl(
             }
             .flatten()
 
-        return resultsByAnyInput + resultsByCommand
+        return sortResults(results = resultsByAnyInput + resultsByCommand)
     }
+
+    private fun sortResults(results: List<OperationResult>): List<OperationResult> =
+        results.sortedWith(OperationResultComparator())
 
     private suspend fun invokeAnyResults(
         plugin: Plugin,

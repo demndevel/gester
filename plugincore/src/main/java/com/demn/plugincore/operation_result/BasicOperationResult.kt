@@ -12,5 +12,6 @@ import kotlinx.parcelize.Parcelize
 data class BasicOperationResult(
     val text: String,
     val description: String? = null,
-    val intent: Intent? = null
+    val intent: Intent? = null,
+    val priority: OperationResultPriority = OperationResultPriority.Other
 ) : OperationResult
