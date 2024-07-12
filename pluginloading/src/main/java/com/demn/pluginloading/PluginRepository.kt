@@ -50,7 +50,7 @@ class MockPluginRepository : PluginRepository {
 
 class PluginRepositoryImpl(
     private val corePluginsProvider: CorePluginsProvider,
-    private val externalPluginsProvider: com.demn.pluginloading.ExternalPluginsProvider,
+    private val externalPluginsProvider: ExternalPluginsProvider,
 ) : PluginRepository {
     private suspend fun fillExternalPlugins(): List<ExternalPlugin> {
         return externalPluginsProvider.getPluginList()

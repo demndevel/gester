@@ -52,13 +52,13 @@ private fun parseCurrency(input: String): CurrencyValue {
         type = CurrencyType.USD
     }
 
-    val eurMatcher: Matcher = eurPattern.matcher(input.toLowerCase())
+    val eurMatcher: Matcher = eurPattern.matcher(input.lowercase())
     if (eurMatcher.find()) {
         value = eurMatcher.group(1)?.toDoubleOrNull()
         type = CurrencyType.EUR
     }
 
-    val rubMatcher: Matcher = rubPattern.matcher(input.toLowerCase())
+    val rubMatcher: Matcher = rubPattern.matcher(input.lowercase())
     if (rubMatcher.find()) {
         value = rubMatcher.group(1)?.toDoubleOrNull()
         type = CurrencyType.RUB

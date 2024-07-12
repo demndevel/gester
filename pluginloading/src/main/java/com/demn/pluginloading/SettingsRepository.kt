@@ -63,7 +63,7 @@ class MockPluginSettingsRepository : PluginSettingsRepository {
 
 class PluginSettingsRepositoryImpl(
     private val corePluginsProvider: CorePluginsProvider,
-    private val externalPluginsProvider: com.demn.pluginloading.ExternalPluginsProvider
+    private val externalPluginsProvider: ExternalPluginsProvider
 ) : PluginSettingsRepository {
     override suspend fun getAll(): List<PluginSettingsInfo> {
         val corePlugins = corePluginsProvider.getPlugins()
