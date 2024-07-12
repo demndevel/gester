@@ -34,11 +34,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.demn.findutil.plugins.MockPluginRepository
 import com.demn.findutil.usecase.MockProcessQueryUseCaseImpl
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
+import com.demn.pluginloading.MockPluginRepository
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

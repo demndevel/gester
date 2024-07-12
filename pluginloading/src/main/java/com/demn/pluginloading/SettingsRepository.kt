@@ -1,4 +1,4 @@
-package com.demn.findutil.plugins
+package com.demn.pluginloading
 
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginSetting
@@ -63,7 +63,7 @@ class MockPluginSettingsRepository : PluginSettingsRepository {
 
 class PluginSettingsRepositoryImpl(
     private val corePluginsProvider: CorePluginsProvider,
-    private val externalPluginsProvider: ExternalPluginsProvider
+    private val externalPluginsProvider: com.demn.pluginloading.ExternalPluginsProvider
 ) : PluginSettingsRepository {
     override suspend fun getAll(): List<PluginSettingsInfo> {
         val corePlugins = corePluginsProvider.getPlugins()

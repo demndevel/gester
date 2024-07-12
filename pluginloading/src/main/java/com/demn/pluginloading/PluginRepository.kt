@@ -1,4 +1,4 @@
-package com.demn.findutil.plugins
+package com.demn.pluginloading
 
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginCommand
@@ -50,7 +50,7 @@ class MockPluginRepository : PluginRepository {
 
 class PluginRepositoryImpl(
     private val corePluginsProvider: CorePluginsProvider,
-    private val externalPluginsProvider: ExternalPluginsProvider,
+    private val externalPluginsProvider: com.demn.pluginloading.ExternalPluginsProvider,
 ) : PluginRepository {
     private suspend fun fillExternalPlugins(): List<ExternalPlugin> {
         return externalPluginsProvider.getPluginList()

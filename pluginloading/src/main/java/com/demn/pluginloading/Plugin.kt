@@ -1,4 +1,4 @@
-package com.demn.findutil.plugins
+package com.demn.pluginloading
 
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginMetadata

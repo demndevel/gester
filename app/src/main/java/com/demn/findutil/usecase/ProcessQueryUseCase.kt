@@ -1,9 +1,9 @@
 package com.demn.findutil.usecase
 
-import com.demn.findutil.plugins.PluginInvocationResult
-import com.demn.findutil.plugins.PluginRepository
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.operation_result.OperationResult
+import com.demn.pluginloading.PluginInvocationResult
+import com.demn.pluginloading.PluginRepository
 import java.util.regex.Pattern
 
 interface ProcessQueryUseCase {

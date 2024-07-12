@@ -2,8 +2,8 @@ package com.demn.findutil.presentation.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.demn.findutil.plugins.PluginSettingsRepository
 import com.demn.plugincore.*
+import com.demn.pluginloading.PluginSettingsRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow

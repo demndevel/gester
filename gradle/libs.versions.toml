@@ -15,6 +15,7 @@ appcompat = "1.6.1"
 material = "1.12.0"
 documentfile = "1.0.1"
 jetbrainsKotlinJvm = "1.9.0"
+junit-junit = "4.13.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,6 +38,7 @@ koin-core = { module = "io.insert-koin:koin-core", version.ref = "koinCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
+junit-junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

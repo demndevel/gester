@@ -1,4 +1,4 @@
-package com.demn.findutil.plugins
+package com.demn.pluginloading
 
 import android.content.BroadcastReceiver
 import android.content.ComponentName

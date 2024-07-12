@@ -22,10 +22,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.demn.findutil.R
-import com.demn.findutil.plugins.MockPluginSettingsRepository
 import com.demn.plugincore.BooleanSettingFalse
 import com.demn.plugincore.BooleanSettingTrue
 import com.demn.plugincore.PluginSettingType
+import com.demn.pluginloading.MockPluginSettingsRepository
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

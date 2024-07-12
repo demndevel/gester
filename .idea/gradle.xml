@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/coreplugins" />
             <option value="$PROJECT_DIR$/fooplugin" />
             <option value="$PROJECT_DIR$/plugincore" />
+            <option value="$PROJECT_DIR$/pluginloading" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />
