@@ -3,6 +3,7 @@ package com.demn.findutil
 import android.content.Context
 import android.content.Intent
 import com.demn.plugincore.PluginMetadata
+import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.buildPluginMetadata
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
@@ -49,6 +50,10 @@ class FindUtilPlugin(
     private val context: Context
 ) : CorePlugin {
     override val metadata: PluginMetadata = findUtilPluginMetadata
+
+    override fun getPluginSettings(): List<PluginSetting> {
+        return emptyList()
+    }
 
     override fun invokeAnyInput(input: String): List<OperationResult> {
         return emptyList()

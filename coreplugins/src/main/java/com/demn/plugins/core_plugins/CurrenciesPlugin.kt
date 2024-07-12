@@ -1,9 +1,12 @@
 package com.demn.plugins.core_plugins
 
+import com.demn.plugincore.PluginSetting
+import com.demn.plugincore.PluginSettingType
 import com.demn.plugincore.buildPluginMetadata
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
 import com.demn.plugins.CorePlugin
+import com.demn.plugins.CorePluginsSettingsRepository
 import java.util.Locale
 import java.util.UUID
 import java.util.regex.Matcher
@@ -68,14 +71,35 @@ private fun parseCurrency(input: String): CurrencyValue {
     return CurrencyValue(0.0, CurrencyType.UNKNOWN)
 }
 
-class CurrenciesPlugin : CorePlugin {
+class CurrenciesPlugin(
+    private val corePluginsSettingsRepository: CorePluginsSettingsRepository
+) : CorePlugin {
     override val metadata = currenciesPluginMetadata
+
+    private val usdCostSettingUuid = UUID.fromString("2bf52834-430b-4ec4-bade-ad6eb563c4ed")
+
+    override fun getPluginSettings(): List<PluginSetting> {
+        return listOf(
+            PluginSetting(
+                pluginUuid = metadata.pluginUuid,
+                pluginSettingUuid = usdCostSettingUuid,
+                settingName = "How much USD should cost in RUB?",
+                settingDescription = "",
+                settingValue = "100",
+                settingType = PluginSettingType.String
+            )
+        )
+    }
 
     override fun invokeAnyInput(input: String): List<OperationResult> {
         return emptyList()
     }
 
     override fun invokePluginCommand(input: String, uuid: UUID): List<OperationResult> {
+        val usdCost = corePluginsSettingsRepository
+            .getSetting(usdCostSettingUuid)
+            .toIntOrNull()
+
         if (uuid != metadata.commands.first().id) return emptyList()
 
         val parsed = parseCurrency(input)
@@ -83,7 +107,7 @@ class CurrenciesPlugin : CorePlugin {
         val transitionResult = TransitionOperationResult(
             initialText = "${parsed.value}${parsed.type}",
             initialDescription = parsed.type.toString(),
-            finalText = "${parsed.value * 70}",
+            finalText = "${parsed.value * (usdCost ?: 100)}",
             finalDescription = "russian roubles ¢"
         )
 

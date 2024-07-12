@@ -20,14 +20,16 @@ interface CorePluginsProvider {
     ): List<PluginSetting>
 
     suspend fun setPluginSetting(
-        // TODO
+        builtInPlugin: BuiltInPlugin,
+        settingUuid: UUID,
+        newValue: String
     )
 }
 
 class CorePluginsProviderImpl(
-    private val plugins: List<CorePlugin>
-) :
-    CorePluginsProvider {
+    private val plugins: List<CorePlugin>,
+    private val corePluginsSettingsRepository: CorePluginsSettingsRepository
+) : CorePluginsProvider {
     override fun getPlugins(): List<BuiltInPlugin> {
         return plugins
             .map { BuiltInPlugin(it.metadata) }
@@ -58,10 +60,18 @@ class CorePluginsProviderImpl(
     }
 
     override suspend fun getPluginSettings(pluginUuid: UUID): List<PluginSetting> {
-        return emptyList() // TODO
+        val settings = plugins
+            .find { it.metadata.pluginUuid == pluginUuid }
+            ?.getPluginSettings()
+
+        return settings ?: emptyList()
     }
 
-    override suspend fun setPluginSetting() {
-        TODO("Not yet implemented")
+    override suspend fun setPluginSetting(
+        builtInPlugin: BuiltInPlugin,
+        settingUuid: UUID,
+        newValue: String
+    ) {
+        corePluginsSettingsRepository.set(settingUuid = settingUuid, value = newValue)
     }
 }

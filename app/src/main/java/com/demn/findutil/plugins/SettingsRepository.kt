@@ -101,9 +101,10 @@ class PluginSettingsRepositoryImpl(
                 }
 
                 is BuiltInPlugin -> {
-                    println("set core setting $pluginUuid $settingUuid $value")
                     corePluginsProvider.setPluginSetting(
-                        // todo
+                        builtInPlugin = it,
+                        settingUuid = settingUuid,
+                        newValue = value
                     )
                 }
             }

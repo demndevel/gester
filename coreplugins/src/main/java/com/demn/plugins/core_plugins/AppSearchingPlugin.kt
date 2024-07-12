@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import com.demn.plugincore.PluginMetadata
+import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.buildPluginMetadata
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
@@ -23,6 +24,10 @@ class AppSearchingPlugin(
     context: Context
 ) : CorePlugin {
     override val metadata: PluginMetadata = appSearchingMetadata
+
+    override fun getPluginSettings(): List<PluginSetting> {
+        return emptyList()
+    }
 
     private val packageManager = context.packageManager
 
