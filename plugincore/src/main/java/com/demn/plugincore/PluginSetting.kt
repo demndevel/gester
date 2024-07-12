@@ -1,16 +1,21 @@
 package com.demn.plugincore
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
-enum class PluginSettingType(val code: Int) {
-    String(0),
-    Number(1),
-    Boolean(2)
+enum class PluginSettingType {
+    String,
+    Number,
+    Boolean
 }
 
+@Parcelize
 data class PluginSetting(
     val pluginUuid: UUID,
-    val settingKey: String,
+    val pluginSettingUuid: UUID,
+    val settingName: String,
+    val settingDescription: String,
     val settingValue: String,
     val settingType: PluginSettingType
-)
+) : Parcelable

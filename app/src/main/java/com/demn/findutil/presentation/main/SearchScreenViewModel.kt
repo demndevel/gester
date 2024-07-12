@@ -1,4 +1,4 @@
-package com.demn.findutil.presentation
+package com.demn.findutil.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -39,6 +39,17 @@ class SearchScreenViewModel(
     }
 
     fun updateSearchBarValue(newValue: String) {
+        if (newValue.isEmpty()) {
+            _state.update {
+                it.copy(
+                    searchBarValue = newValue,
+                    searchResults = emptyList()
+                )
+            }
+
+            return
+        }
+
         _state.update {
             it.copy(
                 searchBarValue = newValue

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FindUtil</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="other_setting_error">This field is invalid</string>
+    <string name="should_contain_only_numbers_setting_error">This field should contain only numbers</string>
+    <string name="should_not_be_blank_setting_error">This field should not be blank</string>
 </resources>

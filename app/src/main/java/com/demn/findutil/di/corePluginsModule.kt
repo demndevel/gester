@@ -1,7 +1,10 @@
-package com.demn.plugins
+package com.demn.findutil.di
 
 import com.demn.plugins.core_plugins.AppSearchingPlugin
 import com.demn.plugins.core_plugins.CurrenciesPlugin
+import com.demn.findutil.FindUtilPlugin
+import com.demn.plugins.CorePluginsProvider
+import com.demn.plugins.CorePluginsProviderImpl
 import org.koin.dsl.module
 
 val corePluginsModule = module {
@@ -9,7 +12,8 @@ val corePluginsModule = module {
         CorePluginsProviderImpl(
             listOf(
                 AppSearchingPlugin(get()),
-                CurrenciesPlugin()
+                CurrenciesPlugin(),
+                FindUtilPlugin(get())
             )
         )
     }

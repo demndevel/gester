@@ -8,7 +8,7 @@ data class ExternalPlugin internal constructor(
     internal val pluginService: PluginService
 ) : Plugin
 
-internal data class PluginService(
+data class PluginService(
     val packageName: String,
     val serviceName: String,
     val actions: List<String>,

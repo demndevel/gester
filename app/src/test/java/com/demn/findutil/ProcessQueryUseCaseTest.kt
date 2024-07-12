@@ -57,7 +57,7 @@ class ProcessQueryUseCaseTest {
     private fun getProcessQueryUseCase(): ProcessQueryUseCaseImpl {
         return ProcessQueryUseCaseImpl(
             object : PluginRepository {
-                override suspend fun getPluginList(): List<Plugin> {
+                override suspend fun getPluginMetadataList(): List<Plugin> {
                     return pluginList
                 }
 

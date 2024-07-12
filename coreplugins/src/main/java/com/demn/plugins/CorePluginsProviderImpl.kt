@@ -1,9 +1,7 @@
 package com.demn.plugins
 
-import android.content.Context
+import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.operation_result.OperationResult
-import com.demn.plugins.core_plugins.AppSearchingPlugin
-import com.demn.plugins.core_plugins.CurrenciesPlugin
 import java.util.UUID
 
 interface CorePluginsProvider {
@@ -16,6 +14,14 @@ interface CorePluginsProvider {
         pluginCommandId: UUID,
         pluginUuid: UUID
     ): List<OperationResult>
+
+    suspend fun getPluginSettings(
+        pluginUuid: UUID
+    ): List<PluginSetting>
+
+    suspend fun setPluginSetting(
+        // TODO
+    )
 }
 
 class MockCorePluginsProvider : CorePluginsProvider {
@@ -33,6 +39,14 @@ class MockCorePluginsProvider : CorePluginsProvider {
         pluginUuid: UUID
     ): List<OperationResult> {
         return emptyList()
+    }
+
+    override suspend fun getPluginSettings(pluginUuid: UUID): List<PluginSetting> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setPluginSetting() {
+        TODO("Not yet implemented")
     }
 }
 
@@ -67,5 +81,13 @@ class CorePluginsProviderImpl(
         }
 
         return plugin.invokePluginCommand(input, pluginCommandId)
+    }
+
+    override suspend fun getPluginSettings(pluginUuid: UUID): List<PluginSetting> {
+        return emptyList() // TODO
+    }
+
+    override suspend fun setPluginSetting() {
+        TODO("Not yet implemented")
     }
 }

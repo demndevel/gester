@@ -1,4 +1,4 @@
-package com.demn.findutil.presentation
+package com.demn.findutil.presentation.main
 
 import android.content.Intent
 import androidx.compose.animation.animateContentSize
@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -65,14 +64,6 @@ fun SearchScreen(
         )
 
         Spacer(modifier = Modifier.height(24.dp))
-
-        LazyColumn(Modifier) {
-            items(state.pluginList) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(it.metadata.pluginUuid.toString())
-                Text(it.metadata.pluginName)
-            }
-        }
 
         ResultList(
             results = state.searchResults,
