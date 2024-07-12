@@ -52,8 +52,6 @@ class PluginRepositoryImpl(
     private val corePluginsProvider: CorePluginsProvider,
     private val externalPluginsProvider: ExternalPluginsProvider,
 ) : PluginRepository {
-    private val pluginList = mutableListOf<Plugin>()
-
     private suspend fun fillExternalPlugins(): List<ExternalPlugin> {
         return externalPluginsProvider.getPluginList()
     }
@@ -69,7 +67,7 @@ class PluginRepositoryImpl(
     }
 
     override suspend fun getAllPluginCommands(): List<PluginCommand> {
-        val commands = pluginList
+        val commands = getPluginList()
             .map { it.metadata.commands }
             .flatten()
 
@@ -99,7 +97,7 @@ class PluginRepositoryImpl(
         input: String,
         commandUuid: UUID
     ): PluginInvocationResult<List<OperationResult>> {
-        val plugin = pluginList
+        val plugin = getPluginList()
             .find { plugin ->
                 plugin.metadata.commands.any {
                     it.id == commandUuid
@@ -152,13 +150,9 @@ class PluginRepositoryImpl(
     }
 
     override suspend fun getPluginList(): List<Plugin> {
-        pluginList.clear()
-
         val externalPlugins = fillExternalPlugins()
         val corePlugins = corePluginsProvider.getPlugins()
 
-        pluginList.addAll(externalPlugins + corePlugins)
-
-        return pluginList
+        return externalPlugins + corePlugins
     }
 }
