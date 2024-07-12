@@ -44,7 +44,7 @@ class BarPluginService : Service() {
             }
 
             override fun setSetting(settingUuid: ParcelUuid?, newValue: String?) {
-                TODO("Not yet implemented")
+                println("$settingUuid $newValue")
             }
 
             override fun getPluginSettings(): MutableList<PluginSetting> {

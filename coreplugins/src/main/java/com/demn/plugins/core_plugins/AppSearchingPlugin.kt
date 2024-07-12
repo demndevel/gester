@@ -37,7 +37,7 @@ class AppSearchingPlugin(
             it.text
                 .lowercase()
                 .contains(lowercaseInput)
-        } // TODO
+        }
 
         return filteredResults
     }

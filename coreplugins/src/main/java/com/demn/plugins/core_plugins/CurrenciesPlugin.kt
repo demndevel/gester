@@ -75,7 +75,6 @@ class CurrenciesPlugin : CorePlugin {
         return emptyList()
     }
 
-    // TODO
     override fun invokePluginCommand(input: String, uuid: UUID): List<OperationResult> {
         if (uuid != metadata.commands.first().id) return emptyList()
 

@@ -24,32 +24,6 @@ interface CorePluginsProvider {
     )
 }
 
-class MockCorePluginsProvider : CorePluginsProvider {
-    override fun getPlugins(): List<BuiltInPlugin> {
-        return emptyList()
-    }
-
-    override suspend fun invokeAnyInput(input: String, uuid: UUID): List<OperationResult> {
-        return emptyList()
-    }
-
-    override suspend fun invokePluginCommand(
-        input: String,
-        pluginCommandId: UUID,
-        pluginUuid: UUID
-    ): List<OperationResult> {
-        return emptyList()
-    }
-
-    override suspend fun getPluginSettings(pluginUuid: UUID): List<PluginSetting> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun setPluginSetting() {
-        TODO("Not yet implemented")
-    }
-}
-
 class CorePluginsProviderImpl(
     private val plugins: List<CorePlugin>
 ) :

@@ -47,8 +47,7 @@ class MockPluginSettingsRepository : PluginSettingsRepository {
     )
 
     override suspend fun getAll(): List<PluginSettingsInfo> {
-        TODO()
-        //        return empty
+        return emptyList()
     }
 
     override suspend fun set(pluginUuid: UUID, settingUuid: UUID, value: String) {
