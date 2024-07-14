@@ -7,14 +7,14 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.demn.findutil.presentation.settings.OnSettingChange
+import com.demn.findutil.presentation.settings.OnPluginSettingChange
 import com.demn.findutil.presentation.settings.SettingsScreenUiState
-import com.demn.findutil.presentation.settings.ui.PluginSettingsSection
+import com.demn.findutil.presentation.settings.ui.plugin_settings.PluginSettingsSection
 import com.demn.findutil.presentation.settings.ui.UnfilledSettingsError
 
 @Composable
 fun NoAppSettingsHasPluginSettingsState(
-    onSettingChange: OnSettingChange,
+    onPluginSettingChange: OnPluginSettingChange,
     modifier: Modifier,
     state: SettingsScreenUiState.NoAppSettingsHasPluginSettings,
 ) {
@@ -31,7 +31,7 @@ fun NoAppSettingsHasPluginSettingsState(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(state.pluginSettingsSections) { settingsSection ->
-                PluginSettingsSection(settingsSection, onSettingChange)
+                PluginSettingsSection(settingsSection, onPluginSettingChange)
             }
         }
     }

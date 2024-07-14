@@ -13,13 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.demn.findutil.R
-import com.demn.findutil.presentation.settings.OnSettingChange
+import com.demn.findutil.preferences.MockAppSettingsRepositoryImpl
+import com.demn.findutil.presentation.settings.OnAppSettingChange
+import com.demn.findutil.presentation.settings.OnPluginSettingChange
 import com.demn.findutil.presentation.settings.SettingsScreenUiState
 import com.demn.findutil.presentation.settings.SettingsScreenViewModel
-import com.demn.findutil.presentation.settings.ui.states.HasAppSettingsHasPluginSettingsState
-import com.demn.findutil.presentation.settings.ui.states.LoadingState
-import com.demn.findutil.presentation.settings.ui.states.NoAppSettingsHasPluginSettingsState
-import com.demn.findutil.presentation.settings.ui.states.NoDataState
+import com.demn.findutil.presentation.settings.ui.states.*
 import com.demn.pluginloading.MockPluginSettingsRepository
 import org.koin.androidx.compose.koinViewModel
 
@@ -37,44 +36,74 @@ fun SettingsScreen(
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
-            SaveButton(state.saveButtonVisible, onClick = vm::save)
+            SaveButton(
+                visible = state.saveButtonVisible,
+                onClick = vm::save
+            )
         }
     ) { contentPadding ->
-        SettingsScreenState(state, onSettingChange = vm::setPluginSetting, contentPadding)
+        SettingsScreenState(
+            state = state,
+            contentPadding = contentPadding,
+            onPluginSettingChange = vm::setPluginSetting,
+            onAppSettingChange = vm::setAppSetting,
+        )
     }
 }
 
 @Composable
 private fun SettingsScreenState(
     state: SettingsScreenUiState,
-    onSettingChange: OnSettingChange,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
+    onAppSettingChange: OnAppSettingChange,
+    onPluginSettingChange: OnPluginSettingChange,
 ) {
     when (state) {
         is SettingsScreenUiState.Loading -> {
-            LoadingState(Modifier.fillMaxSize())
+            LoadingState(
+                Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding),
+            )
         }
 
         is SettingsScreenUiState.NoData -> {
-            NoDataState(Modifier.fillMaxSize())
+            NoDataState(
+                Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding),
+            )
         }
 
         is SettingsScreenUiState.NoAppSettingsHasPluginSettings -> {
             NoAppSettingsHasPluginSettingsState(
-                onSettingChange = onSettingChange,
+                onPluginSettingChange = onPluginSettingChange,
+                state = state,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(contentPadding),
-                state = state
             )
         }
 
         is SettingsScreenUiState.HasAppSettingsHasPluginSettings -> {
-            HasAppSettingsHasPluginSettingsState(Modifier.fillMaxSize())
+            HasAppSettingsHasPluginSettingsState(
+                onAppSettingChange = onAppSettingChange,
+                onPluginSettingChange = onPluginSettingChange,
+                state = state,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding)
+            )
         }
 
         is SettingsScreenUiState.HasAppSettingsNoPluginSettings -> {
-            Text("HasAppSettingsNoPluginSettings")
+            HasAppSettingsNoPluginSettingsState(
+                onAppSettingChange = onAppSettingChange,
+                state = state,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding)
+            )
         }
     }
 }
@@ -90,7 +119,10 @@ private fun SaveButton(
         exit = fadeOut()
     ) {
         FloatingActionButton(onClick = onClick) {
-            Icon(painterResource(R.drawable.save_icon), contentDescription = null)
+            Icon(
+                painterResource(R.drawable.save_icon),
+                contentDescription = null
+            )
         }
     }
 }
@@ -100,8 +132,12 @@ private fun SaveButton(
 fun SettingsScreenPreview() {
     Surface(Modifier.fillMaxSize()) {
         SettingsScreen(
-            modifier = Modifier.fillMaxSize(),
-            vm = SettingsScreenViewModel(MockPluginSettingsRepository())
+            modifier = Modifier
+                .fillMaxSize(),
+            vm = SettingsScreenViewModel(
+                MockPluginSettingsRepository(),
+                MockAppSettingsRepositoryImpl()
+            )
         )
     }
 }

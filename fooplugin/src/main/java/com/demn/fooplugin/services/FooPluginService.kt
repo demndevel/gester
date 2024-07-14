@@ -6,11 +6,8 @@ import android.net.Uri
 import android.os.IBinder
 import android.os.ParcelUuid
 import com.demn.aidl.IOperation
-import com.demn.plugincore.ParcelableOperationResult
+import com.demn.plugincore.*
 import com.demn.plugincore.ParcelableOperationResult.Companion.buildParcelableOperationResult
-import com.demn.plugincore.PluginMetadata
-import com.demn.plugincore.PluginSetting
-import com.demn.plugincore.PluginSettingType
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.PriorityTag
 import java.util.UUID
@@ -32,6 +29,14 @@ class FooPluginService : Service() {
             settingDescription = "This is a description for this second example setting",
             settingValue = "563",
             settingType = PluginSettingType.Number
+        ),
+        PluginSetting(
+            fooPluginMetadata.pluginUuid,
+            UUID.fromString("c480c1a7-f8e0-4038-818c-aea84dff8845"),
+            settingName = "Bool setting",
+            settingDescription = "This is a description for this boolean example setting",
+            settingValue = BooleanSettingFalse,
+            settingType = PluginSettingType.Boolean
         )
     )
 

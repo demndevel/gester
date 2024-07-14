@@ -1,5 +1,6 @@
 package com.demn.findutil.presentation.settings
 
+import com.demn.findutil.preferences.AppSetting
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginSetting
 
@@ -16,46 +17,31 @@ sealed interface SettingsScreenUiState {
             get() = false
     }
 
-    data object HasAppSettingsNoPluginSettings : SettingsScreenUiState {
-        override val saveButtonVisible: Boolean
-            get() = false
-    }
-
-    data class NoAppSettingsHasPluginSettings(
-        val pluginSettingsSections: List<SettingsSection>,
+    data class HasAppSettingsNoPluginSettings(
+        val appSettingsSections: List<AppSettingsSection>,
         override val saveButtonVisible: Boolean
     ) : SettingsScreenUiState
 
-    data object HasAppSettingsHasPluginSettings : SettingsScreenUiState {
+    data class NoAppSettingsHasPluginSettings(
+        val pluginSettingsSections: List<PluginSettingsSection>,
         override val saveButtonVisible: Boolean
-            get() = false
-    }
+    ) : SettingsScreenUiState
+
+    data class HasAppSettingsHasPluginSettings(
+        val pluginSettingsSections: List<PluginSettingsSection>,
+        val appSettingsSections: List<AppSettingsSection>,
+        override val saveButtonVisible: Boolean
+    ) : SettingsScreenUiState
 }
 
-data class SettingsSection(
+data class AppSettingsSection(
+    val title: String,
+    val settings: List<SettingField<AppSetting>>
+)
+
+data class PluginSettingsSection(
     val plugin: Plugin,
     val settings: List<SettingField<PluginSetting>>
 )
 
 data class SettingField<T>(val isEdited: Boolean, val validatedField: ValidatedField<T>)
-
-sealed interface ValidatedField<T> {
-    val value: T
-
-    data class Valid<T>(
-        override val value: T,
-    ) : ValidatedField<T>
-
-    data class InValid<T>(
-        override val value: T,
-        val error: SettingValidationError,
-    ) : ValidatedField<T>
-}
-
-sealed interface SettingValidationError {
-    data object ShouldContainOnlyNumbers : SettingValidationError
-
-    data object ShouldNotBeBlank : SettingValidationError
-
-    data object Other : SettingValidationError
-}

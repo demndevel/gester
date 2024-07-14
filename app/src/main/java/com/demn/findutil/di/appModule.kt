@@ -1,5 +1,7 @@
 package com.demn.findutil.di
 
+import com.demn.findutil.preferences.AppSettingsRepository
+import com.demn.findutil.preferences.AppSettingsRepositoryImpl
 import com.demn.findutil.presentation.main.SearchScreenViewModel
 import com.demn.findutil.presentation.settings.SettingsScreenViewModel
 import com.demn.findutil.usecase.ProcessQueryUseCase
@@ -12,7 +14,8 @@ val appModule = module {
     single<PluginRepository> { PluginRepositoryImpl(get(), get()) }
     factory<ExternalPluginsProvider> { ExternalPluginsProviderImpl(get()) }
     factory<PluginSettingsRepository> { PluginSettingsRepositoryImpl(get(), get()) }
+    factory<AppSettingsRepository> { AppSettingsRepositoryImpl(get()) }
 
     factory { SearchScreenViewModel(get(), get()) }
-    factory { SettingsScreenViewModel(get()) }
+    factory { SettingsScreenViewModel(get(), get()) }
 }
