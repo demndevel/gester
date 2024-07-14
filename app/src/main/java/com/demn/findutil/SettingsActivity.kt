@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.demn.findutil.presentation.settings.SettingsScreen
+import com.demn.findutil.presentation.settings.ui.SettingsScreen
 import com.demn.findutil.ui.theme.FindUtilTheme
 
 class SettingsActivity : ComponentActivity() {
