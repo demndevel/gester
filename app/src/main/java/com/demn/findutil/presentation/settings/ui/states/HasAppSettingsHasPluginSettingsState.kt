@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.demn.findutil.presentation.settings.OnAppSettingChange
 import com.demn.findutil.presentation.settings.OnPluginSettingChange
 import com.demn.findutil.presentation.settings.SettingsScreenUiState
-import com.demn.findutil.presentation.settings.ui.UnfilledSettingsError
+import com.demn.findutil.presentation.settings.ui.InvalidSettingsError
 import com.demn.findutil.presentation.settings.ui.app_settings.AppSettings
 import com.demn.findutil.presentation.settings.ui.plugin_settings.PluginSettingsSection
 
@@ -30,9 +30,11 @@ fun HasAppSettingsHasPluginSettingsState(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        UnfilledSettingsError(Modifier.fillMaxWidth()) // todo
+        if (state.hasInvalidSettings) {
+            InvalidSettingsError(Modifier.fillMaxWidth())
 
-        HorizontalDivider()
+            HorizontalDivider()
+        }
 
         AppSettings(
             settingSections = state.appSettingsSections,

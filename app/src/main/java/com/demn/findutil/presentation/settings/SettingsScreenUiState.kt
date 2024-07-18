@@ -20,18 +20,40 @@ sealed interface SettingsScreenUiState {
     data class HasAppSettingsNoPluginSettings(
         val appSettingsSections: List<AppSettingsSection>,
         override val saveButtonVisible: Boolean
-    ) : SettingsScreenUiState
+    ) : SettingsScreenUiState {
+        val hasInvalidSettings = appSettingsSections
+            .map { it.settings }
+            .flatten()
+            .any { it.validatedField is ValidatedField.Invalid }
+    }
 
     data class NoAppSettingsHasPluginSettings(
         val pluginSettingsSections: List<PluginSettingsSection>,
         override val saveButtonVisible: Boolean
-    ) : SettingsScreenUiState
+    ) : SettingsScreenUiState {
+        val hasInvalidSettings = pluginSettingsSections
+            .map { it.settings }
+            .flatten()
+            .any { it.validatedField is ValidatedField.Invalid }
+    }
 
     data class HasAppSettingsHasPluginSettings(
         val pluginSettingsSections: List<PluginSettingsSection>,
         val appSettingsSections: List<AppSettingsSection>,
         override val saveButtonVisible: Boolean
-    ) : SettingsScreenUiState
+    ) : SettingsScreenUiState {
+        private val hasInvalidAppSettings = appSettingsSections
+            .map { it.settings }
+            .flatten()
+            .any { it.validatedField is ValidatedField.Invalid }
+
+        private val hasInvalidPluginSettings = pluginSettingsSections
+            .map { it.settings }
+            .flatten()
+            .any { it.validatedField is ValidatedField.Invalid }
+
+        val hasInvalidSettings = hasInvalidAppSettings || hasInvalidPluginSettings
+    }
 }
 
 data class AppSettingsSection(

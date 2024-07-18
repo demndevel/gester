@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.demn.findutil.presentation.settings.OnPluginSettingChange
 import com.demn.findutil.presentation.settings.SettingsScreenUiState
 import com.demn.findutil.presentation.settings.ui.plugin_settings.PluginSettingsSection
-import com.demn.findutil.presentation.settings.ui.UnfilledSettingsError
+import com.demn.findutil.presentation.settings.ui.InvalidSettingsError
 
 @Composable
 fun NoAppSettingsHasPluginSettingsState(
@@ -22,7 +22,11 @@ fun NoAppSettingsHasPluginSettingsState(
         modifier = modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        UnfilledSettingsError(Modifier.fillMaxWidth())
+        if (state.hasInvalidSettings) {
+            InvalidSettingsError(Modifier.fillMaxWidth())
+
+            HorizontalDivider()
+        }
 
         HorizontalDivider()
 

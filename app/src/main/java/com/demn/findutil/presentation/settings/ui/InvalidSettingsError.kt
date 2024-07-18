@@ -10,10 +10,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.demn.findutil.R
 
 @Composable
-fun UnfilledSettingsError(modifier: Modifier = Modifier) {
+fun InvalidSettingsError(modifier: Modifier = Modifier) {
     Row(modifier) {
         Icon(
             imageVector = Icons.Default.Warning,
@@ -24,7 +26,7 @@ fun UnfilledSettingsError(modifier: Modifier = Modifier) {
         Spacer(Modifier.width(8.dp))
 
         Text(
-            text = "You have unfilled some settings", // todo use string resources
+            text = stringResource(R.string.you_have_some_invalid_settings_splash),
             style = MaterialTheme.typography.bodyLarge
         )
     }
