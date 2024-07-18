@@ -20,6 +20,12 @@ interface AppSettingsRepository {
         key: UUID,
         value: Boolean
     )
+
+    fun enablePlugin(pluginUuid: UUID)
+
+    fun disablePlugin(pluginUuid: UUID)
+
+    fun checkPluginEnabled(pluginUuid: UUID): Boolean
 }
 
 class MockAppSettingsRepositoryImpl : AppSettingsRepository {
@@ -30,6 +36,12 @@ class MockAppSettingsRepositoryImpl : AppSettingsRepository {
     override fun setNumerousSetting(key: UUID, value: Int) = Unit
 
     override fun setBooleanSetting(key: UUID, value: Boolean) = Unit
+
+    override fun enablePlugin(pluginUuid: UUID) = Unit
+
+    override fun disablePlugin(pluginUuid: UUID) = Unit
+
+    override fun checkPluginEnabled(pluginUuid: UUID): Boolean = true
 }
 
 class AppSettingsRepositoryImpl(context: Context) : AppSettingsRepository {
@@ -114,5 +126,21 @@ class AppSettingsRepositoryImpl(context: Context) : AppSettingsRepository {
 
             commit()
         }
+    }
+
+    override fun enablePlugin(pluginUuid: UUID) {
+        sharedPreferences.edit().apply {
+            putBoolean(pluginUuid.toString(), true)
+        }
+    }
+
+    override fun disablePlugin(pluginUuid: UUID) {
+        sharedPreferences.edit().apply {
+            putBoolean(pluginUuid.toString(), false)
+        }
+    }
+
+    override fun checkPluginEnabled(pluginUuid: UUID): Boolean {
+        return sharedPreferences.getBoolean(pluginUuid.toString(), true)
     }
 }
