@@ -16,6 +16,7 @@ import com.demn.findutil.presentation.settings.ui.SettingsSection
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.BooleanSetting
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.IntSetting
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.StringSetting
+import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.ValidatingIntSetting
 import com.demn.findutil.presentation.settings.ui.settingErrorMessage
 import java.util.*
 
@@ -100,17 +101,33 @@ private fun AppSetting(
             val appNumerousSetting = settingField.validatedField.field as AppNumerousSetting
             val intSettingValue = appNumerousSetting.value
 
-            IntSetting(
+            ValidatingIntSetting( // TODO: this is a temp solution
                 text = setting.title,
                 description = setting.description,
-                value = intSettingValue.toString(),
-                isError = settingField.validatedField is ValidatedField.Invalid,
-                errorMessage = errorMessage,
+                initialValue = intSettingValue.toString(),
                 onValueChange = {
-                    if (it.toIntOrNull() != null) onFieldUpdate(appNumerousSetting.copy(value = it.toInt()))
-                },
-                modifier = modifier
+                    onFieldUpdate(appNumerousSetting.copy(value = it))
+                }
             )
+
+//            IntSetting(
+//                text = setting.title,
+//                description = setting.description,
+//                value = intSettingValue.toString(),
+////                value = if (intSettingValue == 0) "" else intSettingValue.toString(),
+//                isError = settingField.validatedField is ValidatedField.Invalid,
+//                errorMessage = errorMessage,
+//                onValueChange = { newValue ->
+//                    val modifiedValue = try {
+//                        newValue.toInt().toString()
+//                    } catch (e: NumberFormatException) {
+//                        "0$newValue"
+//                    }
+//
+//                    onFieldUpdate(appNumerousSetting.copy(value = modifiedValue.toIntOrNull() ?: 0))
+//                },
+//                modifier = modifier
+//            )
         }
 
         is AppBooleanSetting -> {

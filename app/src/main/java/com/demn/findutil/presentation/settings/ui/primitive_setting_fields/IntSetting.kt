@@ -35,7 +35,7 @@ fun IntSetting(
                 keyboardType = KeyboardType.Number
             ),
             onValueChange = { newValue ->
-                if (newValue.toIntOrNull() != null) onValueChange(newValue.trimStart { it == '0' })
+                onValueChange(newValue)
             },
             modifier = Modifier
                 .fillMaxWidth()
