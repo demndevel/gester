@@ -1,7 +1,7 @@
 package com.demn.findutil.di
 
-import com.demn.findutil.preferences.AppSettingsRepository
-import com.demn.findutil.preferences.AppSettingsRepositoryImpl
+import com.demn.findutil.app_settings.AppSettingsRepository
+import com.demn.findutil.app_settings.AppSettingsRepositoryImpl
 import com.demn.findutil.presentation.main.SearchScreenViewModel
 import com.demn.findutil.presentation.settings.SettingsScreenViewModel
 import com.demn.findutil.usecase.ProcessQueryUseCase

@@ -1,18 +1,16 @@
 package com.demn.findutil.presentation.settings.ui.app_settings
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.demn.findutil.preferences.AppBooleanSetting
-import com.demn.findutil.preferences.AppNumerousSetting
-import com.demn.findutil.preferences.AppSetting
-import com.demn.findutil.preferences.AppStringSetting
+import com.demn.findutil.app_settings.AppBooleanSetting
+import com.demn.findutil.app_settings.AppNumerousSetting
+import com.demn.findutil.app_settings.AppSetting
+import com.demn.findutil.app_settings.AppStringSetting
 import com.demn.findutil.presentation.settings.*
 import com.demn.findutil.presentation.settings.ui.SettingsSection
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.BooleanSetting

@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.demn.findutil.R
-import com.demn.findutil.preferences.MockAppSettingsRepositoryImpl
+import com.demn.findutil.app_settings.MockAppSettingsRepositoryImpl
 import com.demn.findutil.presentation.settings.OnAppSettingChange
 import com.demn.findutil.presentation.settings.OnPluginSettingChange
 import com.demn.findutil.presentation.settings.SettingsScreenUiState

@@ -1,5 +1,5 @@
 package com.demn.findutil.presentation.settings
 
-import com.demn.findutil.preferences.AppSetting
+import com.demn.findutil.app_settings.AppSetting
 
 typealias OnAppSettingChange = (appSetting: AppSetting) -> Unit

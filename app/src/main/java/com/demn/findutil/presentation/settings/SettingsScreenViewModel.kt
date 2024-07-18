@@ -2,7 +2,7 @@ package com.demn.findutil.presentation.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.demn.findutil.preferences.*
+import com.demn.findutil.app_settings.*
 import com.demn.plugincore.*
 import com.demn.pluginloading.PluginSettingsRepository
 import kotlinx.coroutines.*

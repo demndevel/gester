@@ -1,4 +1,4 @@
-package com.demn.findutil.preferences
+package com.demn.findutil.app_settings
 
 import java.util.UUID
 
