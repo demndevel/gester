@@ -4,7 +4,7 @@ import com.demn.plugincore.buildPluginMetadata
 import java.util.UUID
 
 val barPluginMetadata = buildPluginMetadata(
-    pluginUuid = UUID.fromString("83fabe54-1436-4402-be43-8e3765698efb"),
+    pluginUuid = UUID.fromString("922fb4da-48cd-482d-94d6-1766560e4aa8"),
     pluginName = "bar"
 ) {
     description = "'bar' plugin; don't putat' with y9bar chat"
