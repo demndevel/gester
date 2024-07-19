@@ -12,17 +12,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.demn.findutil.presentation.settings.OnAppSettingChange
 import com.demn.findutil.presentation.settings.OnPluginSettingChange
+import com.demn.findutil.presentation.settings.PluginAvailability
 import com.demn.findutil.presentation.settings.SettingsScreenUiState
 import com.demn.findutil.presentation.settings.ui.InvalidSettingsError
 import com.demn.findutil.presentation.settings.ui.app_settings.AppSettings
 import com.demn.findutil.presentation.settings.ui.plugin_settings.PluginSettingsSection
+import com.demn.plugincore.PluginMetadata
 
 @Composable
-fun HasAppSettingsHasPluginSettingsState(
-    state: SettingsScreenUiState.HasAppSettingsHasPluginSettings,
+fun HasDataState(
+    state: SettingsScreenUiState.HasDataState,
     onPluginSettingChange: OnPluginSettingChange,
     onAppSettingChange: OnAppSettingChange,
-    modifier: Modifier = Modifier
+    onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -39,6 +42,8 @@ fun HasAppSettingsHasPluginSettingsState(
         AppSettings(
             settingSections = state.appSettingsSections,
             onAppSettingChange = onAppSettingChange,
+            onAvailabilityChange = onAvailabilityChange,
+            pluginAvailabilities = state.pluginAvailabilities,
             modifier = Modifier.fillMaxWidth()
         )
 

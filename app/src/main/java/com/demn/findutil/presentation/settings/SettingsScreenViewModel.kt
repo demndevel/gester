@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.demn.findutil.app_settings.*
 import com.demn.plugincore.*
+import com.demn.pluginloading.PluginRepository
 import com.demn.pluginloading.PluginSettingsRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,30 +19,17 @@ private data class SettingsScreenVmState(
     val saveButtonVisible: Boolean = false,
     val pluginSettingsSections: List<PluginSettingsSection>? = null,
     val appSettingsSections: List<AppSettingsSection>? = null,
+    val pluginAvailabilities: List<PluginAvailability>? = null
 ) {
     fun toUiState(): SettingsScreenUiState {
         if (isLoading) return SettingsScreenUiState.Loading
 
-
-        if (pluginSettingsSections == null && appSettingsSections != null) {
-            return SettingsScreenUiState.HasAppSettingsNoPluginSettings(
+        if (pluginSettingsSections != null && appSettingsSections != null && pluginAvailabilities != null) {
+            return SettingsScreenUiState.HasDataState(
+                pluginSettingsSections = pluginSettingsSections,
                 appSettingsSections = appSettingsSections,
+                pluginAvailabilities = pluginAvailabilities,
                 saveButtonVisible = saveButtonVisible,
-            )
-        }
-
-        if (pluginSettingsSections != null && appSettingsSections == null) {
-            return SettingsScreenUiState.NoAppSettingsHasPluginSettings(
-                pluginSettingsSections = pluginSettingsSections,
-                saveButtonVisible = saveButtonVisible
-            )
-        }
-
-        if (pluginSettingsSections != null && appSettingsSections != null) {
-            return SettingsScreenUiState.HasAppSettingsHasPluginSettings(
-                pluginSettingsSections = pluginSettingsSections,
-                appSettingsSections = appSettingsSections,
-                saveButtonVisible = saveButtonVisible
             )
         }
 
@@ -52,6 +40,7 @@ private data class SettingsScreenVmState(
 class SettingsScreenViewModel(
     private val pluginSettingsRepository: PluginSettingsRepository,
     private val appSettingsRepository: AppSettingsRepository,
+    private val pluginRepository: PluginRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(SettingsScreenVmState())
 
@@ -97,13 +86,48 @@ class SettingsScreenViewModel(
                 )
             )
 
+            val pluginAvailabilities = pluginRepository
+                .getPluginList()
+                .map { plugin ->
+                    PluginAvailability(
+                        pluginMetadata = plugin.metadata,
+                        available = appSettingsRepository.checkPluginEnabled(plugin.metadata.pluginUuid)
+                    )
+                }
+
             _state.update {
                 it.copy(
                     isLoading = false,
                     pluginSettingsSections = pluginSettingsSections,
-                    appSettingsSections = appSettingsSections
+                    appSettingsSections = appSettingsSections,
+                    pluginAvailabilities = pluginAvailabilities
                 )
             }
+        }
+    }
+
+    fun setPluginAvailability(metadata: PluginMetadata, available: Boolean) {
+        when (available) {
+            true -> appSettingsRepository.enablePlugin(metadata.pluginUuid)
+            false -> appSettingsRepository.disablePlugin(metadata.pluginUuid)
+        }
+
+        _state.update {
+            val mutableAvailabilities = (it.pluginAvailabilities ?: return@update it).toMutableList()
+            val index = mutableAvailabilities
+                .indexOfFirst { availability -> availability.pluginMetadata.pluginUuid == metadata.pluginUuid }
+
+            mutableAvailabilities.set(
+                index = index,
+                element = PluginAvailability(
+                    pluginMetadata = metadata,
+                    available = available
+                )
+            )
+
+            it.copy(
+                pluginAvailabilities = mutableAvailabilities
+            )
         }
     }
 

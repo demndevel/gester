@@ -17,5 +17,5 @@ val appModule = module {
     factory<AppSettingsRepository> { AppSettingsRepositoryImpl(get()) }
 
     factory { SearchScreenViewModel(get(), get()) }
-    factory { SettingsScreenViewModel(get(), get()) }
+    factory { SettingsScreenViewModel(get(), get(), get()) }
 }

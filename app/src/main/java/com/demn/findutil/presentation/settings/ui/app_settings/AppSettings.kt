@@ -14,17 +14,19 @@ import com.demn.findutil.app_settings.AppStringSetting
 import com.demn.findutil.presentation.settings.*
 import com.demn.findutil.presentation.settings.ui.SettingsSection
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.BooleanSetting
-import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.IntSetting
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.StringSetting
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.ValidatingIntSetting
 import com.demn.findutil.presentation.settings.ui.settingErrorMessage
+import com.demn.plugincore.PluginMetadata
 import java.util.*
 
 @Composable
 fun AppSettings(
+    pluginAvailabilities: List<PluginAvailability>,
     settingSections: List<AppSettingsSection>,
     onAppSettingChange: OnAppSettingChange,
-    modifier: Modifier = Modifier
+    onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Column(
@@ -39,8 +41,38 @@ fun AppSettings(
                         .fillMaxWidth()
                 )
             }
+
+            PluginAvailabilitySection(
+                pluginAvailabilities = pluginAvailabilities,
+                onAvailabilityChange = onAvailabilityChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
         }
     }
+}
+
+@Composable
+private fun PluginAvailabilitySection(
+    pluginAvailabilities: List<PluginAvailability>,
+    onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    SettingsSection(
+        sectionName = "Plugins",
+        settings = {
+            pluginAvailabilities.forEach { pluginAvailability ->
+                PluginAvailability(
+                    pluginMetadata = pluginAvailability.pluginMetadata,
+                    available = pluginAvailability.available,
+                    onAvailabilityChange = onAvailabilityChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+        },
+        modifier = modifier
+    )
 }
 
 @Composable
@@ -202,9 +234,11 @@ fun AppSettingsPreview() {
                 .padding(16.dp)
         ) {
             AppSettings(
+                pluginAvailabilities = emptyList(),
                 settingSections = mockSettingSections,
                 onAppSettingChange = {},
-                Modifier.fillMaxSize()
+                onAvailabilityChange = { _, _ -> },
+                modifier = Modifier.fillMaxSize(),
             )
         }
     }

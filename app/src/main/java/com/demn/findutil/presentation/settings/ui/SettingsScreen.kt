@@ -19,6 +19,8 @@ import com.demn.findutil.presentation.settings.OnPluginSettingChange
 import com.demn.findutil.presentation.settings.SettingsScreenUiState
 import com.demn.findutil.presentation.settings.SettingsScreenViewModel
 import com.demn.findutil.presentation.settings.ui.states.*
+import com.demn.plugincore.PluginMetadata
+import com.demn.pluginloading.MockPluginRepository
 import com.demn.pluginloading.MockPluginSettingsRepository
 import org.koin.androidx.compose.koinViewModel
 
@@ -45,8 +47,9 @@ fun SettingsScreen(
         SettingsScreenState(
             state = state,
             contentPadding = contentPadding,
-            onPluginSettingChange = vm::setPluginSetting,
             onAppSettingChange = vm::setAppSetting,
+            onPluginSettingChange = vm::setPluginSetting,
+            onAvailabilityChange = vm::setPluginAvailability
         )
     }
 }
@@ -57,6 +60,7 @@ private fun SettingsScreenState(
     contentPadding: PaddingValues,
     onAppSettingChange: OnAppSettingChange,
     onPluginSettingChange: OnPluginSettingChange,
+    onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
 ) {
     when (state) {
         is SettingsScreenUiState.Loading -> {
@@ -75,34 +79,16 @@ private fun SettingsScreenState(
             )
         }
 
-        is SettingsScreenUiState.NoAppSettingsHasPluginSettings -> {
-            NoAppSettingsHasPluginSettingsState(
-                onPluginSettingChange = onPluginSettingChange,
+
+        is SettingsScreenUiState.HasDataState -> {
+            HasDataState(
                 state = state,
+                onPluginSettingChange = onPluginSettingChange,
+                onAppSettingChange = onAppSettingChange,
+                onAvailabilityChange = onAvailabilityChange,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(contentPadding),
-            )
-        }
-
-        is SettingsScreenUiState.HasAppSettingsHasPluginSettings -> {
-            HasAppSettingsHasPluginSettingsState(
-                onAppSettingChange = onAppSettingChange,
-                onPluginSettingChange = onPluginSettingChange,
-                state = state,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding)
-            )
-        }
-
-        is SettingsScreenUiState.HasAppSettingsNoPluginSettings -> {
-            HasAppSettingsNoPluginSettingsState(
-                onAppSettingChange = onAppSettingChange,
-                state = state,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding)
             )
         }
     }
@@ -136,7 +122,8 @@ fun SettingsScreenPreview() {
                 .fillMaxSize(),
             vm = SettingsScreenViewModel(
                 MockPluginSettingsRepository(),
-                MockAppSettingsRepositoryImpl()
+                MockAppSettingsRepositoryImpl(),
+                MockPluginRepository()
             )
         )
     }

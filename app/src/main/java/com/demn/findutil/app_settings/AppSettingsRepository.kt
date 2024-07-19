@@ -131,12 +131,14 @@ class AppSettingsRepositoryImpl(context: Context) : AppSettingsRepository {
     override fun enablePlugin(pluginUuid: UUID) {
         sharedPreferences.edit().apply {
             putBoolean(pluginUuid.toString(), true)
+            commit()
         }
     }
 
     override fun disablePlugin(pluginUuid: UUID) {
         sharedPreferences.edit().apply {
             putBoolean(pluginUuid.toString(), false)
+            commit()
         }
     }
 
