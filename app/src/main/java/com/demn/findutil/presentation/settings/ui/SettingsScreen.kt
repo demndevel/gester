@@ -36,7 +36,8 @@ fun SettingsScreen(
     }
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier
+            .imePadding(),
         floatingActionButton = {
             SaveButton(
                 visible = state.saveButtonVisible,
