@@ -35,8 +35,6 @@ android {
 dependencies {
     implementation(project(":plugincore"))
 
-    implementation(libs.koin.core)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
