@@ -2,6 +2,7 @@ package com.demn.findutil
 
 import android.content.Context
 import android.content.Intent
+import com.demn.plugincore.FindUtilPluginUuid
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.buildPluginMetadata
@@ -16,7 +17,7 @@ private val commandsCommandUuid = UUID.fromString("59655e19-b299-4241-af6a-0ba19
 
 private val findUtilPluginMetadata =
     buildPluginMetadata(
-        UUID.fromString("6f0d8823-648b-42cb-918a-053c612f1391"),
+        FindUtilPluginUuid,
         "findutilplugin"
     ) {
         consumeAnyInput = false
