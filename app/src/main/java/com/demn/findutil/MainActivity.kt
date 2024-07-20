@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.demn.findutil.di.appModule
 import com.demn.findutil.presentation.main.SearchScreen
@@ -33,6 +34,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             FindUtilTheme {
                 val interactionSource = remember { MutableInteractionSource() }
+                val context = LocalContext.current
 
                 Box(
                     Modifier
@@ -45,6 +47,7 @@ class MainActivity : ComponentActivity() {
                         }
                 ) {
                     SearchScreen(
+                        onEnterClick = context::startActivity,
                         modifier = Modifier
                             .padding(32.dp)
                             .fillMaxSize()
