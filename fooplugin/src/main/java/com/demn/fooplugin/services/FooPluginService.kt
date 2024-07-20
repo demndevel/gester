@@ -5,7 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
 import android.os.ParcelUuid
-import com.demn.aidl.IOperation
+import com.demn.aidl.PluginAdapter
 import com.demn.plugincore.*
 import com.demn.plugincore.ParcelableOperationResult.Companion.buildParcelableOperationResult
 import com.demn.plugincore.operation_result.BasicOperationResult
@@ -44,8 +44,8 @@ class FooPluginService : Service() {
         return addBinder()
     }
 
-    private fun addBinder(): IOperation.Stub {
-        val value = object : IOperation.Stub() {
+    private fun addBinder(): PluginAdapter.Stub {
+        val value = object : PluginAdapter.Stub() {
             override fun executeCommand(
                 commandUuid: String,
                 input: String?

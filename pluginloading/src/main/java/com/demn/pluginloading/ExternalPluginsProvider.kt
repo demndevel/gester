@@ -9,7 +9,7 @@ import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.os.IBinder
 import android.os.ParcelUuid
-import com.demn.aidl.IOperation
+import com.demn.aidl.PluginAdapter
 import com.demn.plugincore.ACTION_PICK_PLUGIN
 import com.demn.plugincore.CategoryExtrasKey
 import com.demn.plugincore.PluginMetadata
@@ -101,8 +101,8 @@ class ExternalPluginsProviderImpl(
         val intent = getIntentForPlugin(pluginService)
 
         return suspendCoroutine { continuation ->
-            val serviceConnection = getServiceConnectionForPlugin { operation ->
-                val results = operation.executeCommand(commandUuid.toString(), input)
+            val serviceConnection = getServiceConnectionForPlugin { adapter ->
+                val results = adapter.executeCommand(commandUuid.toString(), input)
                     .map { it.toOperationResult() }
 
                 continuation.resume(results)
@@ -130,8 +130,8 @@ class ExternalPluginsProviderImpl(
         val intent = getIntentForPlugin(pluginService)
 
         return suspendCoroutine { continuation ->
-            val serviceConnection = getServiceConnectionForPlugin { operation ->
-                val results = operation.executeAnyInput(input).map { parcelableOperationResult ->
+            val serviceConnection = getServiceConnectionForPlugin { adapter ->
+                val results = adapter.executeAnyInput(input).map { parcelableOperationResult ->
                     parcelableOperationResult.toOperationResult()
                 }
 
@@ -142,10 +142,10 @@ class ExternalPluginsProviderImpl(
         }
     }
 
-    private fun getServiceConnectionForPlugin(operationsWithPlugin: (IOperation) -> Unit) =
+    private fun getServiceConnectionForPlugin(operationsWithPlugin: (PluginAdapter) -> Unit) =
         object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
-                val plugin = IOperation.Stub.asInterface(service)
+                val plugin = PluginAdapter.Stub.asInterface(service)
 
                 operationsWithPlugin(plugin)
 
@@ -159,8 +159,8 @@ class ExternalPluginsProviderImpl(
         val intent = getIntentForPlugin(pluginService)
 
         return suspendCoroutine { continuation ->
-            val serviceConnection = getServiceConnectionForPlugin { operation ->
-                continuation.resume(operation.fetchPluginData())
+            val serviceConnection = getServiceConnectionForPlugin { adapter ->
+                continuation.resume(adapter.fetchPluginData())
             }
 
             context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
@@ -171,8 +171,8 @@ class ExternalPluginsProviderImpl(
         val intent = getIntentForPlugin(externalPlugin.pluginService)
 
         return suspendCoroutine { continuation ->
-            val serviceConnection = getServiceConnectionForPlugin { operation ->
-                continuation.resume(operation.pluginSettings)
+            val serviceConnection = getServiceConnectionForPlugin { adapter ->
+                continuation.resume(adapter.pluginSettings)
             }
 
             context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
@@ -187,9 +187,9 @@ class ExternalPluginsProviderImpl(
         val intent = getIntentForPlugin(externalPlugin.pluginService)
 
         return suspendCoroutine { continuation ->
-            val serviceConnection = getServiceConnectionForPlugin { operation ->
+            val serviceConnection = getServiceConnectionForPlugin { adapter ->
                 continuation.resume(
-                    operation.setSetting(
+                    adapter.setSetting(
                         ParcelUuid.fromString(settingUuid.toString()),
                         newValue
                     )
