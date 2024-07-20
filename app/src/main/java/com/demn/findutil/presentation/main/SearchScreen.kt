@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -108,6 +109,7 @@ fun SearchBar(
         textStyle = MaterialTheme.typography.headlineMedium,
         modifier = modifier
             .focusRequester(focusRequester)
+            .shadow(elevation = 6.dp, shape = RoundedCornerShape(16.dp)),
     )
 }
 
