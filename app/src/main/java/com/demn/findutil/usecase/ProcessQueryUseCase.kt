@@ -1,5 +1,6 @@
 package com.demn.findutil.usecase
 
+import com.demn.findutil.app_settings.AppSettingsRepository
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
@@ -19,15 +20,21 @@ class MockProcessQueryUseCaseImpl : ProcessQueryUseCase {
 }
 
 class ProcessQueryUseCaseImpl(
-    private val pluginRepository: PluginRepository
+    private val pluginRepository: PluginRepository,
+    private val appSettingsRepository: AppSettingsRepository
 ) : ProcessQueryUseCase {
     override suspend fun invoke(plugins: List<Plugin>, inputQuery: String): List<OperationResult> {
-        val resultsByAnyInput = plugins
+        val availablePlugins = plugins
+            .filter { appSettingsRepository.checkPluginEnabled(it.metadata.pluginUuid) }
+
+        val resultsByAnyInput = availablePlugins
             .filter { it.metadata.consumeAnyInput }
             .map { invokeAnyResults(it, inputQuery) }
             .flatten()
 
-        val allCommands = pluginRepository.getAllPluginCommands()
+        val allCommands = availablePlugins
+            .map { it.metadata.commands }
+            .flatten()
 
         val commands = allCommands
             .filter { command ->

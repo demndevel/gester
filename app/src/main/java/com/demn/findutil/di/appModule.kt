@@ -10,7 +10,7 @@ import com.demn.pluginloading.*
 import org.koin.dsl.module
 
 val appModule = module {
-    factory<ProcessQueryUseCase> { ProcessQueryUseCaseImpl(get()) }
+    factory<ProcessQueryUseCase> { ProcessQueryUseCaseImpl(get(), get()) }
     single<PluginRepository> { PluginRepositoryImpl(get(), get()) }
     factory<ExternalPluginsProvider> { ExternalPluginsProviderImpl(get()) }
     factory<PluginSettingsRepository> { PluginSettingsRepositoryImpl(get(), get()) }
