@@ -128,7 +128,7 @@ fun ResultList(
         modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(results, key = { if (it is BasicOperationResult) it.text.hashCode() else Random(100).nextInt() }) { result ->
+        items(results) { result ->
             if (result is BasicOperationResult) {
                 BasicResult(
                     text = result.text,
