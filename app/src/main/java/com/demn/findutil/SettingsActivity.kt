@@ -6,9 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.demn.findutil.presentation.settings.ui.SettingsScreen
 import com.demn.findutil.ui.theme.FindUtilTheme
 
@@ -18,16 +17,11 @@ class SettingsActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FindUtilTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Surface(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                    ) {
-                        SettingsScreen(
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
+                SettingsScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
+                )
             }
         }
     }

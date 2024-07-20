@@ -1,24 +1,32 @@
 package com.demn.findutil.presentation.settings.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.*
+import androidx.compose.animation.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.demn.findutil.R
 import com.demn.findutil.app_settings.MockAppSettingsRepositoryImpl
 import com.demn.findutil.presentation.settings.OnAppSettingChange
 import com.demn.findutil.presentation.settings.OnPluginSettingChange
 import com.demn.findutil.presentation.settings.SettingsScreenUiState
 import com.demn.findutil.presentation.settings.SettingsScreenViewModel
-import com.demn.findutil.presentation.settings.ui.states.*
+import com.demn.findutil.presentation.settings.ui.states.HasDataState
+import com.demn.findutil.presentation.settings.ui.states.LoadingState
+import com.demn.findutil.presentation.settings.ui.states.NoDataState
 import com.demn.plugincore.PluginMetadata
 import com.demn.pluginloading.MockPluginRepository
 import com.demn.pluginloading.MockPluginSettingsRepository
@@ -43,40 +51,48 @@ fun SettingsScreen(
                 visible = state.saveButtonVisible,
                 onClick = vm::save
             )
-        }
+        },
+        containerColor = Color.Transparent
     ) { contentPadding ->
-        SettingsScreenState(
-            state = state,
-            contentPadding = contentPadding,
-            onAppSettingChange = vm::setAppSetting,
-            onPluginSettingChange = vm::setPluginSetting,
-            onAvailabilityChange = vm::setPluginAvailability
-        )
+        Card(
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(8.dp)
+                .fillMaxSize(),
+            elevation = CardDefaults
+                .elevatedCardElevation(defaultElevation = 6.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            SettingsScreenState(
+                state = state,
+                onAppSettingChange = vm::setAppSetting,
+                onPluginSettingChange = vm::setPluginSetting,
+                onAvailabilityChange = vm::setPluginAvailability,
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+        }
     }
 }
 
 @Composable
 private fun SettingsScreenState(
     state: SettingsScreenUiState,
-    contentPadding: PaddingValues,
     onAppSettingChange: OnAppSettingChange,
     onPluginSettingChange: OnPluginSettingChange,
     onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
+    modifier: Modifier,
 ) {
     when (state) {
         is SettingsScreenUiState.Loading -> {
             LoadingState(
-                Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding),
+                modifier
             )
         }
 
         is SettingsScreenUiState.NoData -> {
             NoDataState(
-                Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding),
+                modifier
             )
         }
 
@@ -87,9 +103,7 @@ private fun SettingsScreenState(
                 onPluginSettingChange = onPluginSettingChange,
                 onAppSettingChange = onAppSettingChange,
                 onAvailabilityChange = onAvailabilityChange,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding),
+                modifier = modifier
             )
         }
     }
@@ -102,8 +116,8 @@ private fun SaveButton(
 ) {
     AnimatedVisibility(
         visible = visible,
-        enter = fadeIn(),
-        exit = fadeOut()
+        enter = scaleIn(),
+        exit = scaleOut(),
     ) {
         FloatingActionButton(onClick = onClick) {
             Icon(
@@ -117,10 +131,11 @@ private fun SaveButton(
 @Preview
 @Composable
 fun SettingsScreenPreview() {
-    Surface(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize()) {
         SettingsScreen(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(24.dp),
             vm = SettingsScreenViewModel(
                 MockPluginSettingsRepository(),
                 MockAppSettingsRepositoryImpl(),
