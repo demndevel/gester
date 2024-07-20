@@ -5,4 +5,5 @@
     <string name="should_contain_only_numbers_setting_error">This field should contain only numbers</string>
     <string name="should_not_be_blank_setting_error">This field should not be blank</string>
     <string name="you_have_some_invalid_settings_splash">You have some invalid settings</string>
+    <string name="app_settings_section_title">App settings</string>
 </resources>

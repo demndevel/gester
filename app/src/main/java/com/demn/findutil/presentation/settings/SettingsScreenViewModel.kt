@@ -16,20 +16,20 @@ import kotlinx.coroutines.flow.update
 
 private data class SettingsScreenVmState(
     val isLoading: Boolean = false,
-    val saveButtonVisible: Boolean = false,
     val pluginSettingsSections: List<PluginSettingsSection>? = null,
-    val appSettingsSections: List<AppSettingsSection>? = null,
-    val pluginAvailabilities: List<PluginAvailability>? = null
+    val appSettings: List<SettingField<AppSettingMetadata>>? = null,
+    val pluginAvailabilities: List<PluginAvailability>? = null,
+    val saveButtonVisible: Boolean = false
 ) {
     fun toUiState(): SettingsScreenUiState {
         if (isLoading) return SettingsScreenUiState.Loading
 
-        if (pluginSettingsSections != null && appSettingsSections != null && pluginAvailabilities != null) {
+        if (pluginSettingsSections != null && appSettings != null && pluginAvailabilities != null) {
             return SettingsScreenUiState.HasDataState(
                 pluginSettingsSections = pluginSettingsSections,
-                appSettingsSections = appSettingsSections,
+                appSettings = appSettings,
                 pluginAvailabilities = pluginAvailabilities,
-                saveButtonVisible = saveButtonVisible,
+                saveButtonVisible = saveButtonVisible
             )
         }
 
@@ -61,30 +61,32 @@ class SettingsScreenViewModel(
                         it.settings.map { setting ->
                             SettingField(
                                 isEdited = false,
-                                ValidatedField.Valid(
-                                    field = setting,
-                                )
+                                settingMetadata = setting,
+                                ValidatedField.Valid(setting.settingValue)
                             )
                         }
 
                     PluginSettingsSection(plugin = it.plugin, settings = validatableSettings)
                 }
 
-            val appSettingsSections = listOf( // todo
-                AppSettingsSection(
-                    title = "App settings",
-                    settings = appSettingsRepository
-                        .getAllSettings()
-                        .map { appSetting ->
-                            SettingField(
-                                isEdited = false,
-                                ValidatedField.Valid(
-                                    field = appSetting
-                                )
-                            )
-                        }
-                )
-            )
+            val appSettings = appSettingsRepository
+                .getAllSettingsMetadata()
+                .map { appSetting ->
+                    val settingValue = when (appSetting.settingType) {
+                        AppSettingType.String -> appSettingsRepository.getStringSetting(appSetting.key)
+                        AppSettingType.Numerous -> appSettingsRepository.getNumerousSetting(appSetting.key)
+                            .toString()
+
+                        AppSettingType.Boolean -> appSettingsRepository.getBooleanSetting(appSetting.key)
+                            .toString()
+                    }
+
+                    SettingField(
+                        isEdited = false,
+                        settingMetadata = appSetting,
+                        ValidatedField.Valid(settingValue)
+                    )
+                }
 
             val pluginAvailabilities = pluginRepository
                 .getPluginList()
@@ -100,7 +102,7 @@ class SettingsScreenViewModel(
                 it.copy(
                     isLoading = false,
                     pluginSettingsSections = pluginSettingsSections,
-                    appSettingsSections = appSettingsSections,
+                    appSettings = appSettings,
                     pluginAvailabilities = pluginAvailabilities
                 )
             }
@@ -143,9 +145,20 @@ class SettingsScreenViewModel(
         }
     }
 
-    fun setAppSetting(appSetting: AppSetting) {
-        val validatedSetting = validateAppSetting(appSetting)
-        updateValidatedAppSetting(validatedSetting)
+    fun setAppSetting(appSettingMetadata: AppSettingMetadata, newValue: String) {
+        val validatedSetting = validateAppSetting(appSettingMetadata, newValue)
+        updateValidatedAppSetting(appSettingMetadata, validatedSetting)
+
+        _state.update {
+            it.copy(
+                saveButtonVisible = true
+            )
+        }
+    }
+
+    fun setBooleanAppSetting(appSettingMetadata: AppSettingMetadata, newValue: Boolean) {
+        val validatedSetting = ValidatedField.Valid(newValue.toString())
+        updateValidatedAppSetting(appSettingMetadata, validatedSetting)
 
         _state.update {
             it.copy(
@@ -156,13 +169,15 @@ class SettingsScreenViewModel(
 
     fun save() {
         val pluginSettingsSections = _state.value.pluginSettingsSections ?: return
-        val appSettingsSections = _state.value.appSettingsSections ?: return
+        val appSettings = _state.value.appSettings ?: return
 
         val allEditedPluginSettings = selectEditedPluginSettings(pluginSettingsSections)
-        val allEditedAppSettings = selectEditedAppSettings(appSettingsSections)
 
-        if (hasInvalidPluginSettings(allEditedPluginSettings) || hasInvalidAppSettings(allEditedAppSettings))
+        val allEditedAppSettings = selectEditedAppSettings(appSettings)
+
+        if (hasInvalidPluginSettings(allEditedPluginSettings) || hasInvalidAppSettings(allEditedAppSettings)) {
             return
+        }
 
         saveAllAppSettings(allEditedAppSettings)
 
@@ -177,29 +192,29 @@ class SettingsScreenViewModel(
         }
     }
 
-    private fun saveAllAppSettings(appSettingsFields: List<SettingField<AppSetting>>) {
+    private fun saveAllAppSettings(appSettingsFields: List<SettingField<AppSettingMetadata>>) {
         for (field in appSettingsFields) {
-            val appSetting = field.validatedField.field
+            val appSettingMetadata = field.settingMetadata
 
-            when (appSetting) {
-                is AppStringSetting -> {
+            when (appSettingMetadata.settingType) {
+                AppSettingType.String -> {
                     appSettingsRepository.setStringSetting(
-                        key = appSetting.key,
-                        value = appSetting.value
+                        key = appSettingMetadata.key,
+                        value = field.validatedField.field
                     )
                 }
 
-                is AppBooleanSetting -> {
+                AppSettingType.Boolean -> {
                     appSettingsRepository.setBooleanSetting(
-                        key = appSetting.key,
-                        value = appSetting.value
+                        key = appSettingMetadata.key,
+                        value = field.validatedField.field.toBoolean()
                     )
                 }
 
-                is AppNumerousSetting -> {
+                AppSettingType.Numerous -> {
                     appSettingsRepository.setNumerousSetting(
-                        key = appSetting.key,
-                        value = appSetting.value
+                        key = appSettingMetadata.key,
+                        value = field.validatedField.field.toInt()
                     )
                 }
             }
@@ -212,13 +227,11 @@ class SettingsScreenViewModel(
             .flatten()
             .filter { it.isEdited }
 
-    private fun selectEditedAppSettings(appSettingsSections: List<AppSettingsSection>) =
+    private fun selectEditedAppSettings(appSettingsSections: List<SettingField<AppSettingMetadata>>) =
         appSettingsSections
-            .map { it.settings }
-            .flatten()
             .filter { it.isEdited }
 
-    private fun hasInvalidAppSettings(appSettings: List<SettingField<AppSetting>>) =
+    private fun hasInvalidAppSettings(appSettings: List<SettingField<AppSettingMetadata>>) =
         appSettings.any { it.validatedField is ValidatedField.Invalid }
 
     private fun hasInvalidPluginSettings(pluginSettings: List<SettingField<PluginSetting>>) =
@@ -229,12 +242,12 @@ class SettingsScreenViewModel(
             .map { settingField ->
                 coroutineScope {
                     async {
-                        val setting = settingField.validatedField.field
+                        val value = settingField.validatedField.field
 
                         pluginSettingsRepository.set(
-                            setting.pluginUuid,
-                            setting.pluginSettingUuid,
-                            setting.settingValue
+                            settingField.settingMetadata.pluginUuid,
+                            settingField.settingMetadata.pluginSettingUuid,
+                            value
                         )
                     }
                 }
@@ -246,14 +259,19 @@ class SettingsScreenViewModel(
     private fun updateValidatedPluginSetting(
         plugin: Plugin,
         setting: PluginSetting,
-        validatedSetting: ValidatedField<PluginSetting>
+        validatedSetting: ValidatedStringField
     ) {
         val settingsSections = _state.value.pluginSettingsSections ?: return
         val sectionIndex = settingsSections.indexOfFirst { it.plugin == plugin }
         val newSettingsSections = settingsSections.toMutableList().apply {
             val pluginSettings = this[sectionIndex].settings.toMutableList().apply {
-                val settingIndex = indexOfFirst { it.validatedField.field == setting }
-                if (settingIndex != -1) this[settingIndex] = SettingField(true, validatedSetting)
+                val settingIndex = indexOfFirst { it.settingMetadata == setting }
+                if (settingIndex != -1) this[settingIndex] =
+                    SettingField(
+                        isEdited = true,
+                        settingMetadata = setting,
+                        validatedField = validatedSetting
+                    )
             }
 
             this[sectionIndex] = this[sectionIndex].copy(settings = pluginSettings)
@@ -265,58 +283,63 @@ class SettingsScreenViewModel(
     }
 
     private fun updateValidatedAppSetting(
-        validatedSetting: ValidatedField<AppSetting>,
+        appSettingMetadata: AppSettingMetadata,
+        newValidatedValue: ValidatedStringField
     ) {
-        val appSettingField = validatedSetting.field
-        val settingsSections = _state.value.appSettingsSections ?: return
-        val sectionIndex = settingsSections
-            .indexOfFirst { section ->
-                section.settings.any { setting -> setting.validatedField.field.key == appSettingField.key }
-            }
+        val appSettings = _state.value.appSettings ?: return
 
-        val newSettingsSections = settingsSections.toMutableList().apply {
-            val appSettings = this[sectionIndex].settings.toMutableList().apply {
-                val settingIndex = indexOfFirst { it.validatedField.field.key == appSettingField.key }
-                if (settingIndex != -1) this[settingIndex] = SettingField(true, validatedSetting)
+        val newSettings = appSettings
+            .map {
+                if (it.settingMetadata.key == appSettingMetadata.key) {
+                    it.copy(
+                        isEdited = true,
+                        validatedField = newValidatedValue
+                    )
+                } else it
             }
-
-            this[sectionIndex] = this[sectionIndex].copy(settings = appSettings)
-        }
 
         _state.update {
             it.copy(
-                appSettingsSections = newSettingsSections
+                appSettings = newSettings
             )
         }
     }
 
     private fun validateAppSetting(
-        setting: AppSetting,
-    ): ValidatedField<AppSetting> {
-        if (setting is AppStringSetting) {
-            if (setting.value.isBlank()) {
+        metadata: AppSettingMetadata,
+        newValue: String
+    ): ValidatedField<String> {
+        if (metadata.settingType == AppSettingType.String) {
+            if (newValue.isBlank()) {
                 return ValidatedField.Invalid(
-                    field = setting,
+                    field = newValue,
                     error = SettingValidationError.ShouldNotBeBlank
                 )
             }
         }
 
+        if (metadata.settingType == AppSettingType.Numerous) {
+            if (newValue.toIntOrNull() == null) {
+                return ValidatedField.Invalid(
+                    field = newValue,
+                    error = SettingValidationError.ShouldContainOnlyNumbers
+                )
+            }
+        }
+
         return ValidatedField.Valid(
-            field = setting
+            field = newValue
         )
     }
 
     private fun validatePluginSetting(
         setting: PluginSetting,
         newValue: String
-    ): ValidatedField<PluginSetting> {
+    ): ValidatedStringField {
         when (setting.settingType) {
             PluginSettingType.Number -> {
                 newValue.toIntOrNull() ?: return ValidatedField.Invalid(
-                    field = setting.copy(
-                        settingValue = newValue
-                    ),
+                    field = newValue,
                     error = SettingValidationError.ShouldContainOnlyNumbers,
                 )
             }
@@ -324,7 +347,7 @@ class SettingsScreenViewModel(
             PluginSettingType.Boolean -> {
                 if (newValue != BooleanSettingTrue && newValue != BooleanSettingFalse) {
                     return ValidatedField.Invalid(
-                        field = setting.copy(settingValue = newValue),
+                        field = newValue,
                         error = SettingValidationError.Other,
                     )
                 }
@@ -333,13 +356,13 @@ class SettingsScreenViewModel(
             PluginSettingType.String -> {
                 if (newValue.isBlank()) {
                     return ValidatedField.Invalid(
-                        field = setting.copy(settingValue = newValue),
+                        field = newValue,
                         error = SettingValidationError.ShouldNotBeBlank,
                     )
                 }
             }
         }
 
-        return ValidatedField.Valid(field = setting.copy(settingValue = newValue))
+        return ValidatedField.Valid(newValue)
     }
 }

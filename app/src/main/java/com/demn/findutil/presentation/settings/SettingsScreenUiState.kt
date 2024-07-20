@@ -1,6 +1,6 @@
 package com.demn.findutil.presentation.settings
 
-import com.demn.findutil.app_settings.AppSetting
+import com.demn.findutil.app_settings.AppSettingMetadata
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
@@ -20,13 +20,11 @@ sealed interface SettingsScreenUiState {
 
     data class HasDataState(
         val pluginSettingsSections: List<PluginSettingsSection>,
-        val appSettingsSections: List<AppSettingsSection>,
+        val appSettings: List<SettingField<AppSettingMetadata>>,
         val pluginAvailabilities: List<PluginAvailability>,
         override val saveButtonVisible: Boolean
     ) : SettingsScreenUiState {
-        private val hasInvalidAppSettings = appSettingsSections
-            .map { it.settings }
-            .flatten()
+        private val hasInvalidAppSettings = appSettings
             .any { it.validatedField is ValidatedField.Invalid }
 
         private val hasInvalidPluginSettings = pluginSettingsSections
@@ -38,11 +36,6 @@ sealed interface SettingsScreenUiState {
     }
 }
 
-data class AppSettingsSection(
-    val title: String,
-    val settings: List<SettingField<AppSetting>>
-)
-
 data class PluginSettingsSection(
     val plugin: Plugin,
     val settings: List<SettingField<PluginSetting>>
@@ -53,4 +46,8 @@ data class PluginAvailability(
     val available: Boolean
 )
 
-data class SettingField<T>(val isEdited: Boolean, val validatedField: ValidatedField<T>)
+data class SettingField<T>(
+    val isEdited: Boolean,
+    val settingMetadata: T,
+    val validatedField: ValidatedStringField
+)

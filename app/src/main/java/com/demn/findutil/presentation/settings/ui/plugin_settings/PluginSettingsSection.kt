@@ -33,18 +33,18 @@ fun PluginSettingsSection(
                     if (validatedPluginSetting is ValidatedField.Invalid) settingErrorMessage(validatedPluginSetting.error)
                     else ""
 
-                when (validatedPluginSetting.field.settingType) {
+                when (pluginSetting.settingMetadata.settingType) {
                     PluginSettingType.String -> {
                         StringSetting(
-                            text = validatedPluginSetting.field.settingName,
-                            description = validatedPluginSetting.field.settingDescription,
+                            text = pluginSetting.settingMetadata.settingName,
+                            description = pluginSetting.settingMetadata.settingDescription,
                             isError = validatedPluginSetting is ValidatedField.Invalid,
                             errorMessage = settingErrorMessage,
-                            value = validatedPluginSetting.field.settingValue,
+                            value = validatedPluginSetting.field,
                             onValueChange = {
                                 onSettingChange(
                                     pluginSettingsSection.plugin,
-                                    validatedPluginSetting.field,
+                                    pluginSetting.settingMetadata,
                                     it
                                 )
                             }
@@ -53,15 +53,15 @@ fun PluginSettingsSection(
 
                     PluginSettingType.Number -> {
                         IntSetting(
-                            text = validatedPluginSetting.field.settingName,
-                            description = validatedPluginSetting.field.settingDescription,
-                            value = validatedPluginSetting.field.settingValue,
+                            text = pluginSetting.settingMetadata.settingName,
+                            description = pluginSetting.settingMetadata.settingDescription,
+                            value = validatedPluginSetting.field,
                             isError = validatedPluginSetting is ValidatedField.Invalid,
                             errorMessage = settingErrorMessage,
                             onValueChange = {
                                 onSettingChange(
                                     pluginSettingsSection.plugin,
-                                    validatedPluginSetting.field,
+                                    pluginSetting.settingMetadata,
                                     it
                                 )
                             }
@@ -70,16 +70,16 @@ fun PluginSettingsSection(
 
                     PluginSettingType.Boolean -> {
                         BooleanSetting(
-                            text = validatedPluginSetting.field.settingName,
-                            description = validatedPluginSetting.field.settingDescription,
-                            checked = when (validatedPluginSetting.field.settingValue) {
+                            text = pluginSetting.settingMetadata.settingName,
+                            description = pluginSetting.settingMetadata.settingDescription,
+                            checked = when (validatedPluginSetting.field) {
                                 BooleanSettingTrue -> true
                                 else -> false
                             },
                             onCheckedChange = {
                                 onSettingChange(
                                     pluginSettingsSection.plugin,
-                                    validatedPluginSetting.field,
+                                    pluginSetting.settingMetadata,
                                     when (it) {
                                         true -> BooleanSettingTrue
                                         false -> BooleanSettingFalse

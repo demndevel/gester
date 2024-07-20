@@ -1,30 +1,27 @@
 package com.demn.findutil.presentation.settings.ui.app_settings
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.demn.findutil.app_settings.AppBooleanSetting
-import com.demn.findutil.app_settings.AppNumerousSetting
-import com.demn.findutil.app_settings.AppSetting
-import com.demn.findutil.app_settings.AppStringSetting
+import com.demn.findutil.app_settings.*
 import com.demn.findutil.presentation.settings.*
 import com.demn.findutil.presentation.settings.ui.SettingsSection
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.BooleanSetting
+import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.IntSetting
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.StringSetting
-import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.ValidatingIntSetting
 import com.demn.findutil.presentation.settings.ui.settingErrorMessage
 import com.demn.plugincore.PluginMetadata
+import com.demn.plugincore.R
 import java.util.*
 
 @Composable
 fun AppSettings(
     pluginAvailabilities: List<PluginAvailability>,
-    settingSections: List<AppSettingsSection>,
+    appSettings: List<SettingField<AppSettingMetadata>>,
     onAppSettingChange: OnAppSettingChange,
+    onBooleanFieldUpdate: OnAppBooleanSettingChange,
     onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -33,22 +30,21 @@ fun AppSettings(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            settingSections.forEach { section ->
-                AppSettingsSection(
-                    section = section,
-                    onFieldUpdate = onAppSettingChange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-
-            PluginAvailabilitySection(
-                pluginAvailabilities = pluginAvailabilities,
-                onAvailabilityChange = onAvailabilityChange,
+            AppSettingsSection(
+                settings = appSettings,
+                onFieldUpdate = onAppSettingChange,
+                onBooleanFieldUpdate = onBooleanFieldUpdate,
                 modifier = Modifier
                     .fillMaxWidth()
             )
         }
+
+        PluginAvailabilitySection(
+            pluginAvailabilities = pluginAvailabilities,
+            onAvailabilityChange = onAvailabilityChange,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
     }
 }
 
@@ -77,19 +73,19 @@ private fun PluginAvailabilitySection(
 
 @Composable
 private fun AppSettingsSection(
-    section: AppSettingsSection,
+    settings: List<SettingField<AppSettingMetadata>>,
     onFieldUpdate: OnAppSettingChange,
+    onBooleanFieldUpdate: OnAppBooleanSettingChange,
     modifier: Modifier = Modifier,
 ) {
-    val settings = section.settings
-
     SettingsSection(
-        sectionName = section.title,
+        sectionName = stringResource(com.demn.findutil.R.string.app_settings_section_title),
         settings = {
             settings.forEach { settingField ->
                 AppSetting(
                     settingField = settingField,
                     onFieldUpdate = onFieldUpdate,
+                    onBooleanFieldUpdate = onBooleanFieldUpdate,
                     modifier = Modifier
                         .fillMaxSize()
                 )
@@ -101,145 +97,124 @@ private fun AppSettingsSection(
 
 @Composable
 private fun AppSetting(
-    settingField: SettingField<AppSetting>,
+    settingField: SettingField<AppSettingMetadata>,
     onFieldUpdate: OnAppSettingChange,
+    onBooleanFieldUpdate: OnAppBooleanSettingChange,
     modifier: Modifier = Modifier
 ) {
-    val setting = settingField.validatedField.field
+    val settingValue = settingField.validatedField.field
     val errorMessage =
         if (settingField.validatedField is ValidatedField.Invalid)
             settingErrorMessage(settingField.validatedField.error)
         else ""
 
-    when (settingField.validatedField.field) {
-        is AppStringSetting -> {
-            val appStringSetting = settingField.validatedField.field as AppStringSetting
-            val stringSettingValue = appStringSetting.value
-
+    when (settingField.settingMetadata.settingType) {
+        AppSettingType.String -> {
             StringSetting(
-                text = settingField.validatedField.field.title,
-                description = setting.description,
-                value = stringSettingValue,
+                text = settingField.settingMetadata.title,
+                description = settingField.settingMetadata.description,
+                value = settingValue,
                 isError = settingField.validatedField is ValidatedField.Invalid,
                 errorMessage = errorMessage,
                 onValueChange = {
-                    onFieldUpdate(appStringSetting.copy(value = it))
+                    onFieldUpdate(settingField.settingMetadata, it)
                 },
                 modifier = modifier
             )
         }
 
-        is AppNumerousSetting -> {
-            val appNumerousSetting = settingField.validatedField.field as AppNumerousSetting
-            val intSettingValue = appNumerousSetting.value
-
-            ValidatingIntSetting( // TODO: this is a temp solution
-                text = setting.title,
-                description = setting.description,
-                initialValue = intSettingValue.toString(),
-                onValueChange = {
-                    onFieldUpdate(appNumerousSetting.copy(value = it))
-                }
+        AppSettingType.Numerous -> {
+            IntSetting(
+                text = settingField.settingMetadata.title,
+                description = settingField.settingMetadata.description,
+                value = settingValue,
+                isError = settingField.validatedField is ValidatedField.Invalid,
+                errorMessage = errorMessage,
+                onValueChange = { newValue ->
+                    onFieldUpdate(settingField.settingMetadata, newValue)
+                },
+                modifier = modifier
             )
-
-//            IntSetting(
-//                text = setting.title,
-//                description = setting.description,
-//                value = intSettingValue.toString(),
-////                value = if (intSettingValue == 0) "" else intSettingValue.toString(),
-//                isError = settingField.validatedField is ValidatedField.Invalid,
-//                errorMessage = errorMessage,
-//                onValueChange = { newValue ->
-//                    val modifiedValue = try {
-//                        newValue.toInt().toString()
-//                    } catch (e: NumberFormatException) {
-//                        "0$newValue"
-//                    }
-//
-//                    onFieldUpdate(appNumerousSetting.copy(value = modifiedValue.toIntOrNull() ?: 0))
-//                },
-//                modifier = modifier
-//            )
         }
 
-        is AppBooleanSetting -> {
-            val appBooleanSetting = settingField.validatedField.field as AppBooleanSetting
-            val boolSettingValue = appBooleanSetting.value
-
+        AppSettingType.Boolean -> {
             BooleanSetting(
-                text = setting.title,
-                description = setting.description,
-                checked = boolSettingValue,
-                onCheckedChange = { onFieldUpdate(appBooleanSetting.copy(value = it)) },
+                text = settingField.settingMetadata.title,
+                description = settingField.settingMetadata.description,
+                checked = when (settingValue) { // TODO: to review this
+                    true.toString() -> true
+                    else -> false
+                },
+                onCheckedChange = { onBooleanFieldUpdate(settingField.settingMetadata, it) },
                 modifier = modifier
             )
         }
     }
 }
 
-val mockSettingSections = listOf(
-    AppSettingsSection(
-        title = "UI",
-        settings = listOf(
-            SettingField(
-                isEdited = false,
-                ValidatedField.Valid(
-                    field = AppBooleanSetting(
-                        key = UUID.fromString("c34caec8-3f4b-4f67-b1af-defb1d57b8d0"),
-                        title = "Transparent UI",
-                        description = "Makes some UI elements more transparent",
-                        value = true
-                    ),
-                )
-            ),
-            SettingField(
-                isEdited = false,
-                ValidatedField.Invalid(
-                    field = AppStringSetting(
-                        key = UUID.fromString("7ad1b0c2-b98b-439f-9dd3-ddfdbf8f32e2"),
-                        title = "Random setting",
-                        description = "Random description",
-                        value = ""
-                    ),
-                    error = SettingValidationError.ShouldNotBeBlank
-                )
-            )
-        )
-    ),
-    AppSettingsSection(
-        title = "Numbers",
-        settings = listOf(
-            SettingField(
-                isEdited = false,
-                ValidatedField.Valid(
-                    field = AppNumerousSetting(
-                        key = UUID.fromString("544a5d1a-529a-40e7-982c-97bdbabdbb2b"),
-                        title = "Fav number",
-                        description = "Enter your most favourite number",
-                        value = 123
-                    )
-                )
-            )
-        )
-    )
-)
+//val mockSettingSections = listOf(
+//    AppSettingsSection(
+//        title = "UI",
+//        settings = listOf(
+//            SettingField(
+//                isEdited = false,
+//                ValidatedField.Valid(
+//                    field = AppBooleanSetting(
+//                        key = UUID.fromString("c34caec8-3f4b-4f67-b1af-defb1d57b8d0"),
+//                        title = "Transparent UI",
+//                        description = "Makes some UI elements more transparent",
+//                        value = true
+//                    ),
+//                )
+//            ),
+//            SettingField(
+//                isEdited = false,
+//                ValidatedField.Invalid(
+//                    field = AppStringSetting(
+//                        key = UUID.fromString("7ad1b0c2-b98b-439f-9dd3-ddfdbf8f32e2"),
+//                        title = "Random setting",
+//                        description = "Random description",
+//                        value = ""
+//                    ),
+//                    error = SettingValidationError.ShouldNotBeBlank
+//                )
+//            )
+//        )
+//    ),
+//    AppSettingsSection(
+//        title = "Numbers",
+//        settings = listOf(
+//            SettingField(
+//                isEdited = false,
+//                ValidatedField.Valid(
+//                    field = AppNumerousSetting(
+//                        key = UUID.fromString("544a5d1a-529a-40e7-982c-97bdbabdbb2b"),
+//                        title = "Fav number",
+//                        description = "Enter your most favourite number",
+//                        value = 123
+//                    )
+//                )
+//            )
+//        )
+//    )
+//)
 
-@Preview
-@Composable
-fun AppSettingsPreview() {
-    MaterialTheme {
-        Surface(
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            AppSettings(
-                pluginAvailabilities = emptyList(),
-                settingSections = mockSettingSections,
-                onAppSettingChange = {},
-                onAvailabilityChange = { _, _ -> },
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
-    }
-}
+//@Preview
+//@Composable
+//fun AppSettingsPreview() {
+//    MaterialTheme {
+//        Surface(
+//            Modifier
+//                .fillMaxSize()
+//                .padding(16.dp)
+//        ) {
+//            AppSettings(
+//                pluginAvailabilities = emptyList(),
+//                settingSections = mockSettingSections,
+//                onAppSettingChange = {},
+//                onAvailabilityChange = { _, _ -> },
+//                modifier = Modifier.fillMaxSize(),
+//            )
+//        }
+//    }
+//}

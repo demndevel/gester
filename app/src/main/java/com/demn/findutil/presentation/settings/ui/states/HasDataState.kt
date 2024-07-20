@@ -10,10 +10,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.demn.findutil.presentation.settings.OnAppSettingChange
-import com.demn.findutil.presentation.settings.OnPluginSettingChange
-import com.demn.findutil.presentation.settings.PluginAvailability
-import com.demn.findutil.presentation.settings.SettingsScreenUiState
+import com.demn.findutil.presentation.settings.*
 import com.demn.findutil.presentation.settings.ui.InvalidSettingsError
 import com.demn.findutil.presentation.settings.ui.app_settings.AppSettings
 import com.demn.findutil.presentation.settings.ui.plugin_settings.PluginSettingsSection
@@ -24,6 +21,7 @@ fun HasDataState(
     state: SettingsScreenUiState.HasDataState,
     onPluginSettingChange: OnPluginSettingChange,
     onAppSettingChange: OnAppSettingChange,
+    onBooleanFieldUpdate: OnAppBooleanSettingChange,
     onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -40,8 +38,9 @@ fun HasDataState(
         }
 
         AppSettings(
-            settingSections = state.appSettingsSections,
+            appSettings = state.appSettings,
             onAppSettingChange = onAppSettingChange,
+            onBooleanFieldUpdate = onBooleanFieldUpdate,
             onAvailabilityChange = onAvailabilityChange,
             pluginAvailabilities = state.pluginAvailabilities,
             modifier = Modifier.fillMaxWidth()

@@ -13,6 +13,8 @@ sealed interface ValidatedField<T> {
     ) : ValidatedField<T>
 }
 
+typealias ValidatedStringField = ValidatedField<String>
+
 sealed interface SettingValidationError {
     data object ShouldContainOnlyNumbers : SettingValidationError
 
