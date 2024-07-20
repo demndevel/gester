@@ -2,6 +2,9 @@ package com.demn.findutil.presentation.main
 
 import android.content.Intent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +44,8 @@ import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
 import com.demn.pluginloading.MockPluginRepository
 import org.koin.androidx.compose.koinViewModel
+import java.util.*
+import kotlin.random.Random
 
 @Composable
 fun SearchScreen(
@@ -73,7 +78,6 @@ fun SearchScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .animateContentSize()
         )
     }
 }
@@ -113,6 +117,7 @@ fun SearchBar(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ResultList(
     results: List<OperationResult>,
@@ -123,12 +128,12 @@ fun ResultList(
         modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(results) { result ->
+        items(results, key = { if (it is BasicOperationResult) it.text.hashCode() else Random(100).nextInt() }) { result ->
             if (result is BasicOperationResult) {
                 BasicResult(
                     text = result.text,
                     description = result.description,
-                    onResultClick = { result.intent?.let { onResultClick(it) } }
+                    onResultClick = { result.intent?.let { onResultClick(it) } },
                 )
             }
 
@@ -137,7 +142,7 @@ fun ResultList(
                     leftText = result.initialText,
                     leftLabel = result.initialDescription ?: "",
                     rightText = result.finalText,
-                    rightLabel = result.finalDescription ?: ""
+                    rightLabel = result.finalDescription ?: "",
                 )
             }
         }
