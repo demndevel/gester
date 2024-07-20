@@ -6,21 +6,8 @@
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
-    <permission android:name="com.demn.PLUGIN_SERVICE_PERMISSION" />
-
     <uses-permission android:name="com.demn.PLUGIN_SERVICE_PERMISSION" />
 
-    <queries>
-        <package android:name="string" />
-
-        <intent>
-            <action android:name="findutil.intent.action.PICK_PLUGIN" />
-
-            <category android:name="findutil.intent.category.ADD_PLUGIN" />
-        </intent>
-
-        <provider android:authorities="list" />
-    </queries>
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
