@@ -47,7 +47,6 @@ class MainActivity : ComponentActivity() {
                         }
                 ) {
                     SearchScreen(
-                        onEnterClick = context::startActivity,
                         modifier = Modifier
                             .padding(32.dp)
                             .fillMaxSize()

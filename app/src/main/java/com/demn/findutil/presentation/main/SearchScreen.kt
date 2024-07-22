@@ -32,7 +32,6 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SearchScreen(
-    onEnterClick: (Intent) -> Unit,
     modifier: Modifier = Modifier,
     vm: SearchScreenViewModel = koinViewModel<SearchScreenViewModel>(),
 ) {
@@ -50,11 +49,11 @@ fun SearchScreen(
             searchBarValue = state.searchBarValue,
             onSearchBarValueChange = vm::updateSearchBarValue,
             onEnterClick = {
-                val firstResult = state.searchResults.first()
+                val firstResult = state.searchResults.firstOrNull()
 
                 if (firstResult is BasicOperationResult) {
                     firstResult.intent?.let {
-                        onEnterClick(it)
+                        context.startActivity(it)
                     }
                 }
             },
@@ -287,7 +286,6 @@ fun SearchScreenPreview() {
         SearchScreen(
             modifier = Modifier.fillMaxSize(),
             vm = SearchScreenViewModel(MockPluginRepository(), MockProcessQueryUseCaseImpl()),
-            onEnterClick = {}
         )
     }
 }
