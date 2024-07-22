@@ -26,6 +26,37 @@ class AppSearchingPlugin(
 ) : CorePlugin {
     override val metadata: PluginMetadata = appSearchingMetadata
 
+    private data class CachedApplicationInfo(
+        val name: String,
+        val intent: Intent
+    ) {
+        fun toOperationResult(): BasicOperationResult {
+            return BasicOperationResult(
+                text = name,
+                intent = intent,
+                priority = PriorityTag.Application
+            )
+        }
+    }
+
+    private val applications by lazy {
+        val mainIntent = Intent(Intent.ACTION_MAIN)
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+
+        val apps = packageManager.queryIntentActivities(mainIntent, PackageManager.MATCH_ALL)
+
+        apps.mapNotNull { resolveInfo ->
+            val label = resolveInfo.loadLabel(packageManager).toString()
+            val intent =
+                packageManager.getLaunchIntentForPackage(resolveInfo.activityInfo.packageName)
+
+            CachedApplicationInfo(
+                name = label,
+                intent = intent ?: return@mapNotNull null
+            )
+        }
+    }
+
     override fun getPluginSettings(): List<PluginSetting> {
         return emptyList()
     }
@@ -35,37 +66,32 @@ class AppSearchingPlugin(
     override fun invokeAnyInput(input: String): List<OperationResult> {
         val results = getAllApps()
 
-        val filteredResults = results.filter {
-            val lowercaseInput = input
-                .lowercase()
-                .trim()
+        val lowercaseInput = input
+            .lowercase()
+            .trim()
 
+        val filteredResults = results.filter {
             it.text
                 .lowercase()
                 .contains(lowercaseInput)
         }
 
-        return filteredResults
-    }
+        val sortedResults = filteredResults.sortedBy { result ->
+            val text = result.text.lowercase()
 
-    private fun getAllApps(): List<BasicOperationResult> {
-        val mainIntent = Intent(Intent.ACTION_MAIN)
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
-        val apps = packageManager.queryIntentActivities(mainIntent, PackageManager.MATCH_ALL)
-        val results = apps.map { resolveInfo ->
-            val label = resolveInfo.loadLabel(packageManager).toString()
-            val intent =
-                packageManager.getLaunchIntentForPackage(resolveInfo.activityInfo.packageName)
-
-            BasicOperationResult(
-                text = label,
-                intent = intent,
-                priority = PriorityTag.Application
-            )
+            when {
+                text == lowercaseInput -> 0
+                text.startsWith(lowercaseInput) -> 1
+                text.contains(lowercaseInput) -> 2
+                else -> 3
+            }
         }
 
-        return results
+        return sortedResults
     }
+
+    private fun getAllApps(): List<BasicOperationResult> = applications
+        .map(CachedApplicationInfo::toOperationResult)
 
     override fun invokePluginCommand(input: String, uuid: UUID): List<OperationResult> {
         return emptyList()
