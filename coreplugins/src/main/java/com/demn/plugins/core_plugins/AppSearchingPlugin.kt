@@ -43,7 +43,7 @@ class AppSearchingPlugin(
         val mainIntent = Intent(Intent.ACTION_MAIN)
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
 
-        val apps = packageManager.queryIntentActivities(mainIntent, PackageManager.MATCH_ALL)
+        val apps = packageManager.queryIntentActivities(mainIntent, 0)
 
         apps.mapNotNull { resolveInfo ->
             val label = resolveInfo.loadLabel(packageManager).toString()
@@ -64,6 +64,8 @@ class AppSearchingPlugin(
     private val packageManager = context.packageManager
 
     override fun invokeAnyInput(input: String): List<OperationResult> {
+        if (input.isBlank()) return emptyList()
+
         val results = getAllApps()
 
         val lowercaseInput = input
