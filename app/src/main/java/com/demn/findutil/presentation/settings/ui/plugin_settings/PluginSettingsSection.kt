@@ -1,7 +1,12 @@
 package com.demn.findutil.presentation.settings.ui.plugin_settings
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.demn.findutil.R
 import com.demn.findutil.presentation.settings.OnPluginSettingChange
 import com.demn.findutil.presentation.settings.PluginSettingsSection
 import com.demn.findutil.presentation.settings.ValidatedField
@@ -12,12 +17,15 @@ import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.Strin
 import com.demn.findutil.presentation.settings.ui.settingErrorMessage
 import com.demn.plugincore.BooleanSettingFalse
 import com.demn.plugincore.BooleanSettingTrue
+import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginSettingType
+import com.demn.pluginloading.ExternalPlugin
 
 @Composable
 fun PluginSettingsSection(
     pluginSettingsSection: PluginSettingsSection,
-    onSettingChange: OnPluginSettingChange
+    onSettingChange: OnPluginSettingChange,
+    onUninstall: (ExternalPlugin) -> Unit,
 ) {
     SettingsSection(
         sectionName = "${pluginSettingsSection.plugin.metadata.pluginName} (${pluginSettingsSection.plugin.metadata.version})",
@@ -88,6 +96,19 @@ fun PluginSettingsSection(
                             }
                         )
                     }
+                }
+            }
+
+            if (pluginSettingsSection.plugin is ExternalPlugin) {
+                TextButton(
+                    onClick = { onUninstall(pluginSettingsSection.plugin) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    val uninstallText =
+                        "${stringResource(id = R.string.uninstall_pluginname)} ${pluginSettingsSection.plugin.metadata.pluginName}"
+
+                    Text(text = uninstallText)
                 }
             }
         }

@@ -15,7 +15,8 @@ val appModule = module {
     factory<ExternalPluginsProvider> { ExternalPluginsProviderImpl(get()) }
     factory<PluginSettingsRepository> { PluginSettingsRepositoryImpl(get(), get()) }
     factory<AppSettingsRepository> { AppSettingsRepositoryImpl(get()) }
+    factory<PluginUninstaller> { PluginUninstallerImpl(get()) }
 
     factory { SearchScreenViewModel(get(), get()) }
-    factory { SettingsScreenViewModel(get(), get(), get()) }
+    factory { SettingsScreenViewModel(get(), get(), get(), get()) }
 }

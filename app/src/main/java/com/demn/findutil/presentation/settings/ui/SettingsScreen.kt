@@ -23,8 +23,10 @@ import com.demn.findutil.presentation.settings.ui.states.HasDataState
 import com.demn.findutil.presentation.settings.ui.states.LoadingState
 import com.demn.findutil.presentation.settings.ui.states.NoDataState
 import com.demn.plugincore.PluginMetadata
+import com.demn.pluginloading.ExternalPlugin
 import com.demn.pluginloading.MockPluginRepository
 import com.demn.pluginloading.MockPluginSettingsRepository
+import com.demn.pluginloading.MockPluginUninstaller
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -65,6 +67,7 @@ fun SettingsScreen(
                 onBooleanAppSettingUpdate = vm::setBooleanAppSetting,
                 onPluginSettingChange = vm::setPluginSetting,
                 onAvailabilityChange = vm::setPluginAvailability,
+                onPluginUninstall = vm::uninstallPlugin,
                 modifier = Modifier
                     .fillMaxSize()
             )
@@ -79,6 +82,7 @@ private fun SettingsScreenState(
     onBooleanAppSettingUpdate: OnAppBooleanSettingChange,
     onPluginSettingChange: OnPluginSettingChange,
     onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
+    onPluginUninstall: (ExternalPlugin) -> Unit,
     modifier: Modifier,
 ) {
     when (state) {
@@ -102,6 +106,7 @@ private fun SettingsScreenState(
                 onAppSettingChange = onAppSettingChange,
                 onBooleanFieldUpdate = onBooleanAppSettingUpdate,
                 onAvailabilityChange = onAvailabilityChange,
+                onPluginUninstall = onPluginUninstall,
                 modifier = modifier
             )
         }
@@ -138,7 +143,8 @@ fun SettingsScreenPreview() {
             vm = SettingsScreenViewModel(
                 MockPluginSettingsRepository(),
                 MockAppSettingsRepositoryImpl(),
-                MockPluginRepository()
+                MockPluginRepository(),
+                MockPluginUninstaller()
             )
         )
     }

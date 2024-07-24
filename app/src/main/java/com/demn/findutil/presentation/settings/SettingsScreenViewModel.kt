@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.demn.findutil.app_settings.*
 import com.demn.plugincore.*
+import com.demn.pluginloading.ExternalPlugin
 import com.demn.pluginloading.PluginRepository
 import com.demn.pluginloading.PluginSettingsRepository
+import com.demn.pluginloading.PluginUninstaller
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,7 +42,8 @@ private data class SettingsScreenVmState(
 class SettingsScreenViewModel(
     private val pluginSettingsRepository: PluginSettingsRepository,
     private val appSettingsRepository: AppSettingsRepository,
-    private val pluginRepository: PluginRepository
+    private val pluginRepository: PluginRepository,
+    private val pluginUninstaller: PluginUninstaller
 ) : ViewModel() {
     private val _state = MutableStateFlow(SettingsScreenVmState())
 
@@ -190,6 +193,8 @@ class SettingsScreenViewModel(
                 saveButtonVisible = false
             )
         }
+
+        loadData()
     }
 
     private fun saveAllAppSettings(appSettingsFields: List<SettingField<AppSettingMetadata>>) {
@@ -364,5 +369,11 @@ class SettingsScreenViewModel(
         }
 
         return ValidatedField.Valid(newValue)
+    }
+
+    fun uninstallPlugin(externalPlugin: ExternalPlugin) {
+        pluginUninstaller.uninstall(externalPlugin)
+
+        loadData()
     }
 }

@@ -1,7 +1,7 @@
 package com.demn.findutil.di
 
 import com.demn.plugins.core_plugins.AppSearchingPlugin
-import com.demn.plugins.core_plugins.CurrenciesPlugin
+import com.demn.plugins.core_plugins.currencies.CurrenciesPlugin
 import com.demn.findutil.FindUtilPlugin
 import com.demn.plugins.CorePluginsProvider
 import com.demn.plugins.CorePluginsProviderImpl
