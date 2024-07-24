@@ -1,4 +1,4 @@
-package com.demn.plugins.core_plugins
+package com.demn.plugins.core_plugins.currencies
 
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.PluginSettingType
