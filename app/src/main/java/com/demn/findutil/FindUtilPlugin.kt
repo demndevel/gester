@@ -105,4 +105,6 @@ class FindUtilPlugin(
 
         return emptyList()
     }
+
+    override fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit
 }

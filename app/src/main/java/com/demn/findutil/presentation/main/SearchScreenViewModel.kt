@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.demn.findutil.usecase.ProcessQueryUseCase
 import com.demn.plugincore.Plugin
+import com.demn.plugincore.PluginFallbackCommand
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.pluginloading.PluginRepository
 import kotlinx.coroutines.Dispatchers
@@ -11,11 +12,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.*
 
 data class SearchScreenState(
     val searchBarValue: String = "",
-    val searchResults: List<OperationResult> = listOf(),
-    val pluginList: List<Plugin> = listOf()
+    val searchResults: List<OperationResult> = emptyList(),
+    val pluginList: List<Plugin> = emptyList(),
+    val fallbackCommands: List<PluginFallbackCommand> = emptyList()
 )
 
 class SearchScreenViewModel(
@@ -29,12 +32,25 @@ class SearchScreenViewModel(
     fun loadPlugins() {
         viewModelScope.launch(Dispatchers.IO) {
             val plugins = pluginRepository.getPluginList()
+            val fallbackCommands = pluginRepository.getAllFallbackCommands()
+
+            println("fallbackCommands:" + fallbackCommands)
 
             _state.update {
                 it.copy(
-                    pluginList = plugins
+                    pluginList = plugins,
+                    fallbackCommands = fallbackCommands
                 )
             }
+        }
+    }
+
+    fun invokeFallbackCommand(id: UUID) {
+        viewModelScope.launch {
+            pluginRepository.invokeFallbackCommand(
+                input = state.value.searchBarValue,
+                commandUuid = id
+            )
         }
     }
 

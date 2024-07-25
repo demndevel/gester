@@ -2,6 +2,7 @@ package com.demn.pluginloading
 
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginCommand
+import com.demn.plugincore.PluginFallbackCommand
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugins.BuiltInPlugin
 import com.demn.plugins.CorePluginsProvider
@@ -22,9 +23,16 @@ interface PluginRepository {
         commandUuid: UUID
     ): PluginInvocationResult<List<OperationResult>>
 
+    suspend fun invokeFallbackCommand(
+        input: String,
+        commandUuid: UUID
+    )
+
     suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult>
 
     suspend fun getAllPluginCommands(): List<PluginCommand>
+
+    suspend fun getAllFallbackCommands(): List<PluginFallbackCommand>
 }
 
 class MockPluginRepository : PluginRepository {
@@ -39,6 +47,8 @@ class MockPluginRepository : PluginRepository {
         return PluginInvocationResult.Success(value = emptyList())
     }
 
+    override suspend fun invokeFallbackCommand(input: String, commandUuid: UUID) = Unit
+
     override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
         return emptyList()
     }
@@ -46,6 +56,8 @@ class MockPluginRepository : PluginRepository {
     override suspend fun getAllPluginCommands(): List<PluginCommand> {
         return emptyList()
     }
+
+    override suspend fun getAllFallbackCommands(): List<PluginFallbackCommand> = emptyList()
 }
 
 class PluginRepositoryImpl(
@@ -70,6 +82,16 @@ class PluginRepositoryImpl(
         val commands = getPluginList()
             .map { it.metadata.commands }
             .flatten()
+
+        return commands
+    }
+
+    override suspend fun getAllFallbackCommands(): List<PluginFallbackCommand> {
+        val commands = getPluginList()
+            .map { it.metadata.fallbackCommands }
+            .flatten()
+
+        println("getAllFallbackCommands: $commands")
 
         return commands
     }
@@ -121,6 +143,53 @@ class PluginRepositoryImpl(
         }
 
         return PluginInvocationResult.Success(results)
+    }
+
+    override suspend fun invokeFallbackCommand(input: String, commandUuid: UUID) {
+        val plugin = getPluginList()
+            .find { plugin ->
+                plugin.metadata.fallbackCommands.any { it.id == commandUuid }
+            }
+
+        if (plugin == null) {
+            println("uvi not found")
+            return
+        }
+
+        when (plugin) {
+            is ExternalPlugin -> {
+                invokeExternalPluginFallbackCommand(input, commandUuid, plugin)
+            }
+
+            is BuiltInPlugin -> {
+                invokeBuiltInPluginFallbackCommand(input, commandUuid, plugin)
+            }
+        }
+    }
+
+    private fun invokeBuiltInPluginFallbackCommand(
+        input: String,
+        commandUuid: UUID,
+        plugin: BuiltInPlugin
+    ) {
+        corePluginsProvider.invokePluginFallbackCommand(
+            input = input,
+            pluginFallbackCommandId = commandUuid,
+            pluginUuid = plugin.metadata.pluginUuid
+        )
+    }
+
+    private suspend fun invokeExternalPluginFallbackCommand(
+        input: String,
+        commandUuid: UUID,
+        plugin: ExternalPlugin
+    ) {
+        println("executing that stuff")
+        externalPluginsProvider.executeFallbackCommand(
+            input = input,
+            fallbackCommandUuid = commandUuid,
+            pluginService = plugin.pluginService
+        )
     }
 
     private suspend fun invokeExternalPluginCommand(

@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
+import android.os.Parcel
 import android.os.ParcelUuid
 import com.demn.aidl.PluginAdapter
 import com.demn.plugincore.*
@@ -47,7 +48,7 @@ class FooPluginService : Service() {
     private fun addBinder(): PluginAdapter.Stub {
         val value = object : PluginAdapter.Stub() {
             override fun executeCommand(
-                commandUuid: String,
+                commandUuid: ParcelUuid,
                 input: String?
             ): MutableList<ParcelableOperationResult> {
                 return mutableListOf(
@@ -68,6 +69,8 @@ class FooPluginService : Service() {
                     )
                 )
             }
+
+            override fun executeFallbackCommand(commandUuid: ParcelUuid?, input: String?) = Unit
 
             override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {
                 return mutableListOf(

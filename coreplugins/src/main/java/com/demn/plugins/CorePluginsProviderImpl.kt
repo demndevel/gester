@@ -15,6 +15,12 @@ interface CorePluginsProvider {
         pluginUuid: UUID
     ): List<OperationResult>
 
+    fun invokePluginFallbackCommand(
+        input: String,
+        pluginFallbackCommandId: UUID,
+        pluginUuid: UUID,
+    )
+
     suspend fun getPluginSettings(
         pluginUuid: UUID
     ): List<PluginSetting>
@@ -57,6 +63,15 @@ class CorePluginsProviderImpl(
         }
 
         return plugin.invokePluginCommand(input, pluginCommandId)
+    }
+
+    override fun invokePluginFallbackCommand(input: String, pluginFallbackCommandId: UUID, pluginUuid: UUID) {
+        val plugin = plugins
+            .find { it.metadata.pluginUuid == pluginUuid }
+
+        if (plugin == null) return
+
+        plugin.invokePluginFallbackCommand(input, pluginFallbackCommandId)
     }
 
     override suspend fun getPluginSettings(pluginUuid: UUID): List<PluginSetting> {

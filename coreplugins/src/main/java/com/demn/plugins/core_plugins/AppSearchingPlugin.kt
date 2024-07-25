@@ -98,4 +98,6 @@ class AppSearchingPlugin(
     override fun invokePluginCommand(input: String, uuid: UUID): List<OperationResult> {
         return emptyList()
     }
+
+    override fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit
 }

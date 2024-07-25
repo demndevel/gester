@@ -1,7 +1,6 @@
 package com.demn.findutil.presentation.main
 
 import android.content.Intent
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,16 +18,21 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.demn.findutil.R
 import com.demn.findutil.usecase.MockProcessQueryUseCaseImpl
+import com.demn.plugincore.PluginFallbackCommand
+import com.demn.plugincore.PluginFallbackCommandBuilder
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
 import com.demn.pluginloading.MockPluginRepository
 import org.koin.androidx.compose.koinViewModel
+import java.util.*
 
 @Composable
 fun SearchScreen(
@@ -71,6 +75,16 @@ fun SearchScreen(
             modifier = Modifier
                 .fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (state.searchBarValue.isNotBlank()) {
+            FallbackCommandsResultsList(
+                currentInput = state.searchBarValue,
+                fallbackCommands = state.fallbackCommands,
+                onFallbackCommandClick = vm::invokeFallbackCommand
+            )
+        }
     }
 }
 
@@ -119,7 +133,6 @@ fun SearchBar(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ResultList(
     results: List<OperationResult>,
@@ -250,6 +263,74 @@ fun Label(
             modifier = modifier
                 .padding(4.dp),
         )
+    }
+}
+
+@Composable
+fun FallbackCommandsResultsList(
+    currentInput: String,
+    fallbackCommands: List<PluginFallbackCommand>,
+    onFallbackCommandClick: (id: UUID) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Card(Modifier) {
+            Text(
+                text = stringResource(R.string.use_input_with_fallback_command, currentInput),
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
+        fallbackCommands.forEach { command ->
+            FallbackCommandsResult(
+                fallbackCommand = command,
+                onFallbackCommandClick = onFallbackCommandClick
+            )
+        }
+    }
+}
+
+@Composable
+fun FallbackCommandsResult(
+    fallbackCommand: PluginFallbackCommand,
+    onFallbackCommandClick: (id: UUID) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        onClick = { onFallbackCommandClick(fallbackCommand.id) },
+        modifier = modifier
+    ) {
+        Text(
+            text = fallbackCommand.name,
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 16.dp,
+                    bottom = 8.dp
+                )
+        )
+
+        val description = fallbackCommand.description
+        if (description != null) {
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        bottom = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    )
+            )
+        }
     }
 }
 

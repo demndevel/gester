@@ -14,6 +14,7 @@ import com.demn.plugincore.ACTION_PICK_PLUGIN
 import com.demn.plugincore.CategoryExtrasKey
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
+import com.demn.plugincore.extensions.toParcelUuid
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.toOperationResult
 import java.util.UUID
@@ -28,6 +29,12 @@ interface ExternalPluginsProvider {
         commandUuid: UUID,
         pluginService: PluginService
     ): List<OperationResult>
+
+    suspend fun executeFallbackCommand(
+        input: String,
+        fallbackCommandUuid: UUID,
+        pluginService: PluginService
+    )
 
     suspend fun executeAnyInput(
         input: String,
@@ -102,7 +109,7 @@ class ExternalPluginsProviderImpl(
 
         return suspendCoroutine { continuation ->
             val serviceConnection = getServiceConnectionForPlugin { adapter ->
-                val results = adapter.executeCommand(commandUuid.toString(), input)
+                val results = adapter.executeCommand(commandUuid.toParcelUuid(), input)
                     .map { it.toOperationResult() }
 
                 continuation.resume(results)
@@ -110,6 +117,20 @@ class ExternalPluginsProviderImpl(
 
             context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
+    }
+
+    override suspend fun executeFallbackCommand(
+        input: String,
+        fallbackCommandUuid: UUID,
+        pluginService: PluginService
+    ) {
+        val intent = getIntentForPlugin(pluginService)
+
+        val serviceConnection = getServiceConnectionForPlugin { adapter ->
+            adapter.executeFallbackCommand(fallbackCommandUuid.toParcelUuid(), input)
+        }
+
+        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     private fun getIntentForPlugin(plugin: PluginService): Intent {
@@ -190,7 +211,7 @@ class ExternalPluginsProviderImpl(
             val serviceConnection = getServiceConnectionForPlugin { adapter ->
                 continuation.resume(
                     adapter.setSetting(
-                        ParcelUuid.fromString(settingUuid.toString()),
+                        settingUuid.toParcelUuid(),
                         newValue
                     )
                 )

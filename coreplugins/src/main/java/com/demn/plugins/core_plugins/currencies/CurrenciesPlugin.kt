@@ -113,4 +113,6 @@ class CurrenciesPlugin(
 
         return listOf(transitionResult)
     }
+
+    override fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit
 }

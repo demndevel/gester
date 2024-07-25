@@ -13,4 +13,6 @@ interface CorePlugin {
     fun invokeAnyInput(input: String): List<OperationResult>
 
     fun invokePluginCommand(input: String, uuid: UUID): List<OperationResult>
+
+    fun invokePluginFallbackCommand(input: String, uuid: UUID)
 }

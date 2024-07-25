@@ -6,7 +6,9 @@ import com.demn.plugincore.PluginSetting;
 import android.os.ParcelUuid;
 
 interface PluginAdapter {
-    List<ParcelableOperationResult> executeCommand(in String commandUuid, in String input);
+    List<ParcelableOperationResult> executeCommand(in ParcelUuid commandUuid, in String input);
+
+    void executeFallbackCommand(in ParcelUuid commandUuid, in String input);
 
     List<ParcelableOperationResult> executeAnyInput(in String input);
 
