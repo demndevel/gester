@@ -15,4 +15,6 @@ data class TransitionOperationResult(
     val initialDescription: String? = null,
     val finalText: String,
     val finalDescription: String? = null
-) : OperationResult
+) : OperationResult {
+    override val type = ResultType.Information
+}

@@ -10,12 +10,4 @@ val fooPluginMetadata = buildPluginMetadata(
     description = "sample plugin with funny name 'foo'"
     consumeAnyInput = true
     version = "0.1"
-
-    command(UUID.randomUUID(),"foofy", "todo1") {
-        description = "meh some description for foofy plugin"
-    }
-
-    command(UUID.randomUUID(), "foofel", "todo2") {
-        description = "meow description for foofel plugin :) :)"
-    }
 }

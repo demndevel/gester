@@ -1,18 +1,21 @@
 package com.demn.findutil.presentation.main
 
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.demn.findutil.usecase.ProcessQueryUseCase
+import com.demn.domain.data.ResultFrecencyRepository
+import com.demn.domain.plugin_management.PluginRepository
+import com.demn.domain.usecase.ProcessInputQueryUseCase
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginFallbackCommand
+import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
-import com.demn.pluginloading.PluginRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.UUID
 
 data class SearchScreenState(
     val searchBarValue: String = "",
@@ -23,7 +26,8 @@ data class SearchScreenState(
 
 class SearchScreenViewModel(
     private val pluginRepository: PluginRepository,
-    private val processQueryUseCase: ProcessQueryUseCase
+    private val processQueryUseCase: ProcessInputQueryUseCase,
+    private val resultFrecencyRepository: ResultFrecencyRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(SearchScreenState())
 
@@ -33,8 +37,6 @@ class SearchScreenViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val plugins = pluginRepository.getPluginList()
             val fallbackCommands = pluginRepository.getAllFallbackCommands()
-
-            println("fallbackCommands:" + fallbackCommands)
 
             _state.update {
                 it.copy(
@@ -67,18 +69,28 @@ class SearchScreenViewModel(
         }
 
         _state.update {
-            it.copy(
-                searchBarValue = newValue
-            )
+            it.copy(searchBarValue = newValue)
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            val results = processQueryUseCase.invoke(_state.value.pluginList, newValue)
+        viewModelScope.launch {
+            val results = processQueryUseCase(_state.value.pluginList, newValue)
 
             _state.update {
-                it.copy(
-                    searchResults = results
-                )
+                it.copy(searchResults = results)
+            }
+        }
+    }
+
+    fun executeResult(operationResult: OperationResult, runIntent: (Intent) -> Unit) {
+        viewModelScope.launch {
+            resultFrecencyRepository.incrementUsages(
+                state.value.searchBarValue,
+                hashCode = operationResult.hashCode(),
+                recencyTimestamp = System.currentTimeMillis()
+            )
+
+            if (operationResult is BasicOperationResult) {
+                operationResult.intent?.let { runIntent(it) }
             }
         }
     }

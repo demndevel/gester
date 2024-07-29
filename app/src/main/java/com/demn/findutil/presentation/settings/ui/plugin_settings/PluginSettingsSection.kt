@@ -17,9 +17,8 @@ import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.Strin
 import com.demn.findutil.presentation.settings.ui.settingErrorMessage
 import com.demn.plugincore.BooleanSettingFalse
 import com.demn.plugincore.BooleanSettingTrue
-import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginSettingType
-import com.demn.pluginloading.ExternalPlugin
+import com.demn.domain.models.ExternalPlugin
 
 @Composable
 fun PluginSettingsSection(

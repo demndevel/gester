@@ -4,13 +4,12 @@ import android.app.Service
 import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
-import android.os.Parcel
 import android.os.ParcelUuid
 import com.demn.aidl.PluginAdapter
 import com.demn.plugincore.*
 import com.demn.plugincore.ParcelableOperationResult.Companion.buildParcelableOperationResult
 import com.demn.plugincore.operation_result.BasicOperationResult
-import com.demn.plugincore.operation_result.PriorityTag
+import com.demn.plugincore.operation_result.ResultType
 import java.util.UUID
 
 class FooPluginService : Service() {
@@ -47,29 +46,6 @@ class FooPluginService : Service() {
 
     private fun addBinder(): PluginAdapter.Stub {
         val value = object : PluginAdapter.Stub() {
-            override fun executeCommand(
-                commandUuid: ParcelUuid,
-                input: String?
-            ): MutableList<ParcelableOperationResult> {
-                return mutableListOf(
-                    buildParcelableOperationResult(
-                        BasicOperationResult(
-                            text = "foo 1 result"
-                        )
-                    ),
-                    buildParcelableOperationResult(
-                        BasicOperationResult(
-                            text = "foo 2 result"
-                        )
-                    ),
-                    buildParcelableOperationResult(
-                        BasicOperationResult(
-                            text = "foo 3 result :)"
-                        ),
-                    )
-                )
-            }
-
             override fun executeFallbackCommand(commandUuid: ParcelUuid?, input: String?) = Unit
 
             override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {
@@ -78,7 +54,7 @@ class FooPluginService : Service() {
                         BasicOperationResult(
                             text = "github.com",
                             intent = getLaunchWebPageIntent("https://github.com"),
-                            priority = PriorityTag.WebLink
+                            type = ResultType.WebLink
                         )
                     )
                 )

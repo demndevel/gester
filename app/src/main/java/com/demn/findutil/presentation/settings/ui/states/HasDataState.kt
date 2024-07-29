@@ -15,7 +15,7 @@ import com.demn.findutil.presentation.settings.ui.InvalidSettingsError
 import com.demn.findutil.presentation.settings.ui.app_settings.AppSettings
 import com.demn.findutil.presentation.settings.ui.plugin_settings.PluginSettingsSection
 import com.demn.plugincore.PluginMetadata
-import com.demn.pluginloading.ExternalPlugin
+import com.demn.domain.models.ExternalPlugin
 
 @Composable
 fun HasDataState(

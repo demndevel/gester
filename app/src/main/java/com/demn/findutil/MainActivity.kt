@@ -16,6 +16,8 @@ import com.demn.findutil.di.appModule
 import com.demn.findutil.presentation.main.SearchScreen
 import com.demn.findutil.ui.theme.FindUtilTheme
 import com.demn.findutil.di.corePluginsModule
+import com.demn.findutil.di.dataModule
+import com.demn.findutil.di.pluginManagementModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
@@ -27,7 +29,7 @@ class MainActivity : ComponentActivity() {
         if (GlobalContext.getKoinApplicationOrNull() == null) {
             startKoin {
                 androidContext(applicationContext)
-                modules(listOf(appModule, corePluginsModule))
+                modules(listOf(appModule, corePluginsModule, dataModule, pluginManagementModule))
             }
         }
 

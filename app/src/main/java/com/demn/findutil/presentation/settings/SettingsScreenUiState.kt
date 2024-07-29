@@ -1,6 +1,6 @@
 package com.demn.findutil.presentation.settings
 
-import com.demn.findutil.app_settings.AppSettingMetadata
+import com.demn.domain.models.AppSettingMetadata
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
@@ -20,7 +20,7 @@ sealed interface SettingsScreenUiState {
 
     data class HasDataState(
         val pluginSettingsSections: List<PluginSettingsSection>,
-        val appSettings: List<SettingField<AppSettingMetadata>>,
+        val appSettings: List<SettingField<com.demn.domain.models.AppSettingMetadata>>,
         val pluginAvailabilities: List<PluginAvailability>,
         override val saveButtonVisible: Boolean
     ) : SettingsScreenUiState {

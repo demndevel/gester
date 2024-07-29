@@ -1,6 +1,5 @@
 package com.demn.findutil.presentation.main
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,10 +22,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.demn.data.repo.MockResultFrecencyRepository
 import com.demn.findutil.R
 import com.demn.findutil.usecase.MockProcessQueryUseCaseImpl
 import com.demn.plugincore.PluginFallbackCommand
-import com.demn.plugincore.PluginFallbackCommandBuilder
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
@@ -55,10 +54,8 @@ fun SearchScreen(
             onEnterClick = {
                 val firstResult = state.searchResults.firstOrNull()
 
-                if (firstResult is BasicOperationResult) {
-                    firstResult.intent?.let {
-                        context.startActivity(it)
-                    }
+                firstResult?.let {
+                    vm.executeResult(firstResult, context::startActivity)
                 }
             },
             modifier = Modifier
@@ -69,9 +66,7 @@ fun SearchScreen(
 
         ResultList(
             results = state.searchResults,
-            onResultClick = {
-                context.startActivity(it)
-            },
+            onResultClick = { vm.executeResult(it, context::startActivity) },
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -136,7 +131,7 @@ fun SearchBar(
 @Composable
 fun ResultList(
     results: List<OperationResult>,
-    onResultClick: (Intent) -> Unit,
+    onResultClick: (OperationResult) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -148,7 +143,7 @@ fun ResultList(
                 BasicResult(
                     text = result.text,
                     description = result.description,
-                    onResultClick = { result.intent?.let { onResultClick(it) } },
+                    onResultClick = { onResultClick(result) },
                 )
             }
 
@@ -366,7 +361,11 @@ fun SearchScreenPreview() {
     Surface(Modifier.fillMaxSize()) {
         SearchScreen(
             modifier = Modifier.fillMaxSize(),
-            vm = SearchScreenViewModel(MockPluginRepository(), MockProcessQueryUseCaseImpl()),
+            vm = SearchScreenViewModel(
+                MockPluginRepository(),
+                MockProcessQueryUseCaseImpl(),
+                MockResultFrecencyRepository()
+            ),
         )
     }
 }

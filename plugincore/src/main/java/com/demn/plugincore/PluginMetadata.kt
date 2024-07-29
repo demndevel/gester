@@ -21,24 +21,7 @@ data class PluginMetadata internal constructor(
     val description: String? = null,
     val version: String,
     val consumeAnyInput: Boolean = false,
-    val commands: List<PluginCommand> = emptyList(),
     val fallbackCommands: List<PluginFallbackCommand> = emptyList()
-) : Parcelable
-
-/**
- * Parcelable plugin command
- *
- * @param[id] UUID to identify commands
- * @param[name] name of the command available to users of the app
- * @param[description] nullable description about the command
- * @param[triggerRegex] regular expression that needed to satisfy command needs to be launched
- */
-@Parcelize
-data class PluginCommand internal constructor(
-    val id: UUID,
-    val name: String,
-    val description: String? = null,
-    val triggerRegex: String
 ) : Parcelable
 
 /**
@@ -62,25 +45,11 @@ fun buildPluginMetadata(
 ) = PluginMetadataBuilder().apply(block).build(pluginUuid, pluginName)
 
 class PluginMetadataBuilder {
-    private val commands = mutableListOf<PluginCommand>()
     private val fallbackCommands = mutableListOf<PluginFallbackCommand>()
 
     var version: String = "0"
     var description: String? = null
     var consumeAnyInput: Boolean = false
-
-    fun command(
-        uuid: UUID,
-        name: String,
-        triggerRegex: String,
-        block: PluginCommandBuilder.() -> Unit = {}
-    ) {
-        commands.add(
-            PluginCommandBuilder()
-                .apply(block)
-                .build(uuid = uuid, name, triggerRegex = triggerRegex)
-        )
-    }
 
     fun fallbackCommand(
         uuid: UUID,
@@ -99,19 +68,7 @@ class PluginMetadataBuilder {
         pluginName = pluginName,
         version = version,
         consumeAnyInput = consumeAnyInput,
-        commands = commands,
         fallbackCommands = fallbackCommands,
-        description = description
-    )
-}
-
-class PluginCommandBuilder {
-    var description: String? = null
-
-    fun build(uuid: UUID, name: String, triggerRegex: String) = PluginCommand(
-        id = uuid,
-        name = name,
-        triggerRegex = triggerRegex,
         description = description
     )
 }

@@ -1,36 +1,10 @@
 package com.demn.plugins
 
+import com.demn.domain.models.BuiltInPlugin
+import com.demn.domain.plugin_providers.CorePluginsProvider
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.operation_result.OperationResult
 import java.util.UUID
-
-interface CorePluginsProvider {
-    fun getPlugins(): List<BuiltInPlugin>
-
-    suspend fun invokeAnyInput(input: String, uuid: UUID): List<OperationResult>
-
-    suspend fun invokePluginCommand(
-        input: String,
-        pluginCommandId: UUID,
-        pluginUuid: UUID
-    ): List<OperationResult>
-
-    fun invokePluginFallbackCommand(
-        input: String,
-        pluginFallbackCommandId: UUID,
-        pluginUuid: UUID,
-    )
-
-    suspend fun getPluginSettings(
-        pluginUuid: UUID
-    ): List<PluginSetting>
-
-    suspend fun setPluginSetting(
-        builtInPlugin: BuiltInPlugin,
-        settingUuid: UUID,
-        newValue: String
-    )
-}
 
 class CorePluginsProviderImpl(
     private val plugins: List<CorePlugin>,
@@ -48,21 +22,6 @@ class CorePluginsProviderImpl(
         if (plugin == null) return emptyList()
 
         return plugin.invokeAnyInput(input)
-    }
-
-    override suspend fun invokePluginCommand(
-        input: String,
-        pluginCommandId: UUID,
-        pluginUuid: UUID
-    ): List<OperationResult> {
-        val plugin = plugins
-            .find { it.metadata.pluginUuid == pluginUuid }
-
-        if (plugin == null) {
-            return emptyList()
-        }
-
-        return plugin.invokePluginCommand(input, pluginCommandId)
     }
 
     override fun invokePluginFallbackCommand(input: String, pluginFallbackCommandId: UUID, pluginUuid: UUID) {

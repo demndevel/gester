@@ -2,12 +2,13 @@ package com.demn.findutil.presentation.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.demn.findutil.app_settings.*
 import com.demn.plugincore.*
-import com.demn.pluginloading.ExternalPlugin
-import com.demn.pluginloading.PluginRepository
-import com.demn.pluginloading.PluginSettingsRepository
-import com.demn.pluginloading.PluginUninstaller
+import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.plugin_management.PluginRepository
+import com.demn.domain.plugin_management.PluginSettingsRepository
+import com.demn.domain.plugin_management.PluginUninstaller
+import com.demn.domain.settings.AppSettingsRepository
+import com.demn.domain.settings.PluginAvailabilityRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,7 +20,7 @@ import kotlinx.coroutines.flow.update
 private data class SettingsScreenVmState(
     val isLoading: Boolean = false,
     val pluginSettingsSections: List<PluginSettingsSection>? = null,
-    val appSettings: List<SettingField<AppSettingMetadata>>? = null,
+    val appSettings: List<SettingField<com.demn.domain.models.AppSettingMetadata>>? = null,
     val pluginAvailabilities: List<PluginAvailability>? = null,
     val saveButtonVisible: Boolean = false
 ) {
@@ -43,6 +44,7 @@ class SettingsScreenViewModel(
     private val pluginSettingsRepository: PluginSettingsRepository,
     private val appSettingsRepository: AppSettingsRepository,
     private val pluginRepository: PluginRepository,
+    private val pluginAvailabilityRepository: PluginAvailabilityRepository,
     private val pluginUninstaller: PluginUninstaller
 ) : ViewModel() {
     private val _state = MutableStateFlow(SettingsScreenVmState())
@@ -76,11 +78,11 @@ class SettingsScreenViewModel(
                 .getAllSettingsMetadata()
                 .map { appSetting ->
                     val settingValue = when (appSetting.settingType) {
-                        AppSettingType.String -> appSettingsRepository.getStringSetting(appSetting.key)
-                        AppSettingType.Numerous -> appSettingsRepository.getNumerousSetting(appSetting.key)
+                        com.demn.domain.models.AppSettingType.String -> appSettingsRepository.getStringSetting(appSetting.key)
+                        com.demn.domain.models.AppSettingType.Numerous -> appSettingsRepository.getNumerousSetting(appSetting.key)
                             .toString()
 
-                        AppSettingType.Boolean -> appSettingsRepository.getBooleanSetting(appSetting.key)
+                        com.demn.domain.models.AppSettingType.Boolean -> appSettingsRepository.getBooleanSetting(appSetting.key)
                             .toString()
                     }
 
@@ -97,7 +99,7 @@ class SettingsScreenViewModel(
                 .map { plugin ->
                     PluginAvailability(
                         pluginMetadata = plugin.metadata,
-                        available = appSettingsRepository.checkPluginEnabled(plugin.metadata.pluginUuid)
+                        available = pluginAvailabilityRepository.checkPluginEnabled(plugin.metadata.pluginUuid)
                     )
                 }
 
@@ -114,8 +116,8 @@ class SettingsScreenViewModel(
 
     fun setPluginAvailability(metadata: PluginMetadata, available: Boolean) {
         when (available) {
-            true -> appSettingsRepository.enablePlugin(metadata.pluginUuid)
-            false -> appSettingsRepository.disablePlugin(metadata.pluginUuid)
+            true -> pluginAvailabilityRepository.enablePlugin(metadata.pluginUuid)
+            false -> pluginAvailabilityRepository.disablePlugin(metadata.pluginUuid)
         }
 
         _state.update {
@@ -148,7 +150,7 @@ class SettingsScreenViewModel(
         }
     }
 
-    fun setAppSetting(appSettingMetadata: AppSettingMetadata, newValue: String) {
+    fun setAppSetting(appSettingMetadata: com.demn.domain.models.AppSettingMetadata, newValue: String) {
         val validatedSetting = validateAppSetting(appSettingMetadata, newValue)
         updateValidatedAppSetting(appSettingMetadata, validatedSetting)
 
@@ -159,7 +161,7 @@ class SettingsScreenViewModel(
         }
     }
 
-    fun setBooleanAppSetting(appSettingMetadata: AppSettingMetadata, newValue: Boolean) {
+    fun setBooleanAppSetting(appSettingMetadata: com.demn.domain.models.AppSettingMetadata, newValue: Boolean) {
         val validatedSetting = ValidatedField.Valid(newValue.toString())
         updateValidatedAppSetting(appSettingMetadata, validatedSetting)
 
@@ -197,26 +199,26 @@ class SettingsScreenViewModel(
         loadData()
     }
 
-    private fun saveAllAppSettings(appSettingsFields: List<SettingField<AppSettingMetadata>>) {
+    private fun saveAllAppSettings(appSettingsFields: List<SettingField<com.demn.domain.models.AppSettingMetadata>>) {
         for (field in appSettingsFields) {
             val appSettingMetadata = field.settingMetadata
 
             when (appSettingMetadata.settingType) {
-                AppSettingType.String -> {
+                com.demn.domain.models.AppSettingType.String -> {
                     appSettingsRepository.setStringSetting(
                         key = appSettingMetadata.key,
                         value = field.validatedField.field
                     )
                 }
 
-                AppSettingType.Boolean -> {
+                com.demn.domain.models.AppSettingType.Boolean -> {
                     appSettingsRepository.setBooleanSetting(
                         key = appSettingMetadata.key,
                         value = field.validatedField.field.toBoolean()
                     )
                 }
 
-                AppSettingType.Numerous -> {
+                com.demn.domain.models.AppSettingType.Numerous -> {
                     appSettingsRepository.setNumerousSetting(
                         key = appSettingMetadata.key,
                         value = field.validatedField.field.toInt()
@@ -232,11 +234,11 @@ class SettingsScreenViewModel(
             .flatten()
             .filter { it.isEdited }
 
-    private fun selectEditedAppSettings(appSettingsSections: List<SettingField<AppSettingMetadata>>) =
+    private fun selectEditedAppSettings(appSettingsSections: List<SettingField<com.demn.domain.models.AppSettingMetadata>>) =
         appSettingsSections
             .filter { it.isEdited }
 
-    private fun hasInvalidAppSettings(appSettings: List<SettingField<AppSettingMetadata>>) =
+    private fun hasInvalidAppSettings(appSettings: List<SettingField<com.demn.domain.models.AppSettingMetadata>>) =
         appSettings.any { it.validatedField is ValidatedField.Invalid }
 
     private fun hasInvalidPluginSettings(pluginSettings: List<SettingField<PluginSetting>>) =
@@ -288,7 +290,7 @@ class SettingsScreenViewModel(
     }
 
     private fun updateValidatedAppSetting(
-        appSettingMetadata: AppSettingMetadata,
+        appSettingMetadata: com.demn.domain.models.AppSettingMetadata,
         newValidatedValue: ValidatedStringField
     ) {
         val appSettings = _state.value.appSettings ?: return
@@ -311,10 +313,10 @@ class SettingsScreenViewModel(
     }
 
     private fun validateAppSetting(
-        metadata: AppSettingMetadata,
+        metadata: com.demn.domain.models.AppSettingMetadata,
         newValue: String
     ): ValidatedField<String> {
-        if (metadata.settingType == AppSettingType.String) {
+        if (metadata.settingType == com.demn.domain.models.AppSettingType.String) {
             if (newValue.isBlank()) {
                 return ValidatedField.Invalid(
                     field = newValue,
@@ -323,7 +325,7 @@ class SettingsScreenViewModel(
             }
         }
 
-        if (metadata.settingType == AppSettingType.Numerous) {
+        if (metadata.settingType == com.demn.domain.models.AppSettingType.Numerous) {
             if (newValue.toIntOrNull() == null) {
                 return ValidatedField.Invalid(
                     field = newValue,

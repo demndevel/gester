@@ -5,4 +5,6 @@ package com.demn.plugincore.operation_result
  *
  * Examples of OperationResult implementation: [BasicOperationResult] or [TransitionOperationResult]
  */
-sealed interface OperationResult
+sealed interface OperationResult {
+    val type: ResultType
+}

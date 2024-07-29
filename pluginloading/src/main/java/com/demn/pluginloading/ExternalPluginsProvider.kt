@@ -8,8 +8,10 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.os.IBinder
-import android.os.ParcelUuid
 import com.demn.aidl.PluginAdapter
+import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.models.PluginService
+import com.demn.domain.plugin_providers.ExternalPluginsProvider
 import com.demn.plugincore.ACTION_PICK_PLUGIN
 import com.demn.plugincore.CategoryExtrasKey
 import com.demn.plugincore.PluginMetadata
@@ -20,37 +22,6 @@ import com.demn.plugincore.toOperationResult
 import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-
-interface ExternalPluginsProvider {
-    suspend fun getPluginList(): List<ExternalPlugin>
-
-    suspend fun executeCommand(
-        input: String,
-        commandUuid: UUID,
-        pluginService: PluginService
-    ): List<OperationResult>
-
-    suspend fun executeFallbackCommand(
-        input: String,
-        fallbackCommandUuid: UUID,
-        pluginService: PluginService
-    )
-
-    suspend fun executeAnyInput(
-        input: String,
-        pluginService: PluginService
-    ): List<OperationResult>
-
-    suspend fun getPluginData(pluginService: PluginService): PluginMetadata
-
-    suspend fun getPluginSettings(externalPlugin: ExternalPlugin): List<PluginSetting>
-
-    suspend fun setPluginSetting(
-        externalPlugin: ExternalPlugin,
-        settingUuid: UUID,
-        newValue: String
-    )
-}
 
 class ExternalPluginsProviderImpl(
     private val context: Context
@@ -98,25 +69,6 @@ class ExternalPluginsProviderImpl(
             actions.add(resolveInfo.filter.getAction(i))
         }
         return actions
-    }
-
-    override suspend fun executeCommand(
-        input: String,
-        commandUuid: UUID,
-        pluginService: PluginService
-    ): List<OperationResult> {
-        val intent = getIntentForPlugin(pluginService)
-
-        return suspendCoroutine { continuation ->
-            val serviceConnection = getServiceConnectionForPlugin { adapter ->
-                val results = adapter.executeCommand(commandUuid.toParcelUuid(), input)
-                    .map { it.toOperationResult() }
-
-                continuation.resume(results)
-            }
-
-            context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-        }
     }
 
     override suspend fun executeFallbackCommand(

@@ -1,22 +1,15 @@
 package com.demn.pluginloading
 
+import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.models.PluginSettingsInfo
+import com.demn.domain.plugin_management.PluginSettingsRepository
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.PluginSettingType
-import com.demn.plugins.BuiltInPlugin
-import com.demn.plugins.CorePluginsProvider
+import com.demn.domain.models.BuiltInPlugin
+import com.demn.domain.plugin_providers.CorePluginsProvider
+import com.demn.domain.plugin_providers.ExternalPluginsProvider
 import java.util.UUID
-
-data class PluginSettingsInfo(
-    val plugin: Plugin,
-    val settings: List<PluginSetting>
-)
-
-interface PluginSettingsRepository {
-    suspend fun getAll(): List<PluginSettingsInfo>
-
-    suspend fun set(pluginUuid: UUID, settingUuid: UUID, value: String)
-}
 
 class MockPluginSettingsRepository : PluginSettingsRepository {
     private val settings: MutableList<PluginSetting> = mutableListOf(

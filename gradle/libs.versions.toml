@@ -1,21 +1,23 @@
 [versions]
-agp = "8.2.0"
+agp = "8.5.1"
 koinAndroidxCompose = "3.6.0-wasm-alpha2"
 koinCompose = "3.6.0-wasm-alpha2"
 koinCore = "3.6.0-wasm-alpha2"
-kotlin = "1.9.10"
+kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "5.8.1"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
-lifecycleRuntimeKtx = "2.8.0"
-activityCompose = "1.9.0"
-composeBom = "2024.05.00"
-appcompat = "1.6.1"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+lifecycleRuntimeKtx = "2.8.4"
+activityCompose = "1.9.1"
+composeBom = "2024.06.00"
+appcompat = "1.7.0"
 material = "1.12.0"
 documentfile = "1.0.1"
-jetbrainsKotlinJvm = "1.9.0"
+jetbrainsKotlinJvm = "2.0.0"
 junit-junit = "4.13.2"
+ksp = "2.0.0-1.0.23"
+room = "2.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,10 +41,16 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 junit-junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
+kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin" }
+
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

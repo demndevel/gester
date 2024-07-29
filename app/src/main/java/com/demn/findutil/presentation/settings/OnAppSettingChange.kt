@@ -1,7 +1,7 @@
 package com.demn.findutil.presentation.settings
 
-import com.demn.findutil.app_settings.AppSettingMetadata
+import com.demn.domain.models.AppSettingMetadata
 
-typealias OnAppSettingChange = (appSetting: AppSettingMetadata, newValue: String) -> Unit
+typealias OnAppSettingChange = (appSetting: com.demn.domain.models.AppSettingMetadata, newValue: String) -> Unit
 
-typealias OnAppBooleanSettingChange = (appSetting: AppSettingMetadata, newValue: Boolean) -> Unit
+typealias OnAppBooleanSettingChange = (appSetting: com.demn.domain.models.AppSettingMetadata, newValue: Boolean) -> Unit

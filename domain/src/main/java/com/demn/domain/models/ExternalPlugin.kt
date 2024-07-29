@@ -1,11 +1,11 @@
-package com.demn.pluginloading
+package com.demn.domain.models
 
 import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginMetadata
 
-data class ExternalPlugin internal constructor(
+data class ExternalPlugin(
     override val metadata: PluginMetadata,
-    internal val pluginService: PluginService
+    val pluginService: PluginService
 ) : Plugin
 
 data class PluginService(

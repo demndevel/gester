@@ -21,30 +21,6 @@ private val findUtilPluginMetadata =
         "findutilplugin"
     ) {
         consumeAnyInput = false
-
-        command(
-            uuid = commandsCommandUuid,
-            name = "commands",
-            triggerRegex = "^/commands"
-        ) {
-            description = "displays list of all available commands over all plugins"
-        }
-
-        command(
-            uuid = helpCommandUuid,
-            name = "help",
-            triggerRegex = "^/help"
-        ) {
-            description = "just help message"
-        }
-
-        command(
-            uuid = openSettingsCommandUuid,
-            name = "settings",
-            triggerRegex = "^/settings"
-        ) {
-            description = "opens settings screen"
-        }
     }
 
 class FindUtilPlugin(
@@ -57,52 +33,6 @@ class FindUtilPlugin(
     }
 
     override fun invokeAnyInput(input: String): List<OperationResult> {
-        return emptyList()
-    }
-
-    override fun invokePluginCommand(input: String, uuid: UUID): List<OperationResult> {
-        if (uuid == openSettingsCommandUuid) {
-            val operationResult = BasicOperationResult(
-                text = "settings",
-                description = "open settings screen",
-                intent = Intent(context, SettingsActivity::class.java)
-            )
-
-            return listOf(operationResult)
-        }
-
-        if (uuid == helpCommandUuid) {
-            val operationResult = BasicOperationResult(
-                text = "help",
-                description = """help message about how FindUtil works…: 
-                    - /help – help message
-                    - /settings - opens settings screen
-                    - /commands - shows the list of all available commands (like this)
-                    
-                    you can also do smth by doing smth
-                    
-                    another one peace of help message
-                    
-                    enjoy using this app!
-                """.trimMargin()
-            )
-
-            return listOf(operationResult)
-        }
-
-        if (uuid == commandsCommandUuid) {
-            val operationResult = BasicOperationResult(
-                text = "commands",
-                description = """list of all FindUtil commands available: 
-                    - /help – help message
-                    - /settings - opens settings screen
-                    - /commands - shows the list of all available commands (like this)
-                """.trimMargin()
-            )
-
-            return listOf(operationResult)
-        }
-
         return emptyList()
     }
 

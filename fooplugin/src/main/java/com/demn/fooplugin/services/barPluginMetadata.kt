@@ -13,14 +13,6 @@ val barPluginMetadata = buildPluginMetadata(
     consumeAnyInput = false
     version = "2.3"
 
-    command(UUID.randomUUID(), "todo4", "^bar") {
-        description = "desc"
-    }
-
-    command(UUID.randomUUID(), "todo3", "^bar") {
-        description = "meow command"
-    }
-
     fallbackCommand(awesomeFallbackCommandUuid, "Search Google") {
         description = "Opens google search page with default browser app"
     }

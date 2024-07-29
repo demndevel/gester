@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -40,9 +41,6 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -53,6 +51,7 @@ android {
 dependencies {
     implementation(project(":coreplugins"))
     implementation(project(":plugincore"))
+    implementation(project(":data"))
 
     implementation(libs.koin.core)
     implementation(libs.koin.compose)
@@ -68,6 +67,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.documentfile)
     implementation(project(":pluginloading"))
+    implementation(project(":domain"))
 
     testImplementation(kotlin("test"))
 

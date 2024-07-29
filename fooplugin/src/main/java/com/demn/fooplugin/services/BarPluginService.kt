@@ -19,24 +19,6 @@ class BarPluginService : Service() {
 
     private fun addBinder(): PluginAdapter.Stub {
         val value = object : PluginAdapter.Stub() {
-            override fun executeCommand(
-                commandUuid: ParcelUuid,
-                input: String?
-            ): MutableList<ParcelableOperationResult> {
-                return mutableListOf(
-                    ParcelableOperationResult.buildParcelableOperationResult(
-                        BasicOperationResult(
-                            text = "bar 2 result"
-                        )
-                    ),
-                    ParcelableOperationResult.buildParcelableOperationResult(
-                        BasicOperationResult(
-                            text = "bar 3 result :("
-                        )
-                    )
-                )
-            }
-
             override fun executeFallbackCommand(commandUuid: ParcelUuid?, input: String?) {
                 if (commandUuid?.uuid == awesomeFallbackCommandUuid) {
                     val url = "https://google.com/search?q="

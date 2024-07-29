@@ -19,14 +19,6 @@ val currenciesPluginMetadata = buildPluginMetadata(
     consumeAnyInput = false
     description = ""
     version = "0.1"
-
-    command(
-        uuid = UUID.fromString("5d94de41-837d-4eb5-b3f9-fc8665c851ff"),
-        name = "currency to rub",
-        triggerRegex = "(\\d+\\.?\\d*)\\s*(usd|eur|rub)|\\$(\\d+\\.?\\d*)\\s*(usd)"
-    ) {
-        description = "translate any currency to russian roubles"
-    }
 }
 
 internal enum class CurrencyType {
@@ -93,25 +85,6 @@ class CurrenciesPlugin(
 
     override fun invokeAnyInput(input: String): List<OperationResult> {
         return emptyList()
-    }
-
-    override fun invokePluginCommand(input: String, uuid: UUID): List<OperationResult> {
-        val usdCost = corePluginsSettingsRepository
-            .getSetting(usdCostSettingUuid)
-            .toIntOrNull()
-
-        if (uuid != metadata.commands.first().id) return emptyList()
-
-        val parsed = parseCurrency(input)
-
-        val transitionResult = TransitionOperationResult(
-            initialText = "${parsed.value}${parsed.type}",
-            initialDescription = parsed.type.toString(),
-            finalText = "${parsed.value * (usdCost ?: 100)}",
-            finalDescription = "russian roubles ¢"
-        )
-
-        return listOf(transitionResult)
     }
 
     override fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit

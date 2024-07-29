@@ -2,13 +2,12 @@ package com.demn.plugins.core_plugins
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.buildPluginMetadata
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
-import com.demn.plugincore.operation_result.PriorityTag
+import com.demn.plugincore.operation_result.ResultType
 import com.demn.plugins.CorePlugin
 import java.util.UUID
 
@@ -34,7 +33,7 @@ class AppSearchingPlugin(
             return BasicOperationResult(
                 text = name,
                 intent = intent,
-                priority = PriorityTag.Application
+                type = ResultType.Application
             )
         }
     }
@@ -94,10 +93,6 @@ class AppSearchingPlugin(
 
     private fun getAllApps(): List<BasicOperationResult> = applications
         .map(CachedApplicationInfo::toOperationResult)
-
-    override fun invokePluginCommand(input: String, uuid: UUID): List<OperationResult> {
-        return emptyList()
-    }
 
     override fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit
 }

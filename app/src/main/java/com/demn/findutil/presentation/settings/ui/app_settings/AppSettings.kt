@@ -13,13 +13,12 @@ import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.IntSe
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.StringSetting
 import com.demn.findutil.presentation.settings.ui.settingErrorMessage
 import com.demn.plugincore.PluginMetadata
-import com.demn.plugincore.R
 import java.util.*
 
 @Composable
 fun AppSettings(
     pluginAvailabilities: List<PluginAvailability>,
-    appSettings: List<SettingField<AppSettingMetadata>>,
+    appSettings: List<SettingField<com.demn.domain.models.AppSettingMetadata>>,
     onAppSettingChange: OnAppSettingChange,
     onBooleanFieldUpdate: OnAppBooleanSettingChange,
     onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
@@ -73,7 +72,7 @@ private fun PluginAvailabilitySection(
 
 @Composable
 private fun AppSettingsSection(
-    settings: List<SettingField<AppSettingMetadata>>,
+    settings: List<SettingField<com.demn.domain.models.AppSettingMetadata>>,
     onFieldUpdate: OnAppSettingChange,
     onBooleanFieldUpdate: OnAppBooleanSettingChange,
     modifier: Modifier = Modifier,
@@ -97,7 +96,7 @@ private fun AppSettingsSection(
 
 @Composable
 private fun AppSetting(
-    settingField: SettingField<AppSettingMetadata>,
+    settingField: SettingField<com.demn.domain.models.AppSettingMetadata>,
     onFieldUpdate: OnAppSettingChange,
     onBooleanFieldUpdate: OnAppBooleanSettingChange,
     modifier: Modifier = Modifier
@@ -109,7 +108,7 @@ private fun AppSetting(
         else ""
 
     when (settingField.settingMetadata.settingType) {
-        AppSettingType.String -> {
+        com.demn.domain.models.AppSettingType.String -> {
             StringSetting(
                 text = settingField.settingMetadata.title,
                 description = settingField.settingMetadata.description,
@@ -123,7 +122,7 @@ private fun AppSetting(
             )
         }
 
-        AppSettingType.Numerous -> {
+        com.demn.domain.models.AppSettingType.Numerous -> {
             IntSetting(
                 text = settingField.settingMetadata.title,
                 description = settingField.settingMetadata.description,
@@ -137,7 +136,7 @@ private fun AppSetting(
             )
         }
 
-        AppSettingType.Boolean -> {
+        com.demn.domain.models.AppSettingType.Boolean -> {
             BooleanSetting(
                 text = settingField.settingMetadata.title,
                 description = settingField.settingMetadata.description,

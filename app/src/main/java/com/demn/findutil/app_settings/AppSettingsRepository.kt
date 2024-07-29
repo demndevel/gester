@@ -1,38 +1,10 @@
 package com.demn.findutil.app_settings
 
 import android.content.Context
+import com.demn.domain.models.AppSettingMetadata
+import com.demn.domain.models.AppSettingType
+import com.demn.domain.settings.AppSettingsRepository
 import java.util.*
-
-interface AppSettingsRepository {
-    fun getAllSettingsMetadata(): List<AppSettingMetadata>
-
-    fun setStringSetting(
-        key: UUID,
-        value: String
-    )
-
-    fun getStringSetting(key: UUID): String
-
-    fun setNumerousSetting(
-        key: UUID,
-        value: Int
-    )
-
-    fun getNumerousSetting(key: UUID): Int
-
-    fun setBooleanSetting(
-        key: UUID,
-        value: Boolean
-    )
-
-    fun getBooleanSetting(key: UUID): Boolean
-
-    fun enablePlugin(pluginUuid: UUID)
-
-    fun disablePlugin(pluginUuid: UUID)
-
-    fun checkPluginEnabled(pluginUuid: UUID): Boolean
-}
 
 class MockAppSettingsRepositoryImpl : AppSettingsRepository {
     override fun getAllSettingsMetadata(): List<AppSettingMetadata> = emptyList()
@@ -45,12 +17,6 @@ class MockAppSettingsRepositoryImpl : AppSettingsRepository {
 
     override fun setBooleanSetting(key: UUID, value: Boolean) = Unit
     override fun getBooleanSetting(key: UUID): Boolean = true
-
-    override fun enablePlugin(pluginUuid: UUID) = Unit
-
-    override fun disablePlugin(pluginUuid: UUID) = Unit
-
-    override fun checkPluginEnabled(pluginUuid: UUID): Boolean = true
 }
 
 class AppSettingsRepositoryImpl(context: Context) : AppSettingsRepository {
@@ -68,13 +34,13 @@ class AppSettingsRepositoryImpl(context: Context) : AppSettingsRepository {
                 key = UUID.fromString("c9c87cbe-7c80-4c32-b725-8a7a42d88581"),
                 title = "How much digits do you know?",
                 description = "Simple question about how much digits do you know",
-                settingType = AppSettingType.Numerous
+                settingType = com.demn.domain.models.AppSettingType.Numerous
             ),
             AppSettingMetadata(
                 key = UUID.fromString("2813ddb8-83a7-4a42-9db8-1df548622b46"),
                 title = "Your name",
                 description = "Your name or your deadname",
-                settingType = AppSettingType.String
+                settingType = com.demn.domain.models.AppSettingType.String
             ),
         )
     }
@@ -122,23 +88,5 @@ class AppSettingsRepositoryImpl(context: Context) : AppSettingsRepository {
 
     override fun getBooleanSetting(key: UUID): Boolean {
         return sharedPreferences.getBoolean(key.toString(), false)
-    }
-
-    override fun enablePlugin(pluginUuid: UUID) {
-        sharedPreferences.edit().apply {
-            putBoolean(pluginUuid.toString(), true)
-            commit()
-        }
-    }
-
-    override fun disablePlugin(pluginUuid: UUID) {
-        sharedPreferences.edit().apply {
-            putBoolean(pluginUuid.toString(), false)
-            commit()
-        }
-    }
-
-    override fun checkPluginEnabled(pluginUuid: UUID): Boolean {
-        return sharedPreferences.getBoolean(pluginUuid.toString(), true)
     }
 }

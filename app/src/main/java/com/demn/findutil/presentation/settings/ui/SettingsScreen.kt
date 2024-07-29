@@ -23,7 +23,8 @@ import com.demn.findutil.presentation.settings.ui.states.HasDataState
 import com.demn.findutil.presentation.settings.ui.states.LoadingState
 import com.demn.findutil.presentation.settings.ui.states.NoDataState
 import com.demn.plugincore.PluginMetadata
-import com.demn.pluginloading.ExternalPlugin
+import com.demn.domain.models.ExternalPlugin
+import com.demn.findutil.app_settings.MockPluginAvailabilityRepository
 import com.demn.pluginloading.MockPluginRepository
 import com.demn.pluginloading.MockPluginSettingsRepository
 import com.demn.pluginloading.MockPluginUninstaller
@@ -44,7 +45,6 @@ fun SettingsScreen(
         modifier = modifier
             .imePadding(),
         floatingActionButton = {
-            println("saveButtonVisible: " + state.saveButtonVisible)
             SaveButton(
                 visible = state.saveButtonVisible,
                 onClick = vm::save
@@ -144,7 +144,8 @@ fun SettingsScreenPreview() {
                 MockPluginSettingsRepository(),
                 MockAppSettingsRepositoryImpl(),
                 MockPluginRepository(),
-                MockPluginUninstaller()
+                MockPluginAvailabilityRepository(),
+                MockPluginUninstaller(),
             )
         )
     }

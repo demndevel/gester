@@ -33,6 +33,7 @@ android {
 dependencies {
     implementation(project(":plugincore"))
     implementation(project(":coreplugins"))
+    implementation(project(":domain"))
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.junit)
