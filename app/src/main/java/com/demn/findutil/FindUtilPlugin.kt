@@ -2,6 +2,7 @@ package com.demn.findutil
 
 import android.content.Context
 import android.content.Intent
+import com.demn.domain.models.PluginCommand
 import com.demn.plugincore.FindUtilPluginUuid
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
@@ -27,6 +28,10 @@ class FindUtilPlugin(
     private val context: Context
 ) : CorePlugin {
     override val metadata: PluginMetadata = findUtilPluginMetadata
+
+    override fun invokeCommand(uuid: UUID) = Unit
+
+    override fun getPluginCommands(): List<PluginCommand> = emptyList()
 
     override fun getPluginSettings(): List<PluginSetting> {
         return emptyList()

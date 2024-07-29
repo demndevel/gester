@@ -1,6 +1,7 @@
 package com.demn.plugins
 
 import com.demn.domain.models.BuiltInPlugin
+import com.demn.domain.models.PluginCommand
 import com.demn.domain.plugin_providers.CorePluginsProvider
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.operation_result.OperationResult
@@ -24,7 +25,27 @@ class CorePluginsProviderImpl(
         return plugin.invokeAnyInput(input)
     }
 
-    override fun invokePluginFallbackCommand(input: String, pluginFallbackCommandId: UUID, pluginUuid: UUID) {
+    override fun getPluginCommands(plugin: BuiltInPlugin): List<PluginCommand> {
+        plugins
+            .find { it.metadata.pluginUuid == plugin.metadata.pluginUuid }
+            ?.let {
+                return it.getPluginCommands()
+            }
+
+        return emptyList()
+    }
+
+    override fun invokePluginCommand(commandUuid: UUID, pluginUuid: UUID) {
+        plugins
+            .find { it.metadata.pluginUuid == pluginUuid }
+            ?.invokeCommand(commandUuid)
+    }
+
+    override fun invokePluginFallbackCommand(
+        input: String,
+        pluginFallbackCommandId: UUID,
+        pluginUuid: UUID
+    ) {
         val plugin = plugins
             .find { it.metadata.pluginUuid == pluginUuid }
 

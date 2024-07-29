@@ -48,6 +48,10 @@ class FooPluginService : Service() {
         val value = object : PluginAdapter.Stub() {
             override fun executeFallbackCommand(commandUuid: ParcelUuid?, input: String?) = Unit
 
+            override fun executeCommand(commandUuid: ParcelUuid?) {
+                TODO("Not yet implemented")
+            }
+
             override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {
                 return mutableListOf(
                     buildParcelableOperationResult(

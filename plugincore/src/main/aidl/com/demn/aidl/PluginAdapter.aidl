@@ -9,6 +9,8 @@ import android.os.ParcelUuid;
 interface PluginAdapter {
     void executeFallbackCommand(in ParcelUuid commandUuid, in String input);
 
+    void executeCommand(in ParcelUuid commandUuid);
+
     List<ParcelableOperationResult> executeAnyInput(in String input);
 
     List<ParcelablePluginCommand> getAllCommands();

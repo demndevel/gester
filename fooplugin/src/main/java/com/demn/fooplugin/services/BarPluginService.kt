@@ -33,6 +33,10 @@ class BarPluginService : Service() {
                 }
             }
 
+            override fun executeCommand(commandUuid: ParcelUuid?) {
+                TODO("Not yet implemented")
+            }
+
             override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {
                 return mutableListOf()
             }

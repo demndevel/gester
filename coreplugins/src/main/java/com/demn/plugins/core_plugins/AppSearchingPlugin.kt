@@ -2,6 +2,7 @@ package com.demn.plugins.core_plugins
 
 import android.content.Context
 import android.content.Intent
+import com.demn.domain.models.PluginCommand
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.buildPluginMetadata
@@ -24,6 +25,10 @@ class AppSearchingPlugin(
     context: Context
 ) : CorePlugin {
     override val metadata: PluginMetadata = appSearchingMetadata
+
+    override fun invokeCommand(uuid: UUID) = Unit
+
+    override fun getPluginCommands(): List<PluginCommand> = emptyList()
 
     private data class CachedApplicationInfo(
         val name: String,

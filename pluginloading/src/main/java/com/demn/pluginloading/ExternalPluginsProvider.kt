@@ -10,6 +10,7 @@ import android.content.pm.ResolveInfo
 import android.os.IBinder
 import com.demn.aidl.PluginAdapter
 import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginService
 import com.demn.domain.plugin_providers.ExternalPluginsProvider
 import com.demn.plugincore.ACTION_PICK_PLUGIN
@@ -80,6 +81,36 @@ class ExternalPluginsProviderImpl(
 
         val serviceConnection = getServiceConnectionForPlugin { adapter ->
             adapter.executeFallbackCommand(fallbackCommandUuid.toParcelUuid(), input)
+        }
+
+        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    override suspend fun getAllCommands(plugin: ExternalPlugin): List<PluginCommand> {
+        val intent = getIntentForPlugin(plugin.pluginService)
+
+        return suspendCoroutine { continuation ->
+            val serviceConnection = getServiceConnectionForPlugin { adapter ->
+                val commands = adapter.allCommands
+                    .map { it.toPluginCommand(plugin.metadata.pluginUuid) }
+
+                continuation.resume(commands)
+            }
+
+            context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override suspend fun executeCommand(uuid: UUID, pluginUuid: UUID) {
+        val plugin = getPluginList()
+            .find { it.metadata.pluginUuid == pluginUuid }
+
+        if (plugin == null) return
+
+        val intent = getIntentForPlugin(plugin.pluginService)
+
+        val serviceConnection = getServiceConnectionForPlugin { adapter ->
+            adapter.executeCommand(uuid.toParcelUuid())
         }
 
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)

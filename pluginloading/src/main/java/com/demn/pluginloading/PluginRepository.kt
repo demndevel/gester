@@ -6,6 +6,7 @@ import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginFallbackCommand
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.domain.models.BuiltInPlugin
+import com.demn.domain.models.PluginCommand
 import com.demn.domain.plugin_providers.CorePluginsProvider
 import com.demn.domain.plugin_providers.ExternalPluginsProvider
 import java.util.UUID
@@ -16,6 +17,10 @@ class MockPluginRepository : PluginRepository {
     }
 
     override suspend fun invokeFallbackCommand(input: String, commandUuid: UUID) = Unit
+
+    override suspend fun getAllCommands(): List<PluginCommand> = emptyList()
+
+    override suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID) = Unit
 
     override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
         return emptyList()
@@ -87,6 +92,32 @@ class PluginRepositoryImpl(
             is BuiltInPlugin -> {
                 invokeBuiltInPluginFallbackCommand(input, commandUuid, plugin)
             }
+        }
+    }
+
+    override suspend fun getAllCommands(): List<PluginCommand> {
+        return getPluginList()
+            .flatMap {
+                when (it) {
+                    is BuiltInPlugin -> corePluginsProvider.getPluginCommands(it)
+
+                    is ExternalPlugin -> externalPluginsProvider.getAllCommands(it)
+
+                    else -> emptyList()
+                }
+            }
+    }
+
+    override suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID) {
+        val plugin = getPluginList()
+            .find { it.metadata.pluginUuid == pluginUuid }
+
+        if (plugin == null) return
+
+        when (plugin) {
+            is BuiltInPlugin -> corePluginsProvider.invokePluginCommand(commandUuid, pluginUuid)
+
+            is ExternalPlugin -> externalPluginsProvider.executeCommand(commandUuid, pluginUuid)
         }
     }
 

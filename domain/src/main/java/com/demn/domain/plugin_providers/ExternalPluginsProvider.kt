@@ -1,6 +1,7 @@
 package com.demn.domain.plugin_providers
 
 import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginService
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
@@ -14,6 +15,13 @@ interface ExternalPluginsProvider {
         input: String,
         fallbackCommandUuid: UUID,
         pluginService: PluginService
+    )
+
+    suspend fun getAllCommands(plugin: ExternalPlugin): List<PluginCommand>
+
+    suspend fun executeCommand(
+        uuid: UUID,
+        pluginUuid: UUID
     )
 
     suspend fun executeAnyInput(
