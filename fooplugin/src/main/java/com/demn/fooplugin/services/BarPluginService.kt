@@ -7,6 +7,7 @@ import android.os.IBinder
 import android.os.ParcelUuid
 import com.demn.aidl.PluginAdapter
 import com.demn.plugincore.ParcelableOperationResult
+import com.demn.plugincore.ParcelablePluginCommand
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.operation_result.BasicOperationResult
@@ -33,6 +34,10 @@ class BarPluginService : Service() {
             }
 
             override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {
+                return mutableListOf()
+            }
+
+            override fun getAllCommands(): MutableList<ParcelablePluginCommand> {
                 return mutableListOf()
             }
 

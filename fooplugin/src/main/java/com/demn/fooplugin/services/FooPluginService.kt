@@ -60,6 +60,10 @@ class FooPluginService : Service() {
                 )
             }
 
+            override fun getAllCommands(): MutableList<ParcelablePluginCommand> {
+                TODO("Not yet implemented")
+            }
+
             override fun fetchPluginData(): PluginMetadata {
                 return fooPluginMetadata
             }

@@ -16,7 +16,7 @@ import com.demn.plugincore.ACTION_PICK_PLUGIN
 import com.demn.plugincore.CategoryExtrasKey
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
-import com.demn.plugincore.extensions.toParcelUuid
+import com.demn.plugincore.util.toParcelUuid
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.toOperationResult
 import java.util.UUID
