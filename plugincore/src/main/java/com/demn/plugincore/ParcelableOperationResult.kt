@@ -30,7 +30,6 @@ class ParcelableOperationResult private constructor(
             return when (operationResult) {
                 is BasicOperationResult -> ParcelableOperationResult(
                     text = operationResult.text,
-                    description = operationResult.description,
                     intent = operationResult.intent
                 )
 
@@ -56,7 +55,6 @@ fun ParcelableOperationResult.toOperationResult(): OperationResult {
     if (text != null) {
         return BasicOperationResult(
             text,
-            description,
             intent
         )
     }

@@ -9,7 +9,6 @@ class ParcelableOperationResultTest {
     fun `ParcelableOperationResult with BasicOperationResult`() {
         val basicOperationResult = BasicOperationResult(
             text = "some sample text",
-            description = "some sample description"
         )
 
         val parcelableOperationResult =

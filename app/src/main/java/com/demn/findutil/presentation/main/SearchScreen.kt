@@ -23,12 +23,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.demn.data.repo.MockResultFrecencyRepository
+import com.demn.domain.usecase.ProcessInputQueryUseCase
 import com.demn.findutil.R
-import com.demn.findutil.usecase.MockProcessQueryUseCaseImpl
+import com.demn.findutil.app_settings.MockAppSettingsRepositoryImpl
+import com.demn.findutil.app_settings.MockPluginAvailabilityRepository
 import com.demn.plugincore.PluginFallbackCommand
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
+import com.demn.pluginloading.MockOperationResultSorter
 import com.demn.pluginloading.MockPluginRepository
 import org.koin.androidx.compose.koinViewModel
 import java.util.*
@@ -142,7 +145,6 @@ fun ResultList(
             if (result is BasicOperationResult) {
                 BasicResult(
                     text = result.text,
-                    description = result.description,
                     onResultClick = { onResultClick(result) },
                 )
             }
@@ -162,7 +164,6 @@ fun ResultList(
 @Composable
 fun BasicResult(
     text: String,
-    description: String?,
     onResultClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -182,20 +183,6 @@ fun BasicResult(
                     bottom = 8.dp
                 )
         )
-
-        if (description != null) {
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        bottom = 16.dp,
-                        start = 16.dp,
-                        end = 16.dp
-                    )
-            )
-        }
     }
 }
 
@@ -334,12 +321,6 @@ fun FallbackCommandsResult(
 fun BasicResultPreview() {
     BasicResult(
         text = "help",
-        description = """
-                    - type app name to launch
-                    - type some math expression to calculate
-                    - type some number with currency code to convert to your default currency (specified in the config)
-                    - type "config" to show findutil config (aliases, plugins, etc.)
-                """.trimIndent(),
         onResultClick = {}
     )
 }
@@ -363,7 +344,11 @@ fun SearchScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             vm = SearchScreenViewModel(
                 MockPluginRepository(),
-                MockProcessQueryUseCaseImpl(),
+                ProcessInputQueryUseCase(
+                    MockPluginRepository(),
+                    MockOperationResultSorter(),
+                    MockPluginAvailabilityRepository(),
+                ),
                 MockResultFrecencyRepository()
             ),
         )
