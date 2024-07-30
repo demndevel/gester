@@ -29,9 +29,25 @@ class FindUtilPlugin(
 ) : CorePlugin {
     override val metadata: PluginMetadata = findUtilPluginMetadata
 
-    override fun invokeCommand(uuid: UUID) = Unit
+    override fun invokeCommand(uuid: UUID) {
+        if (uuid == openSettingsCommandUuid) {
+            val intent = Intent(context, SettingsActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
 
-    override fun getPluginCommands(): List<PluginCommand> = emptyList()
+            context.startActivity(intent)
+        }
+    }
+
+    override fun getPluginCommands(): List<PluginCommand> =
+        listOf(
+            PluginCommand(
+                uuid = openSettingsCommandUuid,
+                pluginUuid = metadata.pluginUuid,
+                name = "FindUtil settings",
+                description = null
+            )
+        )
 
     override fun getPluginSettings(): List<PluginSetting> {
         return emptyList()
