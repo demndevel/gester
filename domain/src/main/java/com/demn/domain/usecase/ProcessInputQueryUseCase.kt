@@ -1,6 +1,5 @@
 package com.demn.domain.usecase
 
-import com.demn.domain.data.PluginCommandCacheRepository
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.plugin_management.OperationResultSorter
 import com.demn.domain.plugin_management.PluginRepository
@@ -51,6 +50,7 @@ class ProcessInputQueryUseCase(
 private fun PluginCommand.toOperationResult(): OperationResult {
     return CommandOperationResult(
         uuid = uuid,
+        pluginUuid = pluginUuid,
         name = name
     )
 }

@@ -25,7 +25,8 @@ class ParcelableOperationResult private constructor(
     val finalDescription: String? = null,
     val intent: Intent? = null,
     val commandName: String? = null,
-    val commandUuid: ParcelUuid? = null
+    val commandUuid: ParcelUuid? = null,
+    val commandPluginUuid: ParcelUuid? = null
 ) : Parcelable {
     companion object {
         /**
@@ -48,6 +49,7 @@ class ParcelableOperationResult private constructor(
                 is CommandOperationResult -> ParcelableOperationResult(
                     commandUuid = operationResult.uuid.toParcelUuid(),
                     commandName = operationResult.name,
+                    commandPluginUuid = operationResult.pluginUuid.toParcelUuid()
                 )
             }
         }
@@ -78,9 +80,10 @@ fun ParcelableOperationResult.toOperationResult(): OperationResult {
         )
     }
 
-    if (commandUuid != null && commandName != null) { // TODO: write tests for this case
+    if (commandUuid != null && commandName != null && commandPluginUuid != null) { // TODO: write tests for this case
         return CommandOperationResult(
             uuid = commandUuid.uuid,
+            pluginUuid = commandPluginUuid.uuid,
             name = commandName
         )
     }

@@ -49,7 +49,7 @@ class FooPluginService : Service() {
             override fun executeFallbackCommand(commandUuid: ParcelUuid?, input: String?) = Unit
 
             override fun executeCommand(commandUuid: ParcelUuid?) {
-                TODO("Not yet implemented")
+                println("foo plugin: invoked command $commandUuid")
             }
 
             override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {

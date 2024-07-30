@@ -35,7 +35,7 @@ class BarPluginService : Service() {
             }
 
             override fun executeCommand(commandUuid: ParcelUuid?) {
-                TODO("Not yet implemented")
+                println("bar plugin: invoked command $commandUuid")
             }
 
             override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {

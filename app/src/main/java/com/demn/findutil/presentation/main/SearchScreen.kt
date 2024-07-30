@@ -159,9 +159,12 @@ fun ResultList(
                     rightLabel = result.finalDescription ?: "",
                 )
             }
-            
+
             if (result is CommandOperationResult) {
-                BasicResult(text = "[command] ${result.name}", onResultClick = { /*TODO*/ })
+                BasicResult(
+                    text = "[command] ${result.name}",
+                    onResultClick = { onResultClick(result) }
+                )
             }
         }
     }
