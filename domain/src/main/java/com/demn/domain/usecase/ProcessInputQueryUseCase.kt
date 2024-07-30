@@ -1,6 +1,7 @@
 package com.demn.domain.usecase
 
-import com.demn.domain.data.PluginCacheRepository
+import com.demn.domain.data.PluginCommandCacheRepository
+import com.demn.domain.models.PluginCommand
 import com.demn.domain.plugin_management.OperationResultSorter
 import com.demn.domain.plugin_management.PluginRepository
 import com.demn.domain.settings.PluginAvailabilityRepository
@@ -15,7 +16,7 @@ class ProcessInputQueryUseCase(
     private val pluginRepository: PluginRepository,
     private val operationResultSorter: OperationResultSorter,
     private val pluginAvailabilityRepository: PluginAvailabilityRepository,
-    private val pluginCacheRepository: PluginCacheRepository,
+    private val commandSearcherUseCase: CommandSearcherUseCase,
 ) {
     suspend operator fun invoke(plugins: List<Plugin>, inputQuery: String): List<OperationResult> {
         val availablePlugins = plugins
@@ -23,9 +24,10 @@ class ProcessInputQueryUseCase(
 
         val resultsByAnyInput = getResultsByAnyInput(availablePlugins, inputQuery)
 
-        pluginCacheRepository.getAllPlugins() // TODO
+        val commandResults = commandSearcherUseCase(inputQuery)
+            .map(PluginCommand::toOperationResult)
 
-        return operationResultSorter.sort(resultsByAnyInput)
+        return operationResultSorter.sort(resultsByAnyInput + commandResults)
     }
 
     private suspend fun getResultsByAnyInput(
@@ -43,4 +45,8 @@ class ProcessInputQueryUseCase(
         resultsByAnyInputDefers.awaitAll()
             .flatten()
     }
+}
+
+private fun PluginCommand.toOperationResult(): OperationResult {
+    TODO()
 }

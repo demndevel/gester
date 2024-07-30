@@ -17,7 +17,7 @@ interface ExternalPluginsProvider {
         pluginService: PluginService
     )
 
-    suspend fun getAllCommands(plugin: ExternalPlugin): List<PluginCommand>
+    suspend fun getPluginCommands(plugin: ExternalPlugin): List<PluginCommand>
 
     suspend fun executeCommand(
         uuid: UUID,
@@ -38,4 +38,6 @@ interface ExternalPluginsProvider {
         settingUuid: UUID,
         newValue: String
     )
+
+    suspend fun getPluginCommands(): List<PluginCommand>
 }

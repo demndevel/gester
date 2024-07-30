@@ -13,6 +13,8 @@ interface CorePluginsProvider {
 
     fun getPluginCommands(plugin: BuiltInPlugin): List<PluginCommand>
 
+    fun getAllPluginCommands(): List<PluginCommand>
+
     fun invokePluginCommand(commandUuid: UUID, pluginUuid: UUID)
 
     fun invokePluginFallbackCommand(

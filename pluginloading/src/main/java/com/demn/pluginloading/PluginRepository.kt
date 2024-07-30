@@ -33,7 +33,7 @@ class PluginRepositoryImpl(
     private val corePluginsProvider: CorePluginsProvider,
     private val externalPluginsProvider: ExternalPluginsProvider,
 ) : PluginRepository {
-    private suspend fun fillExternalPlugins(): List<ExternalPlugin> {
+    private suspend fun getExternalPlugins(): List<ExternalPlugin> {
         return externalPluginsProvider.getPluginList()
     }
 
@@ -96,16 +96,7 @@ class PluginRepositoryImpl(
     }
 
     override suspend fun getAllCommands(): List<PluginCommand> {
-        return getPluginList()
-            .flatMap {
-                when (it) {
-                    is BuiltInPlugin -> corePluginsProvider.getPluginCommands(it)
-
-                    is ExternalPlugin -> externalPluginsProvider.getAllCommands(it)
-
-                    else -> emptyList()
-                }
-            }
+        return corePluginsProvider.getAllPluginCommands() + externalPluginsProvider.getPluginCommands()
     }
 
     override suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID) {
@@ -146,7 +137,7 @@ class PluginRepositoryImpl(
     }
 
     override suspend fun getPluginList(): List<Plugin> {
-        val externalPlugins = fillExternalPlugins()
+        val externalPlugins = getExternalPlugins()
         val corePlugins = corePluginsProvider.getPlugins()
 
         return externalPlugins + corePlugins

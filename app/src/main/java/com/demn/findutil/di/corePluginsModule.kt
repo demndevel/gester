@@ -10,7 +10,7 @@ import com.demn.plugins.core_plugins.currencies.CurrenciesPlugin
 import org.koin.dsl.module
 
 val corePluginsModule = module {
-    factory<CorePluginsProvider> {
+    single<CorePluginsProvider> {
         CorePluginsProviderImpl(
             listOf(
                 AppSearchingPlugin(get()),

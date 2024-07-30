@@ -5,17 +5,17 @@ import com.demn.data.entities.PluginWithCommandsDbo
 import com.demn.data.toPluginCache
 import com.demn.data.toPluginWithCommandsDbo
 import com.demn.domain.data.PluginCache
-import com.demn.domain.data.PluginCacheRepository
+import com.demn.domain.data.PluginCommandCacheRepository
 
-class MockPluginCacheRepository() : PluginCacheRepository {
+class MockPluginCommandCacheRepository() : PluginCommandCacheRepository {
     override suspend fun getAllPlugins(): List<PluginCache> = emptyList()
 
     override suspend fun updatePluginCache(pluginCache: PluginCache) = Unit
 }
 
-class PluginCacheRepositoryImpl(
+class PluginCommandCacheRepositoryImpl(
     private val pluginCacheDao: PluginCacheDao
-) : PluginCacheRepository {
+) : PluginCommandCacheRepository {
     override suspend fun getAllPlugins(): List<PluginCache> {
         return pluginCacheDao
             .getPluginsWithCommands()

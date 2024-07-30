@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.os.IBinder
 import com.demn.aidl.PluginAdapter
+import com.demn.domain.data.PluginCommandCacheRepository
 import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginService
@@ -25,7 +26,8 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class ExternalPluginsProviderImpl(
-    private val context: Context
+    private val context: Context,
+    private val pluginCommandCacheRepository: PluginCommandCacheRepository
 ) : ExternalPluginsProvider {
     private inner class PackageBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) = Unit
@@ -86,7 +88,44 @@ class ExternalPluginsProviderImpl(
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
-    override suspend fun getAllCommands(plugin: ExternalPlugin): List<PluginCommand> {
+    private suspend fun getPluginsForCacheUpdate(plugins: List<ExternalPlugin>): List<ExternalPlugin> {
+        val pluginsCache = pluginCommandCacheRepository.getAllPlugins()
+
+        return plugins.mapNotNull { plugin ->
+            val pluginCache = pluginsCache
+                .find { it.pluginUuid == plugin.metadata.pluginUuid }
+
+            if (pluginCache == null) return@mapNotNull plugin
+
+            if (pluginCache.version != plugin.metadata.version) return@mapNotNull plugin
+
+            return@mapNotNull null
+        }
+    }
+
+    private suspend fun updatePluginsCache(plugins: List<ExternalPlugin>) {
+        plugins.forEach { plugin ->
+            val commands = getPluginCommandsDirectly(plugin)
+            pluginCommandCacheRepository.updatePluginCache(
+                plugin.toPluginCache(commands)
+            )
+        }
+    }
+
+    private suspend fun updatePluginCacheIfDeprecated(plugin: ExternalPlugin) {
+        val pluginsCache = pluginCommandCacheRepository.getAllPlugins()
+        val pluginCache = pluginsCache.find { it.pluginUuid == plugin.metadata.pluginUuid }
+
+        if (pluginCache?.version == plugin.metadata.version) return
+        if (pluginCache != null) return
+
+        val commands = getPluginCommandsDirectly(plugin)
+        pluginCommandCacheRepository.updatePluginCache(
+            plugin.toPluginCache(commands)
+        )
+    }
+
+    private suspend fun getPluginCommandsDirectly(plugin: ExternalPlugin): List<PluginCommand> {
         val intent = getIntentForPlugin(plugin.pluginService)
 
         return suspendCoroutine { continuation ->
@@ -99,6 +138,24 @@ class ExternalPluginsProviderImpl(
 
             context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
+    }
+
+    override suspend fun getPluginCommands(plugin: ExternalPlugin): List<PluginCommand> {
+        updatePluginCacheIfDeprecated(plugin)
+
+        return pluginCommandCacheRepository.getAllPlugins()
+            .find { it.pluginUuid == plugin.metadata.pluginUuid }
+            ?.commands
+            ?: emptyList()
+    }
+
+    override suspend fun getPluginCommands(): List<PluginCommand> {
+        val plugins = getPluginList()
+        val pluginsForCacheUpdate = getPluginsForCacheUpdate(plugins)
+        updatePluginsCache(pluginsForCacheUpdate)
+
+        return pluginCommandCacheRepository.getAllPlugins()
+            .flatMap { it.commands }
     }
 
     override suspend fun executeCommand(uuid: UUID, pluginUuid: UUID) {
