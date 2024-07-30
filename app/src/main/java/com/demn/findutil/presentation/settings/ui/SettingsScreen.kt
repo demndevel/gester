@@ -24,6 +24,7 @@ import com.demn.findutil.presentation.settings.ui.states.LoadingState
 import com.demn.findutil.presentation.settings.ui.states.NoDataState
 import com.demn.plugincore.PluginMetadata
 import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.usecase.MockPluginCacheSyncUseCase
 import com.demn.findutil.app_settings.MockPluginAvailabilityRepository
 import com.demn.pluginloading.MockPluginRepository
 import com.demn.pluginloading.MockPluginSettingsRepository
@@ -68,8 +69,9 @@ fun SettingsScreen(
                 onPluginSettingChange = vm::setPluginSetting,
                 onAvailabilityChange = vm::setPluginAvailability,
                 onPluginUninstall = vm::uninstallPlugin,
+                onPluginCacheSync = vm::syncPluginCache,
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxSize(),
             )
         }
     }
@@ -83,6 +85,7 @@ private fun SettingsScreenState(
     onPluginSettingChange: OnPluginSettingChange,
     onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
     onPluginUninstall: (ExternalPlugin) -> Unit,
+    onPluginCacheSync: () -> Unit,
     modifier: Modifier,
 ) {
     when (state) {
@@ -107,7 +110,8 @@ private fun SettingsScreenState(
                 onBooleanFieldUpdate = onBooleanAppSettingUpdate,
                 onAvailabilityChange = onAvailabilityChange,
                 onPluginUninstall = onPluginUninstall,
-                modifier = modifier
+                onPluginCacheSync = onPluginCacheSync,
+                modifier = modifier,
             )
         }
     }
@@ -146,6 +150,7 @@ fun SettingsScreenPreview() {
                 MockPluginRepository(),
                 MockPluginAvailabilityRepository(),
                 MockPluginUninstaller(),
+                MockPluginCacheSyncUseCase()
             )
         )
     }

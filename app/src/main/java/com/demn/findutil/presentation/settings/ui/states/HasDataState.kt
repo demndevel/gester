@@ -25,6 +25,7 @@ fun HasDataState(
     onBooleanFieldUpdate: OnAppBooleanSettingChange,
     onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
     onPluginUninstall: (ExternalPlugin) -> Unit,
+    onPluginCacheSync: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -45,6 +46,7 @@ fun HasDataState(
             onBooleanFieldUpdate = onBooleanFieldUpdate,
             onAvailabilityChange = onAvailabilityChange,
             pluginAvailabilities = state.pluginAvailabilities,
+            onPluginCacheSync = onPluginCacheSync,
             modifier = Modifier.fillMaxWidth()
         )
 

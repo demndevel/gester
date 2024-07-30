@@ -40,4 +40,5 @@ interface ExternalPluginsProvider {
     )
 
     suspend fun getPluginCommands(): List<PluginCommand>
+    suspend fun getPluginCommandsDirectly(plugin: ExternalPlugin): List<PluginCommand>
 }

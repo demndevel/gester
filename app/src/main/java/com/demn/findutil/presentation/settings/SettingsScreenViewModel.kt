@@ -9,6 +9,7 @@ import com.demn.domain.plugin_management.PluginSettingsRepository
 import com.demn.domain.plugin_management.PluginUninstaller
 import com.demn.domain.settings.AppSettingsRepository
 import com.demn.domain.settings.PluginAvailabilityRepository
+import com.demn.domain.usecase.PluginCacheSyncUseCase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -45,7 +46,8 @@ class SettingsScreenViewModel(
     private val appSettingsRepository: AppSettingsRepository,
     private val pluginRepository: PluginRepository,
     private val pluginAvailabilityRepository: PluginAvailabilityRepository,
-    private val pluginUninstaller: PluginUninstaller
+    private val pluginUninstaller: PluginUninstaller,
+    private val pluginCacheSyncUseCase: PluginCacheSyncUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(SettingsScreenVmState())
 
@@ -78,11 +80,18 @@ class SettingsScreenViewModel(
                 .getAllSettingsMetadata()
                 .map { appSetting ->
                     val settingValue = when (appSetting.settingType) {
-                        com.demn.domain.models.AppSettingType.String -> appSettingsRepository.getStringSetting(appSetting.key)
-                        com.demn.domain.models.AppSettingType.Numerous -> appSettingsRepository.getNumerousSetting(appSetting.key)
+                        com.demn.domain.models.AppSettingType.String -> appSettingsRepository.getStringSetting(
+                            appSetting.key
+                        )
+
+                        com.demn.domain.models.AppSettingType.Numerous -> appSettingsRepository.getNumerousSetting(
+                            appSetting.key
+                        )
                             .toString()
 
-                        com.demn.domain.models.AppSettingType.Boolean -> appSettingsRepository.getBooleanSetting(appSetting.key)
+                        com.demn.domain.models.AppSettingType.Boolean -> appSettingsRepository.getBooleanSetting(
+                            appSetting.key
+                        )
                             .toString()
                     }
 
@@ -121,7 +130,8 @@ class SettingsScreenViewModel(
         }
 
         _state.update {
-            val mutableAvailabilities = (it.pluginAvailabilities ?: return@update it).toMutableList()
+            val mutableAvailabilities =
+                (it.pluginAvailabilities ?: return@update it).toMutableList()
             val index = mutableAvailabilities
                 .indexOfFirst { availability -> availability.pluginMetadata.pluginUuid == metadata.pluginUuid }
 
@@ -150,7 +160,10 @@ class SettingsScreenViewModel(
         }
     }
 
-    fun setAppSetting(appSettingMetadata: com.demn.domain.models.AppSettingMetadata, newValue: String) {
+    fun setAppSetting(
+        appSettingMetadata: com.demn.domain.models.AppSettingMetadata,
+        newValue: String
+    ) {
         val validatedSetting = validateAppSetting(appSettingMetadata, newValue)
         updateValidatedAppSetting(appSettingMetadata, validatedSetting)
 
@@ -161,7 +174,10 @@ class SettingsScreenViewModel(
         }
     }
 
-    fun setBooleanAppSetting(appSettingMetadata: com.demn.domain.models.AppSettingMetadata, newValue: Boolean) {
+    fun setBooleanAppSetting(
+        appSettingMetadata: com.demn.domain.models.AppSettingMetadata,
+        newValue: Boolean
+    ) {
         val validatedSetting = ValidatedField.Valid(newValue.toString())
         updateValidatedAppSetting(appSettingMetadata, validatedSetting)
 
@@ -180,7 +196,10 @@ class SettingsScreenViewModel(
 
         val allEditedAppSettings = selectEditedAppSettings(appSettings)
 
-        if (hasInvalidPluginSettings(allEditedPluginSettings) || hasInvalidAppSettings(allEditedAppSettings)) {
+        if (hasInvalidPluginSettings(allEditedPluginSettings) || hasInvalidAppSettings(
+                allEditedAppSettings
+            )
+        ) {
             return
         }
 
@@ -377,5 +396,11 @@ class SettingsScreenViewModel(
         pluginUninstaller.uninstall(externalPlugin)
 
         loadData()
+    }
+
+    fun syncPluginCache() {
+        viewModelScope.launch {
+            pluginCacheSyncUseCase()
+        }
     }
 }

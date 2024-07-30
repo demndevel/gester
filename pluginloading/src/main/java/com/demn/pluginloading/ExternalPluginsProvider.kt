@@ -125,7 +125,7 @@ class ExternalPluginsProviderImpl(
         )
     }
 
-    private suspend fun getPluginCommandsDirectly(plugin: ExternalPlugin): List<PluginCommand> {
+    override suspend fun getPluginCommandsDirectly(plugin: ExternalPlugin): List<PluginCommand> {
         val intent = getIntentForPlugin(plugin.pluginService)
 
         return suspendCoroutine { continuation ->

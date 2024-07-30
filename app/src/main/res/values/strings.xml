@@ -8,4 +8,5 @@
     <string name="app_settings_section_title">App settings</string>
     <string name="uninstall_pluginname">Uninstall</string>
     <string name="use_input_with_fallback_command">Use \"%1$s\" with…</string>
+    <string name="manual_external_plugin_cache_sync">Manual external plugin cache sync</string>
 </resources>
