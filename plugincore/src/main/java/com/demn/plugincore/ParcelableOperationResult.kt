@@ -1,10 +1,13 @@
 package com.demn.plugincore
 
 import android.content.Intent
+import android.os.ParcelUuid
 import android.os.Parcelable
 import com.demn.plugincore.operation_result.BasicOperationResult
+import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
+import com.demn.plugincore.util.toParcelUuid
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -20,7 +23,9 @@ class ParcelableOperationResult private constructor(
     val initialDescription: String? = null,
     val finalText: String? = null,
     val finalDescription: String? = null,
-    val intent: Intent? = null
+    val intent: Intent? = null,
+    val commandName: String? = null,
+    val commandUuid: ParcelUuid? = null
 ) : Parcelable {
     companion object {
         /**
@@ -38,6 +43,11 @@ class ParcelableOperationResult private constructor(
                     initialDescription = operationResult.initialDescription,
                     finalText = operationResult.finalText,
                     finalDescription = operationResult.finalDescription
+                )
+
+                is CommandOperationResult -> ParcelableOperationResult(
+                    commandUuid = operationResult.uuid.toParcelUuid(),
+                    commandName = operationResult.name,
                 )
             }
         }
@@ -65,6 +75,13 @@ fun ParcelableOperationResult.toOperationResult(): OperationResult {
             initialDescription,
             finalText,
             finalDescription
+        )
+    }
+
+    if (commandUuid != null && commandName != null) { // TODO: write tests for this case
+        return CommandOperationResult(
+            uuid = commandUuid.uuid,
+            name = commandName
         )
     }
 

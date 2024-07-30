@@ -54,6 +54,7 @@ fun PluginCache.toPluginWithCommandsDbo(): PluginWithCommandsDbo {
 fun PluginCommand.toPluginCommandDbo(): PluginCommandCacheDbo {
     return PluginCommandCacheDbo(
         commandUuid = uuid,
+        pluginUuid = pluginUuid,
         name = name,
         description = description
     )

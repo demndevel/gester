@@ -6,6 +6,7 @@ import com.demn.domain.plugin_management.OperationResultSorter
 import com.demn.domain.plugin_management.PluginRepository
 import com.demn.domain.settings.PluginAvailabilityRepository
 import com.demn.plugincore.Plugin
+import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -48,5 +49,8 @@ class ProcessInputQueryUseCase(
 }
 
 private fun PluginCommand.toOperationResult(): OperationResult {
-    TODO()
+    return CommandOperationResult(
+        uuid = uuid,
+        name = name
+    )
 }

@@ -18,8 +18,8 @@ class CommandSearcherUseCaseImpl(
     override suspend fun invoke(input: String): List<PluginCommand> {
         val commands = pluginRepository.getAllCommands()
 
-        return commands.filter { command ->
-            command.name.startsWith(input)
+         return commands.filter { command ->
+            command.name.lowercase().contains(input.lowercase())
         }
     }
 }

@@ -65,7 +65,16 @@ class FooPluginService : Service() {
             }
 
             override fun getAllCommands(): MutableList<ParcelablePluginCommand> {
-                TODO("Not yet implemented")
+                return mutableListOf(
+                    ParcelablePluginCommand(
+                        uuid = UUID.fromString("c7b53672-d63a-400a-8148-e93ffa22d6e3"),
+                        name = "Search BitWarden vault"
+                    ),
+                    ParcelablePluginCommand(
+                        uuid = UUID.fromString("3a8680d5-853c-4e5c-aae0-84ec65b6f1d3"),
+                        name = "Look though some items"
+                    ),
+                )
             }
 
             override fun fetchPluginData(): PluginMetadata {

@@ -22,7 +22,7 @@ data class PluginWithCommandsDbo(
 
     @Relation(
         parentColumn = "pluginUuid",
-        entityColumn = "commandUuid"
+        entityColumn = "pluginUuid"
     )
     val commands: List<PluginCommandCacheDbo>
 )
@@ -31,6 +31,7 @@ data class PluginWithCommandsDbo(
 data class PluginCommandCacheDbo(
     @PrimaryKey
     val commandUuid: UUID,
+    val pluginUuid: UUID,
     val name: String,
     val description: String? = null
 )

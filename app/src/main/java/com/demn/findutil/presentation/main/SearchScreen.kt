@@ -24,11 +24,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.demn.data.repo.MockPluginCommandCacheRepository
 import com.demn.data.repo.MockResultFrecencyRepository
+import com.demn.domain.usecase.MockCommandSearcherUseCase
 import com.demn.domain.usecase.ProcessInputQueryUseCase
 import com.demn.findutil.R
 import com.demn.findutil.app_settings.MockPluginAvailabilityRepository
 import com.demn.plugincore.PluginFallbackCommand
 import com.demn.plugincore.operation_result.BasicOperationResult
+import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
 import com.demn.pluginloading.MockOperationResultSorter
@@ -156,6 +158,10 @@ fun ResultList(
                     rightText = result.finalText,
                     rightLabel = result.finalDescription ?: "",
                 )
+            }
+            
+            if (result is CommandOperationResult) {
+                BasicResult(text = "[command] ${result.name}", onResultClick = { /*TODO*/ })
             }
         }
     }
@@ -348,7 +354,7 @@ fun SearchScreenPreview() {
                     MockPluginRepository(),
                     MockOperationResultSorter(),
                     MockPluginAvailabilityRepository(),
-                    MockPluginCommandCacheRepository()
+                    MockCommandSearcherUseCase()
                 ),
                 MockResultFrecencyRepository()
             ),

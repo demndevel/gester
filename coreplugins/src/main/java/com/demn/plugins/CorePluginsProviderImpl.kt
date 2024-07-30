@@ -35,6 +35,10 @@ class CorePluginsProviderImpl(
         return emptyList()
     }
 
+    override fun getAllPluginCommands(): List<PluginCommand> {
+        return plugins.flatMap { it.getPluginCommands() }
+    }
+
     override fun invokePluginCommand(commandUuid: UUID, pluginUuid: UUID) {
         plugins
             .find { it.metadata.pluginUuid == pluginUuid }

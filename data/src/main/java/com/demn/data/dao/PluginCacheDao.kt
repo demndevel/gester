@@ -21,6 +21,9 @@ interface PluginCacheDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPluginCommands(commands: List<PluginCommandCacheDbo>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPluginCommand(command: PluginCommandCacheDbo)
+
     @Transaction
     suspend fun insertPluginWithCommands(pluginWithCommandsDbo: PluginWithCommandsDbo) {
         insertPluginCache(pluginWithCommandsDbo.pluginCacheDbo)

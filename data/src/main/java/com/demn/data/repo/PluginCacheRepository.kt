@@ -3,6 +3,7 @@ package com.demn.data.repo
 import com.demn.data.dao.PluginCacheDao
 import com.demn.data.entities.PluginWithCommandsDbo
 import com.demn.data.toPluginCache
+import com.demn.data.toPluginCommand
 import com.demn.data.toPluginWithCommandsDbo
 import com.demn.domain.data.PluginCache
 import com.demn.domain.data.PluginCommandCacheRepository
