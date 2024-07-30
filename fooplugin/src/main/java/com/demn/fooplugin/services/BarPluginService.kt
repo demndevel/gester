@@ -12,6 +12,7 @@ import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.operation_result.BasicOperationResult
 import java.net.URLEncoder
+import java.util.UUID
 
 class BarPluginService : Service() {
     override fun onBind(intent: Intent?): IBinder {
@@ -42,7 +43,32 @@ class BarPluginService : Service() {
             }
 
             override fun getAllCommands(): MutableList<ParcelablePluginCommand> {
-                return mutableListOf()
+                return mutableListOf(
+                    ParcelablePluginCommand(
+                        uuid = UUID.fromString("94244b9c-8882-49ae-a169-1c2751824dc0"),
+                        name = "Search BitWarden Vault"
+                    ),
+                    ParcelablePluginCommand(
+                        uuid = UUID.fromString("f9e4e3b1-6954-48e9-8fc6-47605468e7ac"),
+                        name = "My Schedule"
+                    ),
+                    ParcelablePluginCommand(
+                        uuid = UUID.fromString("fe6829e5-c3f5-437a-ba55-4cb052a10f34"),
+                        name = "Search through all files"
+                    ),
+                    ParcelablePluginCommand(
+                        uuid = UUID.fromString("e02d112e-96e1-44ed-aaa6-196ffa7b09d9"),
+                        name = "Close all apps"
+                    ),
+                    ParcelablePluginCommand(
+                        uuid = UUID.fromString("7638d491-a901-4355-b260-e1b0315e5212"),
+                        name = "Confetti"
+                    ),
+                    ParcelablePluginCommand(
+                        uuid = UUID.fromString("18708475-e695-43d8-9d5b-37349989a0b0"),
+                        name = "Shutdown"
+                    )
+                )
             }
 
             override fun fetchPluginData(): PluginMetadata {
