@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -143,10 +144,11 @@ fun ResultList(
         modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(results) { result ->
+        itemsIndexed(results) { index, result ->
             if (result is BasicOperationResult) {
                 BasicResult(
                     text = result.text,
+                    isFirst = index == 0,
                     onResultClick = { onResultClick(result) },
                 )
             }
@@ -163,6 +165,7 @@ fun ResultList(
             if (result is CommandOperationResult) {
                 BasicResult(
                     text = "[command] ${result.name}",
+                    isFirst = index == 0,
                     onResultClick = { onResultClick(result) }
                 )
             }
@@ -174,11 +177,25 @@ fun ResultList(
 fun BasicResult(
     text: String,
     onResultClick: () -> Unit,
+    isFirst: Boolean,
     modifier: Modifier = Modifier
 ) {
     Card(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = when (isFirst) {
+                true -> 6.dp
+                false -> 1.dp
+            },
+            pressedElevation = 12.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = when (isFirst) {
+                true -> MaterialTheme.colorScheme.primaryContainer
+                false -> MaterialTheme.colorScheme.surface
+            }
+        ),
         modifier = modifier
-            .clickable { onResultClick() }
+            .clickable { onResultClick() },
     ) {
         Text(
             text = text,
@@ -327,10 +344,21 @@ fun FallbackCommandsResult(
 
 @Preview
 @Composable
-fun BasicResultPreview() {
+fun BasicResultNotFirstPreview() {
     BasicResult(
         text = "help",
-        onResultClick = {}
+        onResultClick = {},
+        false,
+    )
+}
+
+@Preview
+@Composable
+fun BasicResultFirstPreview() {
+    BasicResult(
+        text = "help",
+        onResultClick = {},
+        true,
     )
 }
 
