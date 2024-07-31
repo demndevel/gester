@@ -97,6 +97,12 @@ class SearchScreenViewModel(
             if (operationResult is CommandOperationResult) {
                 pluginRepository.invokeCommand(operationResult.uuid, operationResult.pluginUuid)
             }
+
+            if (operationResult is CommandOperationResult || operationResult is BasicOperationResult) {
+                _state.update {
+                    it.copy(searchBarValue = "")
+                }
+            }
         }
     }
 }
