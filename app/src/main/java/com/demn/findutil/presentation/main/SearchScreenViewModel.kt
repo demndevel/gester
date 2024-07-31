@@ -39,12 +39,7 @@ class SearchScreenViewModel(
             val plugins = pluginRepository.getPluginList()
             val fallbackCommands = pluginRepository.getAllFallbackCommands()
 
-            _state.update {
-                it.copy(
-                    pluginList = plugins,
-                    fallbackCommands = fallbackCommands
-                )
-            }
+            updateSearchBarValue("")
         }
     }
 
