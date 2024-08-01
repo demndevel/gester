@@ -38,8 +38,6 @@ class SearchScreenViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val plugins = pluginRepository.getPluginList()
             val fallbackCommands = pluginRepository.getAllFallbackCommands()
-
-            updateSearchBarValue("")
         }
     }
 
@@ -94,9 +92,7 @@ class SearchScreenViewModel(
             }
 
             if (operationResult is CommandOperationResult || operationResult is BasicOperationResult) {
-                _state.update {
-                    it.copy(searchBarValue = "")
-                }
+                updateSearchBarValue("")
             }
         }
     }
