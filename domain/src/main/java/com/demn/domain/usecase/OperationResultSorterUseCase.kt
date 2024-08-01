@@ -5,6 +5,7 @@ import com.demn.domain.models.ResultFrecency
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operation_result.ResultType
 import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
 import com.frosch2010.fuzzywuzzy_kotlin.ToStringFunction
 
@@ -59,6 +60,15 @@ class OperationResultSorterUseCaseImpl(
         return fuzzySorted
     }
 
+    private class OperationResultTypeComparator : Comparator<ResultType> {
+        override fun compare(o1: ResultType?, o2: ResultType?): Int {
+            if (o1 == ResultType.Information && o2 == ResultType.Information) return 0
+            if (o1 != ResultType.Information && o2 == ResultType.Information) return -1
+
+            return 1
+        }
+    }
+
     private suspend fun sortByFrecency(
         input: String,
         fuzzySorted: List<OperationResult>
@@ -76,6 +86,7 @@ class OperationResultSorterUseCaseImpl(
             .sortedWith(
                 compareByDescending<Pair<OperationResult, ResultFrecency?>> { it.second?.usages }
                     .thenByDescending { it.second?.recency }
+                    .thenByDescending(OperationResultTypeComparator()) { it.first.type }
             )
 
 
