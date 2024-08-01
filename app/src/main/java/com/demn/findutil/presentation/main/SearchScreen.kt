@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -23,10 +22,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.demn.data.repo.MockPluginCommandCacheRepository
 import com.demn.data.repo.MockResultFrecencyRepository
 import com.demn.domain.usecase.MockCommandSearcherUseCase
 import com.demn.domain.usecase.ProcessInputQueryUseCase
+import com.demn.domain.usecase.MockOperationResultSorterUseCase
 import com.demn.findutil.R
 import com.demn.findutil.app_settings.MockPluginAvailabilityRepository
 import com.demn.plugincore.PluginFallbackCommand
@@ -34,7 +33,6 @@ import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
-import com.demn.pluginloading.MockOperationResultSorter
 import com.demn.pluginloading.MockPluginRepository
 import org.koin.androidx.compose.koinViewModel
 import java.util.*
@@ -383,7 +381,7 @@ fun SearchScreenPreview() {
                 MockPluginRepository(),
                 ProcessInputQueryUseCase(
                     MockPluginRepository(),
-                    MockOperationResultSorter(),
+                    MockOperationResultSorterUseCase(),
                     MockPluginAvailabilityRepository(),
                     MockCommandSearcherUseCase()
                 ),

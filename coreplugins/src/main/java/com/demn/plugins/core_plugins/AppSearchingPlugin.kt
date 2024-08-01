@@ -10,6 +10,7 @@ import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.ResultType
 import com.demn.plugins.CorePlugin
+import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
 import java.util.UUID
 
 val appSearchingMetadata = buildPluginMetadata(
@@ -70,30 +71,25 @@ class AppSearchingPlugin(
     override fun invokeAnyInput(input: String): List<OperationResult> {
         if (input.isBlank()) return emptyList()
 
-        val results = getAllApps()
+        val filteredResults = applications
+            .filter {
+                val formattedInput = input
+                    .trimIndent()
+                    .replace(" ", "")
+                    .lowercase()
 
-        val lowercaseInput = input
-            .lowercase()
-            .trim()
+                val formattedAppName = it.name
+                    .trimIndent()
+                    .replace(" ", "")
+                    .lowercase()
 
-        val filteredResults = results.filter {
-            it.text
-                .lowercase()
-                .contains(lowercaseInput)
-        }
+                val ratio = FuzzySearch.tokenSetPartialRatio(formattedInput, formattedAppName)
 
-        val sortedResults = filteredResults.sortedBy { result ->
-            val text = result.text.lowercase()
-
-            when {
-                text == lowercaseInput -> 0
-                text.startsWith(lowercaseInput) -> 1
-                text.contains(lowercaseInput) -> 2
-                else -> 3
+                ratio >= 45
             }
-        }
 
-        return sortedResults
+        return filteredResults
+            .map(CachedApplicationInfo::toOperationResult)
     }
 
     private fun getAllApps(): List<BasicOperationResult> = applications

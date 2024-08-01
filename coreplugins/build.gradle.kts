@@ -40,6 +40,8 @@ dependencies {
     implementation(libs.material)
     implementation(project(":domain"))
 
+    implementation(libs.fuzzywuzzy.kotlin)
+
     testImplementation(kotlin("test"))
 
     androidTestImplementation(libs.androidx.junit)

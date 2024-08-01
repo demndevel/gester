@@ -1,7 +1,6 @@
 package com.demn.domain.usecase
 
 import com.demn.domain.models.PluginCommand
-import com.demn.domain.plugin_management.OperationResultSorter
 import com.demn.domain.plugin_management.PluginRepository
 import com.demn.domain.settings.PluginAvailabilityRepository
 import com.demn.plugincore.Plugin
@@ -14,7 +13,7 @@ import kotlinx.coroutines.withContext
 
 class ProcessInputQueryUseCase(
     private val pluginRepository: PluginRepository,
-    private val operationResultSorter: OperationResultSorter,
+    private val operationResultSorter: OperationResultSorterUseCase,
     private val pluginAvailabilityRepository: PluginAvailabilityRepository,
     private val commandSearcherUseCase: CommandSearcherUseCase,
 ) {
@@ -27,7 +26,7 @@ class ProcessInputQueryUseCase(
         val commandResults = commandSearcherUseCase(inputQuery)
             .map(PluginCommand::toOperationResult)
 
-        return operationResultSorter.sort(resultsByAnyInput + commandResults)
+        return operationResultSorter(inputQuery, resultsByAnyInput + commandResults)
     }
 
     private suspend fun getResultsByAnyInput(

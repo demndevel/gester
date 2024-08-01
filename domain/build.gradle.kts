@@ -41,5 +41,8 @@ java {
 }
 dependencies {
     implementation(project(":plugincore"))
+
+    implementation(libs.fuzzywuzzy.kotlin)
+
     implementation(libs.androidx.activity.compose)
 }
