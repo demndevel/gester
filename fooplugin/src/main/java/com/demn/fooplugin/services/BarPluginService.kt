@@ -11,6 +11,7 @@ import com.demn.plugincore.ParcelablePluginCommand
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.operation_result.BasicOperationResult
+import com.demn.plugincore.operation_result.TransitionOperationResult
 import java.net.URLEncoder
 import java.util.UUID
 
@@ -39,7 +40,19 @@ class BarPluginService : Service() {
             }
 
             override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {
-                return mutableListOf()
+                println(input)
+                return if (input == "5$") {
+                    mutableListOf(
+                        ParcelableOperationResult.buildParcelableOperationResult(
+                            TransitionOperationResult(
+                                initialText = "5$",
+                                initialDescription = "American Dollars USD",
+                                finalText = "500RUB",
+                                finalDescription = "Russian Roubles RUB"
+                            )
+                        )
+                    )
+                } else mutableListOf()
             }
 
             override fun getAllCommands(): MutableList<ParcelablePluginCommand> {
