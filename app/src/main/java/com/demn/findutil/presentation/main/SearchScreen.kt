@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -148,6 +149,7 @@ fun ResultList(
                     text = result.text,
                     isFirst = index == 0,
                     onResultClick = { onResultClick(result) },
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
@@ -157,6 +159,7 @@ fun ResultList(
                     leftLabel = result.initialDescription ?: "",
                     rightText = result.finalText,
                     rightLabel = result.finalDescription ?: "",
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
@@ -164,7 +167,8 @@ fun ResultList(
                 BasicResult(
                     text = "[command] ${result.name}",
                     isFirst = index == 0,
-                    onResultClick = { onResultClick(result) }
+                    onResultClick = { onResultClick(result) },
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
@@ -220,34 +224,49 @@ fun ConversionResult(
 ) {
     Card(
         modifier = modifier
+            .height(IntrinsicSize.Min),
     ) {
-        Column(
+        Row(
             Modifier
                 .padding(16.dp)
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Text(
-                text = leftText,
-                style = MaterialTheme.typography.headlineLarge,
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
-            )
+            ) {
+                Text(
+                    text = leftText,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier
+                )
 
-            Label(leftLabel)
+                Spacer(Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Label(leftLabel)
+            }
 
-            HorizontalDivider()
+            Spacer(modifier = Modifier.width(8.dp))
 
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalDivider(Modifier) // here
 
-            Text(
-                text = rightText,
-                style = MaterialTheme.typography.headlineLarge,
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
-            )
+            ) {
+                Text(
+                    text = rightText,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier
+                )
 
-            Label(rightLabel)
+                Spacer(Modifier.height(8.dp))
+
+                Label(rightLabel)
+            }
         }
     }
 }
@@ -363,12 +382,16 @@ fun BasicResultFirstPreview() {
 @Preview
 @Composable
 fun ConversionResultPreview() {
-    ConversionResult(
-        leftText = "5$",
-        leftLabel = "american dollar",
-        rightText = "500₽",
-        rightLabel = "russian rouble"
-    )
+    Box(Modifier.fillMaxSize()) {
+        ConversionResult(
+            leftText = "5$",
+            leftLabel = "american dollar",
+            rightText = "500₽",
+            rightLabel = "russian rouble",
+//        modifier = Modifier.height(100.dp)
+        )
+    }
+
 }
 
 @Preview
