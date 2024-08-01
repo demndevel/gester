@@ -1,6 +1,7 @@
 package com.demn.domain.usecase
 
 import com.demn.domain.data.ResultFrecencyRepository
+import com.demn.domain.models.ResultFrecency
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.OperationResult
@@ -8,11 +9,14 @@ import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
 import com.frosch2010.fuzzywuzzy_kotlin.ToStringFunction
 
 interface OperationResultSorterUseCase {
-    operator fun invoke(input: String, results: List<OperationResult>): List<OperationResult>
+    suspend operator fun invoke(
+        input: String,
+        results: List<OperationResult>
+    ): List<OperationResult>
 }
 
 class MockOperationResultSorterUseCase : OperationResultSorterUseCase {
-    override operator fun invoke(
+    override suspend operator fun invoke(
         input: String, results: List<OperationResult>
     ): List<OperationResult> {
         return results
@@ -30,19 +34,51 @@ class OperationResultFuzzySearcherToString : ToStringFunction<OperationResult> {
 class OperationResultSorterUseCaseImpl(
     private val resultFrecencyRepository: ResultFrecencyRepository
 ) : OperationResultSorterUseCase {
-    override operator fun invoke(
-        input: String, results: List<OperationResult>
+    override suspend operator fun invoke(
+        input: String,
+        results: List<OperationResult>
     ): List<OperationResult> {
-        // TODO
+        val fuzzySorted = fuzzySort(input, results)
 
+        return sortByFrecency(input, fuzzySorted)
+    }
+
+    private fun fuzzySort(
+        input: String,
+        results: List<OperationResult>
+    ): List<OperationResult> {
         val fuzzyExtracted = FuzzySearch.extractAll(
             query = input,
             choices = results,
             toStringFunction = OperationResultFuzzySearcherToString()
         )
 
-        val fuzzySorted = fuzzyExtracted.sortedByDescending { it.score }
+        val fuzzySorted = fuzzyExtracted
+            .sortedByDescending { it.score }
+            .map { it.referent }
+        return fuzzySorted
+    }
 
-        return fuzzySorted.map { println(it); it.referent }
+    private suspend fun sortByFrecency(
+        input: String,
+        fuzzySorted: List<OperationResult>
+    ): List<OperationResult> {
+        val frecencies = resultFrecencyRepository.getUsagesByInput(input)
+
+        val frecencyMap = frecencies.associateBy { it.resultHashCode }
+
+        val combinedResults = fuzzySorted.map { result ->
+            val frecency = frecencyMap[result.hashCode()]
+            result to frecency
+        }
+
+        val sortedResults = combinedResults
+            .sortedWith(
+                compareByDescending<Pair<OperationResult, ResultFrecency?>> { it.second?.usages }
+                    .thenByDescending { it.second?.recency }
+            )
+
+
+        return sortedResults.map { it.first }
     }
 }
