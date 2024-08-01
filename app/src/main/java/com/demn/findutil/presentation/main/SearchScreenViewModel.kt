@@ -38,6 +38,12 @@ class SearchScreenViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val plugins = pluginRepository.getPluginList()
             val fallbackCommands = pluginRepository.getAllFallbackCommands()
+            _state.update {
+                it.copy(
+                    pluginList = plugins,
+                    fallbackCommands = fallbackCommands
+                )
+            }
         }
     }
 
