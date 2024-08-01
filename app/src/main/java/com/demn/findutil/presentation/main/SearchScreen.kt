@@ -5,9 +5,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -50,7 +52,10 @@ fun SearchScreen(
         vm.loadPlugins()
     }
 
-    Column(modifier) {
+    Column(
+        modifier
+            .verticalScroll(rememberScrollState())
+    ) {
         Spacer(modifier = Modifier.height(48.dp))
 
         SearchBar(
@@ -139,11 +144,11 @@ fun ResultList(
     onResultClick: (OperationResult) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
+    Column(
         modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        itemsIndexed(results) { index, result ->
+        results.forEachIndexed { index, result ->
             if (result is BasicOperationResult) {
                 BasicResult(
                     text = result.text,
@@ -391,7 +396,6 @@ fun ConversionResultPreview() {
 //        modifier = Modifier.height(100.dp)
         )
     }
-
 }
 
 @Preview
