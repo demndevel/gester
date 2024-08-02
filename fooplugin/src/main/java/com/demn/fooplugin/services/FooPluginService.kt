@@ -1,14 +1,18 @@
 package com.demn.fooplugin.services
 
 import android.app.Service
+import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
 import android.os.ParcelUuid
+import androidx.core.content.res.ResourcesCompat
 import com.demn.aidl.PluginAdapter
+import com.demn.fooplugin.R
 import com.demn.plugincore.*
 import com.demn.plugincore.ParcelableOperationResult.Companion.buildParcelableOperationResult
 import com.demn.plugincore.operation_result.BasicOperationResult
+import com.demn.plugincore.operation_result.IconOperationResult
 import com.demn.plugincore.operation_result.ResultType
 import java.util.UUID
 
@@ -53,12 +57,28 @@ class FooPluginService : Service() {
             }
 
             override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {
+                val drawableUri = Uri.Builder()
+                    .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                    .authority(resources.getResourcePackageName(R.drawable.save_icon))
+                    .appendPath(resources.getResourceTypeName(R.drawable.save_icon))
+                    .appendPath(resources.getResourceEntryName(R.drawable.save_icon))
+                    .build()
+
+                println(drawableUri)
+
                 return mutableListOf(
                     buildParcelableOperationResult(
                         BasicOperationResult(
                             text = "github.com",
                             intent = getLaunchWebPageIntent("https://github.com"),
                             type = ResultType.WebLink
+                        )
+                    ),
+                    buildParcelableOperationResult(
+                        IconOperationResult(
+                            text = "Some icon result",
+                            intent = null,
+                            iconUri = drawableUri,
                         )
                     )
                 )

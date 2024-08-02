@@ -2,11 +2,13 @@ package com.demn.plugins.core_plugins
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import com.demn.domain.models.PluginCommand
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.buildPluginMetadata
 import com.demn.plugincore.operation_result.BasicOperationResult
+import com.demn.plugincore.operation_result.IconOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.ResultType
 import com.demn.plugins.CorePlugin
@@ -33,11 +35,13 @@ class AppSearchingPlugin(
 
     private data class CachedApplicationInfo(
         val name: String,
-        val intent: Intent
+        val intent: Intent,
+        val iconUri: Uri
     ) {
-        fun toOperationResult(): BasicOperationResult {
-            return BasicOperationResult(
+        fun toOperationResult(): OperationResult {
+            return IconOperationResult(
                 text = name,
+                iconUri = iconUri,
                 intent = intent,
                 type = ResultType.Application
             )
@@ -55,8 +59,11 @@ class AppSearchingPlugin(
             val intent =
                 packageManager.getLaunchIntentForPackage(resolveInfo.activityInfo.packageName)
 
+            val iconUri = Uri.parse("android.resource://${resolveInfo.activityInfo.packageName}/drawable/${resolveInfo.iconResource}")
+
             CachedApplicationInfo(
                 name = label,
+                iconUri = iconUri,
                 intent = intent ?: return@mapNotNull null
             )
         }
@@ -92,7 +99,7 @@ class AppSearchingPlugin(
             .map(CachedApplicationInfo::toOperationResult)
     }
 
-    private fun getAllApps(): List<BasicOperationResult> = applications
+    private fun getAllApps(): List<OperationResult> = applications
         .map(CachedApplicationInfo::toOperationResult)
 
     override fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit

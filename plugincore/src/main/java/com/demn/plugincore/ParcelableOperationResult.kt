@@ -1,11 +1,14 @@
 package com.demn.plugincore
 
 import android.content.Intent
+import android.net.Uri
 import android.os.ParcelUuid
 import android.os.Parcelable
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.CommandOperationResult
+import com.demn.plugincore.operation_result.IconOperationResult
 import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operation_result.ResultType
 import com.demn.plugincore.operation_result.TransitionOperationResult
 import com.demn.plugincore.util.toParcelUuid
 import kotlinx.parcelize.Parcelize
@@ -17,8 +20,10 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 class ParcelableOperationResult private constructor(
+    val resultType: ResultType,
     val text: String? = null,
     val description: String? = null,
+    val iconUri: Uri? = null,
     val initialText: String? = null,
     val initialDescription: String? = null,
     val finalText: String? = null,
@@ -26,7 +31,7 @@ class ParcelableOperationResult private constructor(
     val intent: Intent? = null,
     val commandName: String? = null,
     val commandUuid: ParcelUuid? = null,
-    val commandPluginUuid: ParcelUuid? = null
+    val commandPluginUuid: ParcelUuid? = null,
 ) : Parcelable {
     companion object {
         /**
@@ -36,20 +41,30 @@ class ParcelableOperationResult private constructor(
             return when (operationResult) {
                 is BasicOperationResult -> ParcelableOperationResult(
                     text = operationResult.text,
-                    intent = operationResult.intent
+                    intent = operationResult.intent,
+                    resultType = operationResult.type
                 )
 
                 is TransitionOperationResult -> ParcelableOperationResult(
                     initialText = operationResult.initialText,
                     initialDescription = operationResult.initialDescription,
                     finalText = operationResult.finalText,
-                    finalDescription = operationResult.finalDescription
+                    finalDescription = operationResult.finalDescription,
+                    resultType = operationResult.type
                 )
 
                 is CommandOperationResult -> ParcelableOperationResult(
                     commandUuid = operationResult.uuid.toParcelUuid(),
                     commandName = operationResult.name,
-                    commandPluginUuid = operationResult.pluginUuid.toParcelUuid()
+                    commandPluginUuid = operationResult.pluginUuid.toParcelUuid(),
+                    resultType = operationResult.type
+                )
+
+                is IconOperationResult -> ParcelableOperationResult(
+                    text = operationResult.text,
+                    intent = operationResult.intent,
+                    iconUri = operationResult.iconUri,
+                    resultType = operationResult.type
                 )
             }
         }
@@ -64,6 +79,14 @@ class ParcelableOperationResult private constructor(
  * @throws[IllegalArgumentException] when the incorrect parameters entered
  */
 fun ParcelableOperationResult.toOperationResult(): OperationResult {
+    if (text != null && iconUri != null) {
+        return IconOperationResult(
+            text = text,
+            intent = intent,
+            iconUri = iconUri
+        )
+    }
+
     if (text != null) {
         return BasicOperationResult(
             text,

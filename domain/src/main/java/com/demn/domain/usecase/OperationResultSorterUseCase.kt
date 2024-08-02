@@ -4,6 +4,7 @@ import com.demn.domain.data.ResultFrecencyRepository
 import com.demn.domain.models.ResultFrecency
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.CommandOperationResult
+import com.demn.plugincore.operation_result.IconOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.ResultType
 import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
@@ -28,6 +29,7 @@ class OperationResultFuzzySearcherToString : ToStringFunction<OperationResult> {
     override fun apply(item: OperationResult): String {
         if (item is CommandOperationResult) return item.name
         if (item is BasicOperationResult) return item.text
+        if (item is IconOperationResult) return item.text
         return ""
     }
 }

@@ -1,11 +1,11 @@
 package com.demn.findutil.presentation.main
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,12 +19,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.demn.data.repo.MockResultFrecencyRepository
 import com.demn.domain.usecase.MockCommandSearcherUseCase
 import com.demn.domain.usecase.ProcessInputQueryUseCase
@@ -34,6 +37,7 @@ import com.demn.findutil.app_settings.MockPluginAvailabilityRepository
 import com.demn.plugincore.PluginFallbackCommand
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.CommandOperationResult
+import com.demn.plugincore.operation_result.IconOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
 import com.demn.pluginloading.MockPluginRepository
@@ -152,6 +156,16 @@ fun ResultList(
             if (result is BasicOperationResult) {
                 BasicResult(
                     text = result.text,
+                    onResultClick = { onResultClick(result) },
+                    isFirst = index == 0,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+
+            if (result is IconOperationResult) {
+                BasicResult(
+                    text = result.text,
+                    iconUri = result.iconUri,
                     isFirst = index == 0,
                     onResultClick = { onResultClick(result) },
                     modifier = Modifier.fillMaxWidth()
@@ -171,9 +185,9 @@ fun ResultList(
             if (result is CommandOperationResult) {
                 BasicResult(
                     text = "[command] ${result.name}",
-                    isFirst = index == 0,
                     onResultClick = { onResultClick(result) },
-                    modifier = Modifier.fillMaxWidth()
+                    isFirst = index == 0,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
@@ -185,7 +199,8 @@ fun BasicResult(
     text: String,
     onResultClick: () -> Unit,
     isFirst: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    iconUri: Uri? = null,
 ) {
     Card(
         elevation = CardDefaults.cardElevation(
@@ -204,19 +219,46 @@ fun BasicResult(
         modifier = modifier
             .clickable { onResultClick() },
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.headlineMedium,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 16.dp,
-                    bottom = 8.dp
+                .padding(8.dp)
+                .fillMaxWidth(),
+        ) {
+            iconUri?.let {
+                UriIcon(
+                    iconUri = it,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape),
                 )
-        )
+            }
+
+            Spacer(Modifier.width(8.dp))
+
+            Text(
+                text = text,
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier
+                    .weight(1f)
+            )
+        }
     }
+}
+
+@Composable
+private fun UriIcon(
+    iconUri: Uri,
+    modifier: Modifier = Modifier
+) {
+    AsyncImage(
+        ImageRequest.Builder(LocalContext.current)
+            .data(iconUri)
+            .build(),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+    )
 }
 
 @Composable
@@ -371,6 +413,7 @@ fun BasicResultNotFirstPreview() {
         text = "help",
         onResultClick = {},
         false,
+        iconUri = null,
     )
 }
 
@@ -381,6 +424,7 @@ fun BasicResultFirstPreview() {
         text = "help",
         onResultClick = {},
         true,
+        iconUri = null,
     )
 }
 

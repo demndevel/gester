@@ -10,6 +10,7 @@ import com.demn.plugincore.Plugin
 import com.demn.plugincore.PluginFallbackCommand
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.CommandOperationResult
+import com.demn.plugincore.operation_result.IconOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -93,11 +94,15 @@ class SearchScreenViewModel(
                 operationResult.intent?.let { runIntent(it) }
             }
 
+            if (operationResult is IconOperationResult) {
+                operationResult.intent?.let { runIntent(it) }
+            }
+
             if (operationResult is CommandOperationResult) {
                 pluginRepository.invokeCommand(operationResult.uuid, operationResult.pluginUuid)
             }
 
-            if (operationResult is CommandOperationResult || operationResult is BasicOperationResult) {
+            if (operationResult is CommandOperationResult || operationResult is BasicOperationResult || operationResult is IconOperationResult) {
                 updateSearchBarValue("")
             }
         }
