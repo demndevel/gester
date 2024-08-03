@@ -91,6 +91,8 @@ fun SearchScreen(
                 onResultClick = { vm.executeResult(it, context::startActivity) },
                 Modifier
             )
+
+            Spacer(Modifier.height(4.dp))
         }
 
         if (vm.searchBarState.isNotBlank()) {
