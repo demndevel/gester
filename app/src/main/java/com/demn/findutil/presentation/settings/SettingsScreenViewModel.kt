@@ -1,5 +1,6 @@
 package com.demn.findutil.presentation.settings
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.demn.plugincore.*
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
+@Immutable
 private data class SettingsScreenVmState(
     val isLoading: Boolean = false,
     val pluginSettingsSections: List<PluginSettingsSection>? = null,
@@ -207,15 +209,15 @@ class SettingsScreenViewModel(
 
         viewModelScope.launch {
             saveAllPluginSettings(allEditedPluginSettings)
-        }
 
-        _state.update {
-            it.copy(
-                saveButtonVisible = false
-            )
-        }
+            _state.update {
+                it.copy(
+                    saveButtonVisible = false
+                )
+            }
 
-        loadData()
+            loadData()
+        }
     }
 
     private fun saveAllAppSettings(appSettingsFields: List<SettingField<com.demn.domain.models.AppSettingMetadata>>) {
@@ -264,10 +266,10 @@ class SettingsScreenViewModel(
         pluginSettings.any { it.validatedField is ValidatedField.Invalid }
 
     private suspend fun saveAllPluginSettings(allPluginSettings: List<SettingField<PluginSetting>>) {
-        val deferredList = allPluginSettings
-            .map { settingField ->
-                coroutineScope {
-                    async {
+        val deferredList =
+            allPluginSettings
+                .map { settingField ->
+                    viewModelScope.async {
                         val value = settingField.validatedField.field
 
                         pluginSettingsRepository.set(
@@ -277,7 +279,6 @@ class SettingsScreenViewModel(
                         )
                     }
                 }
-            }
 
         deferredList.awaitAll()
     }
