@@ -1,5 +1,6 @@
 package com.demn.findutil.presentation.main
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,6 +25,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,9 +45,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -73,11 +82,63 @@ fun SearchScreen(
 ) {
     val context = LocalContext.current
     val state by vm.state.collectAsState()
+    val searchBarFocusRequester = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {
         vm.loadPlugins()
     }
 
+    Box(
+        modifier
+    ) {
+        SearchScreenContent(
+            vm,
+            state,
+            context,
+            searchBarFocusRequester,
+            Modifier
+                .fillMaxSize()
+                .align(Alignment.Center)
+                .imePadding(),
+        )
+
+        ShowKeyboardButton(
+            onClick = { keyboard?.show() },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+        )
+    }
+}
+
+@Composable
+private fun ShowKeyboardButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = onClick,
+        colors = IconButtonDefaults.filledIconButtonColors(),
+        modifier = modifier
+            .size(48.dp)
+    ) {
+        Icon(
+            painterResource(R.drawable.keyboard_icon),
+            contentDescription = null,
+            modifier = Modifier
+                .size(24.dp)
+        )
+    }
+}
+
+@Composable
+private fun SearchScreenContent(
+    vm: SearchScreenViewModel,
+    state: SearchScreenState,
+    context: Context,
+    focusRequester: FocusRequester,
+    modifier: Modifier = Modifier,
+) {
     LazyColumn(
         modifier
     ) {
@@ -85,6 +146,7 @@ fun SearchScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             SearchBar(
+                focusRequester = focusRequester,
                 searchBarValue = vm.searchBarState,
                 onSearchBarValueChange = vm::updateSearchBarValue,
                 onEnterClick = {
@@ -128,12 +190,13 @@ fun SearchScreen(
 
 @Composable
 fun SearchBar(
+    focusRequester: FocusRequester,
     searchBarValue: String,
     onSearchBarValueChange: (String) -> Unit,
     onEnterClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val focusRequester = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -167,7 +230,8 @@ fun SearchBar(
         minLines = 1,
         modifier = modifier
             .focusRequester(focusRequester)
-            .shadow(elevation = 6.dp, shape = RoundedCornerShape(16.dp)),
+            .shadow(elevation = 6.dp, shape = RoundedCornerShape(16.dp))
+            .onFocusChanged { if (it.hasFocus) keyboard?.show() },
     )
 }
 
