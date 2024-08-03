@@ -1,6 +1,10 @@
 package com.demn.findutil.presentation.main
 
 import android.content.Intent
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.demn.domain.data.ResultFrecencyRepository
@@ -13,14 +17,18 @@ import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.IconOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+@Immutable
 data class SearchScreenState(
-    val searchBarValue: String = "",
     val searchResults: List<OperationResult> = emptyList(),
     val pluginList: List<Plugin> = emptyList(),
     val fallbackCommands: List<PluginFallbackCommand> = emptyList()
@@ -34,6 +42,9 @@ class SearchScreenViewModel(
     private val _state = MutableStateFlow(SearchScreenState())
 
     val state = _state.asStateFlow()
+
+    var searchBarState by mutableStateOf("")
+        private set
 
     fun loadPlugins() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -51,29 +62,24 @@ class SearchScreenViewModel(
     fun invokeFallbackCommand(id: UUID) {
         viewModelScope.launch {
             pluginRepository.invokeFallbackCommand(
-                input = state.value.searchBarValue,
+                input = searchBarState,
                 commandUuid = id
             )
         }
     }
 
     fun updateSearchBarValue(newValue: String) {
-        if (newValue.isEmpty()) {
+        if (newValue.isBlank()) {
+            searchBarState = newValue
             _state.update {
-                it.copy(
-                    searchBarValue = newValue,
-                    searchResults = emptyList()
-                )
+                it.copy(searchResults = emptyList())
             }
-
             return
         }
 
-        _state.update {
-            it.copy(searchBarValue = newValue)
-        }
+        searchBarState = newValue
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val results = processQueryUseCase(_state.value.pluginList, newValue)
 
             _state.update {
@@ -85,7 +91,7 @@ class SearchScreenViewModel(
     fun executeResult(operationResult: OperationResult, runIntent: (Intent) -> Unit) {
         viewModelScope.launch {
             resultFrecencyRepository.incrementUsages(
-                state.value.searchBarValue,
+                searchBarState,
                 hashCode = operationResult.hashCode(),
                 recencyTimestamp = System.currentTimeMillis()
             )

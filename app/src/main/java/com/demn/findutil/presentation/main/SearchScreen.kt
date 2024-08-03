@@ -1,9 +1,14 @@
 package com.demn.findutil.presentation.main
 
 import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,43 +61,48 @@ fun SearchScreen(
         vm.loadPlugins()
     }
 
-    Column(
+    LazyColumn(
         modifier
-            .verticalScroll(rememberScrollState())
     ) {
-        Spacer(modifier = Modifier.height(48.dp))
+        item {
+            Spacer(modifier = Modifier.height(48.dp))
 
-        SearchBar(
-            searchBarValue = state.searchBarValue,
-            onSearchBarValueChange = vm::updateSearchBarValue,
-            onEnterClick = {
-                val firstResult = state.searchResults.firstOrNull()
+            SearchBar(
+                searchBarValue = vm.searchBarState,
+                onSearchBarValueChange = vm::updateSearchBarValue,
+                onEnterClick = {
+                    val firstResult = state.searchResults.firstOrNull()
 
-                firstResult?.let {
-                    vm.executeResult(firstResult, context::startActivity)
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        ResultList(
-            results = state.searchResults,
-            onResultClick = { vm.executeResult(it, context::startActivity) },
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (state.searchBarValue.isNotBlank()) {
-            FallbackCommandsResultsList(
-                currentInput = state.searchBarValue,
-                fallbackCommands = state.fallbackCommands,
-                onFallbackCommandClick = vm::invokeFallbackCommand
+                    firstResult?.let {
+                        vm.executeResult(firstResult, context::startActivity)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        itemsIndexed(state.searchResults) { index, item ->
+            ResultItem(
+                item,
+                index,
+                onResultClick = { vm.executeResult(it, context::startActivity) },
+                Modifier
+            )
+        }
+
+        if (vm.searchBarState.isNotBlank()) {
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                FallbackCommandsResultsList(
+                    currentInput = vm.searchBarState,
+                    fallbackCommands = state.fallbackCommands,
+                    onFallbackCommandClick = vm::invokeFallbackCommand
+                )
+            }
         }
     }
 }
@@ -143,54 +153,48 @@ fun SearchBar(
 }
 
 @Composable
-fun ResultList(
-    results: List<OperationResult>,
+fun ResultItem(
+    result: OperationResult,
+    index: Int,
     onResultClick: (OperationResult) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        results.forEachIndexed { index, result ->
-            if (result is BasicOperationResult) {
-                BasicResult(
-                    text = result.text,
-                    onResultClick = { onResultClick(result) },
-                    isFirst = index == 0,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
+    if (result is BasicOperationResult) {
+        BasicResult(
+            text = result.text,
+            onResultClick = { onResultClick(result) },
+            isFirst = index == 0,
+            modifier = modifier.fillMaxWidth(),
+        )
+    }
 
-            if (result is IconOperationResult) {
-                BasicResult(
-                    text = result.text,
-                    iconUri = result.iconUri,
-                    isFirst = index == 0,
-                    onResultClick = { onResultClick(result) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+    if (result is IconOperationResult) {
+        BasicResult(
+            text = result.text,
+            iconUri = result.iconUri,
+            isFirst = index == 0,
+            onResultClick = { onResultClick(result) },
+            modifier = modifier.fillMaxWidth()
+        )
+    }
 
-            if (result is TransitionOperationResult) {
-                ConversionResult(
-                    leftText = result.initialText,
-                    leftLabel = result.initialDescription ?: "",
-                    rightText = result.finalText,
-                    rightLabel = result.finalDescription ?: "",
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+    if (result is TransitionOperationResult) {
+        ConversionResult(
+            leftText = result.initialText,
+            leftLabel = result.initialDescription ?: "",
+            rightText = result.finalText,
+            rightLabel = result.finalDescription ?: "",
+            modifier = modifier.fillMaxWidth()
+        )
+    }
 
-            if (result is CommandOperationResult) {
-                BasicResult(
-                    text = "[command] ${result.name}",
-                    onResultClick = { onResultClick(result) },
-                    isFirst = index == 0,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        }
+    if (result is CommandOperationResult) {
+        BasicResult(
+            text = "[command] ${result.name}",
+            onResultClick = { onResultClick(result) },
+            isFirst = index == 0,
+            modifier = modifier.fillMaxWidth(),
+        )
     }
 }
 
