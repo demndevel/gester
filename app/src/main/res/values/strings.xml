@@ -9,4 +9,10 @@
     <string name="uninstall_pluginname">Uninstall</string>
     <string name="use_input_with_fallback_command">Use \"%1$s\" with…</string>
     <string name="manual_external_plugin_cache_sync">Manual external plugin cache sync</string>
+    <string name="other_result_type">Other</string>
+    <string name="application_result_type">Application</string>
+    <string name="command_result_type">Command</string>
+    <string name="alias_result_type">Alias</string>
+    <string name="weblink_result_type">Web link</string>
+    <string name="information_result_type">Info</string>
 </resources>

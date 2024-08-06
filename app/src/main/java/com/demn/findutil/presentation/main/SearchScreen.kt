@@ -3,6 +3,7 @@ package com.demn.findutil.presentation.main
 import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,17 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -70,6 +61,7 @@ import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.IconOperationResult
 import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operation_result.ResultType
 import com.demn.plugincore.operation_result.TransitionOperationResult
 import com.demn.pluginloading.MockPluginRepository
 import org.koin.androidx.compose.koinViewModel
@@ -248,6 +240,7 @@ fun ResultItem(
             onResultClick = { onResultClick(result) },
             isFirst = index == 0,
             modifier = modifier.fillMaxWidth(),
+            resultType = result.type
         )
     }
 
@@ -257,7 +250,8 @@ fun ResultItem(
             iconUri = result.iconUri,
             isFirst = index == 0,
             onResultClick = { onResultClick(result) },
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth(),
+            resultType = result.type
         )
     }
 
@@ -277,6 +271,7 @@ fun ResultItem(
             onResultClick = { onResultClick(result) },
             isFirst = index == 0,
             modifier = modifier.fillMaxWidth(),
+            resultType = result.type
         )
     }
 }
@@ -288,6 +283,7 @@ fun BasicResult(
     isFirst: Boolean,
     modifier: Modifier = Modifier,
     iconUri: Uri? = null,
+    resultType: ResultType = ResultType.Other
 ) {
     Card(
         elevation = CardDefaults.cardElevation(
@@ -319,9 +315,9 @@ fun BasicResult(
                         .size(32.dp)
                         .clip(CircleShape),
                 )
-            }
 
-            Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(8.dp))
+            }
 
             Text(
                 text = text,
@@ -329,7 +325,40 @@ fun BasicResult(
                 modifier = Modifier
                     .weight(1f)
             )
+
+            Spacer(Modifier.width(8.dp))
+
+            Text(
+                text = getResultTypeText(resultType),
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier
+                    .border(
+                        1.dp,
+                        color = LocalContentColor.current,
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    .padding(4.dp)
+            )
         }
+    }
+}
+
+@Composable
+fun getResultTypeText(type: ResultType): String {
+    return when (type) {
+        ResultType.Command -> stringResource(R.string.command_result_type)
+
+        ResultType.Alias -> stringResource(R.string.alias_result_type)
+
+        ResultType.WebLink -> stringResource(R.string.weblink_result_type)
+
+        ResultType.Information -> stringResource(R.string.information_result_type)
+
+        ResultType.Application -> stringResource(R.string.application_result_type)
+
+        ResultType.Other -> stringResource(R.string.other_result_type)
+
+        else -> type.name
     }
 }
 

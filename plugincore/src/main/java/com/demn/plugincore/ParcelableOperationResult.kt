@@ -83,14 +83,16 @@ fun ParcelableOperationResult.toOperationResult(): OperationResult {
         return IconOperationResult(
             text = text,
             intent = intent,
-            iconUri = iconUri
+            iconUri = iconUri,
+            resultType
         )
     }
 
     if (text != null) {
         return BasicOperationResult(
             text,
-            intent
+            intent,
+            resultType
         )
     }
 
