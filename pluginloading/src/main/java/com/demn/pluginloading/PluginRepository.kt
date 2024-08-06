@@ -96,7 +96,7 @@ class PluginRepositoryImpl(
     }
 
     override suspend fun getAllCommands(): List<PluginCommand> {
-        return corePluginsProvider.getAllPluginCommands() + externalPluginsProvider.getPluginCommands()
+        return corePluginsProvider.getAllPluginCommands() + externalPluginsProvider.getAllPluginCommands()
     }
 
     override suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID) {

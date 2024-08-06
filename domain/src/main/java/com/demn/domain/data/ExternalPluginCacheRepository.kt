@@ -1,21 +1,18 @@
 package com.demn.domain.data
 
-import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.models.PluginCommand
-import com.demn.plugincore.Plugin
+import com.demn.plugincore.PluginMetadata
 import java.util.UUID
 
-interface PluginCommandCacheRepository {
+interface ExternalPluginCacheRepository {
     suspend fun getAllPlugins(): List<PluginCache>
+
+    suspend fun getPluginCache(uuid: UUID): PluginCache?
 
     suspend fun updatePluginCache(pluginCache: PluginCache)
 }
 
 data class PluginCache(
-    val pluginUuid: UUID,
-    val name: String,
-    val description: String? = null,
-    val version: String,
-    val consumeAnyInput: Boolean = false,
+    val pluginMetadata: PluginMetadata,
     val commands: List<PluginCommand>
 )

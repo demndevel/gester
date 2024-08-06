@@ -15,11 +15,7 @@ fun ParcelablePluginCommand.toPluginCommand(pluginUuid: UUID): PluginCommand = P
 
 fun ExternalPlugin.toPluginCache(commands: List<PluginCommand>): PluginCache {
     return PluginCache(
-        pluginUuid = metadata.pluginUuid,
-        name = metadata.pluginName,
-        description = metadata.description,
-        version = metadata.version,
-        consumeAnyInput = metadata.consumeAnyInput,
+        pluginMetadata = metadata,
         commands = commands
     )
 }

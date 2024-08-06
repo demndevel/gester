@@ -7,6 +7,9 @@ import com.demn.data.entities.ResultFrecencyDbo
 import com.demn.domain.data.PluginCache
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.ResultFrecency
+import com.demn.plugincore.PluginMetadata
+import com.demn.plugincore.PluginVersion
+import com.demn.plugincore.buildPluginMetadata
 import java.util.UUID
 
 fun ResultFrecencyDbo.toResultFrecency(): ResultFrecency {
@@ -29,11 +32,14 @@ fun PluginCommandCacheDbo.toPluginCommand(pluginUuid: UUID): PluginCommand {
 
 fun PluginWithCommandsDbo.toPluginCache(): PluginCache {
     return PluginCache(
-        pluginUuid = pluginCacheDbo.pluginUuid,
-        name = pluginCacheDbo.pluginName,
-        description = pluginCacheDbo.description,
-        version = pluginCacheDbo.version,
-        consumeAnyInput = pluginCacheDbo.consumeAnyInput,
+        pluginMetadata = buildPluginMetadata(
+            pluginUuid = pluginCacheDbo.pluginUuid,
+            pluginName = pluginCacheDbo.pluginName
+        ) {
+            description = pluginCacheDbo.description
+            version = PluginVersion(pluginCacheDbo.versionMajor, pluginCacheDbo.versionMinor)
+            consumeAnyInput = pluginCacheDbo.consumeAnyInput
+        },
         commands = commands.map { it.toPluginCommand(pluginCacheDbo.pluginUuid) }
     )
 }
@@ -41,11 +47,12 @@ fun PluginWithCommandsDbo.toPluginCache(): PluginCache {
 fun PluginCache.toPluginWithCommandsDbo(): PluginWithCommandsDbo {
     return PluginWithCommandsDbo(
         pluginCacheDbo = PluginCacheDbo(
-            pluginUuid = pluginUuid,
-            pluginName = name,
-            description = description,
-            version = version,
-            consumeAnyInput = consumeAnyInput
+            pluginMetadata.pluginUuid,
+            pluginMetadata.pluginName,
+            pluginMetadata.description,
+            pluginMetadata.version.major,
+            pluginMetadata.version.minor,
+            pluginMetadata.consumeAnyInput
         ),
         commands = commands.map(PluginCommand::toPluginCommandDbo)
     )

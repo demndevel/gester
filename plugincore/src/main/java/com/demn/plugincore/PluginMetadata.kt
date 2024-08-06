@@ -11,7 +11,6 @@ import java.util.UUID
  * @param[description] can be null
  * @param[version] version of the plugin
  * @param[consumeAnyInput] this means that the plugin can accept any input without specific regexp. Example: app search plugin that looks for plugins just by typing the text
- * @param[commands] command list of [PluginCommand]
  * @param[fallbackCommands] fallback command list of [PluginFallbackCommand]
  */
 @Parcelize
@@ -19,7 +18,7 @@ data class PluginMetadata internal constructor(
     val pluginUuid: UUID,
     val pluginName: String,
     val description: String? = null,
-    val version: String,
+    val version: PluginVersion,
     val consumeAnyInput: Boolean = false,
     val fallbackCommands: List<PluginFallbackCommand> = emptyList()
 ) : Parcelable
@@ -47,7 +46,7 @@ fun buildPluginMetadata(
 class PluginMetadataBuilder {
     private val fallbackCommands = mutableListOf<PluginFallbackCommand>()
 
-    var version: String = "0"
+    var version: PluginVersion = PluginVersion(0, 0)
     var description: String? = null
     var consumeAnyInput: Boolean = false
 

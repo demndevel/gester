@@ -8,12 +8,17 @@ import androidx.room.Transaction
 import com.demn.data.entities.PluginCacheDbo
 import com.demn.data.entities.PluginCommandCacheDbo
 import com.demn.data.entities.PluginWithCommandsDbo
+import java.util.UUID
 
 @Dao
 interface PluginCacheDao {
     @Transaction
     @Query("SELECT * FROM PluginCacheDbo")
     suspend fun getPluginsWithCommands(): List<PluginWithCommandsDbo>
+
+    @Transaction
+    @Query("SELECT * FROM PluginCacheDbo WHERE pluginUuid = :uuid")
+    suspend fun getPluginWithCommands(uuid: UUID): PluginWithCommandsDbo?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPluginCache(pluginCacheDbo: PluginCacheDbo)

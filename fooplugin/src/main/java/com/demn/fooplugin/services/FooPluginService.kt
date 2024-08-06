@@ -97,8 +97,12 @@ class FooPluginService : Service() {
                 )
             }
 
-            override fun fetchPluginData(): PluginMetadata {
+            override fun getPluginMetadata(): PluginMetadata {
                 return fooPluginMetadata
+            }
+
+            override fun getPluginSummary(): PluginSummary {
+                return fooPluginSummary
             }
 
             override fun setSetting(settingUuid: ParcelUuid?, newValue: String?) {

@@ -5,14 +5,15 @@ import android.content.Intent
 import android.os.IBinder
 import android.os.ParcelUuid
 import com.demn.aidl.PluginAdapter
-import com.demn.plugincore.ParcelableOperationResult
-import com.demn.plugincore.ParcelablePluginCommand
-import com.demn.plugincore.PluginMetadata
-import com.demn.plugincore.PluginSetting
-import com.demn.plugincore.buildPluginMetadata
+import com.demn.plugincore.*
 import java.util.UUID
 
 class PluginWithSubmenuService : Service() {
+    private val summary = PluginSummary(
+        UUID.fromString("890ec932-ea09-4713-bb2e-674fba343d3f"),
+        PluginVersion(0, 0)
+    )
+
     override fun onBind(intent: Intent?): IBinder {
         return addBinder()
     }
@@ -43,11 +44,17 @@ class PluginWithSubmenuService : Service() {
                 )
             }
 
-            override fun fetchPluginData(): PluginMetadata {
+            override fun getPluginMetadata(): PluginMetadata {
                 return buildPluginMetadata(
-                    pluginUuid = UUID.fromString("890ec932-ea09-4713-bb2e-674fba343d3f"),
+                    pluginUuid = summary.pluginUuid,
                     pluginName = "Example plugin with example submenu",
-                )
+                ) {
+                    version = summary.pluginVersion
+                }
+            }
+
+            override fun getPluginSummary(): PluginSummary {
+                return summary
             }
 
             override fun setSetting(settingUuid: ParcelUuid?, newValue: String?) = Unit

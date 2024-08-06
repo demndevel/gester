@@ -3,24 +3,32 @@ package com.demn.data.repo
 import com.demn.data.dao.PluginCacheDao
 import com.demn.data.entities.PluginWithCommandsDbo
 import com.demn.data.toPluginCache
-import com.demn.data.toPluginCommand
 import com.demn.data.toPluginWithCommandsDbo
 import com.demn.domain.data.PluginCache
-import com.demn.domain.data.PluginCommandCacheRepository
+import com.demn.domain.data.ExternalPluginCacheRepository
+import java.util.*
 
-class MockPluginCommandCacheRepository() : PluginCommandCacheRepository {
+class MockExternalPluginCacheRepository() : ExternalPluginCacheRepository {
     override suspend fun getAllPlugins(): List<PluginCache> = emptyList()
+
+    override suspend fun getPluginCache(uuid: UUID): PluginCache? = null
 
     override suspend fun updatePluginCache(pluginCache: PluginCache) = Unit
 }
 
-class PluginCommandCacheRepositoryImpl(
+class ExternalPluginCacheRepositoryImpl(
     private val pluginCacheDao: PluginCacheDao
-) : PluginCommandCacheRepository {
+) : ExternalPluginCacheRepository {
     override suspend fun getAllPlugins(): List<PluginCache> {
         return pluginCacheDao
             .getPluginsWithCommands()
             .map(PluginWithCommandsDbo::toPluginCache)
+    }
+
+    override suspend fun getPluginCache(uuid: UUID): PluginCache? {
+        return pluginCacheDao
+            .getPluginWithCommands(uuid)
+            ?.toPluginCache()
     }
 
     override suspend fun updatePluginCache(pluginCache: PluginCache) {

@@ -6,10 +6,7 @@ import android.net.Uri
 import android.os.IBinder
 import android.os.ParcelUuid
 import com.demn.aidl.PluginAdapter
-import com.demn.plugincore.ParcelableOperationResult
-import com.demn.plugincore.ParcelablePluginCommand
-import com.demn.plugincore.PluginMetadata
-import com.demn.plugincore.PluginSetting
+import com.demn.plugincore.*
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
 import java.net.URLEncoder
@@ -84,8 +81,12 @@ class BarPluginService : Service() {
                 )
             }
 
-            override fun fetchPluginData(): PluginMetadata {
+            override fun getPluginMetadata(): PluginMetadata {
                 return barPluginMetadata
+            }
+
+            override fun getPluginSummary(): PluginSummary {
+                return barPluginSummary
             }
 
             override fun setSetting(settingUuid: ParcelUuid?, newValue: String?) {

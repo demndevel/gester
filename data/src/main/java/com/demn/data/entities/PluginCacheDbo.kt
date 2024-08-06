@@ -12,7 +12,8 @@ data class PluginCacheDbo(
     val pluginUuid: UUID,
     val pluginName: String,
     val description: String? = null,
-    val version: String,
+    val versionMajor: Int,
+    val versionMinor: Int,
     val consumeAnyInput: Boolean,
 )
 

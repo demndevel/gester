@@ -3,6 +3,7 @@ package com.demn.plugins.core_plugins.currencies
 import com.demn.domain.models.PluginCommand
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.PluginSettingType
+import com.demn.plugincore.PluginVersion
 import com.demn.plugincore.buildPluginMetadata
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
@@ -19,7 +20,7 @@ val currenciesPluginMetadata = buildPluginMetadata(
 ) {
     consumeAnyInput = false
     description = ""
-    version = "0.1"
+    version = PluginVersion(0, 0)
 }
 
 internal enum class CurrencyType {

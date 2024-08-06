@@ -9,15 +9,26 @@ import com.demn.plugincore.operation_result.OperationResult
 import java.util.UUID
 
 interface ExternalPluginsProvider {
+    /**
+     * Caches new or updated plugins & returns plugins from cache
+     */
     suspend fun getPluginList(): List<ExternalPlugin>
+
+    /**
+     * Gets plugin settings list via IPC
+     */
+    suspend fun getPluginSettings(externalPlugin: ExternalPlugin): List<PluginSetting>
+
+    /**
+     * Gets all plugin commands from cache
+     */
+    suspend fun getAllPluginCommands(): List<PluginCommand>
 
     suspend fun executeFallbackCommand(
         input: String,
         fallbackCommandUuid: UUID,
         pluginService: PluginService
     )
-
-    suspend fun getPluginCommands(plugin: ExternalPlugin): List<PluginCommand>
 
     suspend fun executeCommand(
         uuid: UUID,
@@ -29,16 +40,9 @@ interface ExternalPluginsProvider {
         pluginService: PluginService
     ): List<OperationResult>
 
-    suspend fun getPluginData(pluginService: PluginService): PluginMetadata
-
-    suspend fun getPluginSettings(externalPlugin: ExternalPlugin): List<PluginSetting>
-
     suspend fun setPluginSetting(
         externalPlugin: ExternalPlugin,
         settingUuid: UUID,
         newValue: String
     )
-
-    suspend fun getPluginCommands(): List<PluginCommand>
-    suspend fun getPluginCommandsDirectly(plugin: ExternalPlugin): List<PluginCommand>
 }

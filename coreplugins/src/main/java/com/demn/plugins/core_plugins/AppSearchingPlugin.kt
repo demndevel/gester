@@ -6,6 +6,7 @@ import android.net.Uri
 import com.demn.domain.models.PluginCommand
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
+import com.demn.plugincore.PluginVersion
 import com.demn.plugincore.buildPluginMetadata
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.IconOperationResult
@@ -20,7 +21,7 @@ val appSearchingMetadata = buildPluginMetadata(
     pluginName = "App Searching Plugin"
 ) {
     description = "built-in plugin for plugin searching"
-    version = "0.1"
+    version = PluginVersion(0, 1)
     consumeAnyInput = true
 }
 
