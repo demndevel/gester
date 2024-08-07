@@ -1,6 +1,7 @@
 package com.demn.plugins.core_plugins.currencies
 
 import com.demn.domain.models.PluginCommand
+import com.demn.domain.models.PluginFallbackCommand
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.PluginSettingType
 import com.demn.plugincore.PluginVersion
@@ -75,6 +76,8 @@ class CurrenciesPlugin(
     }
 
     override fun getPluginCommands(): List<PluginCommand> = emptyList()
+
+    override fun getPluginFallbackCommands(): List<PluginFallbackCommand> = emptyList()
 
     private val usdCostSettingUuid = UUID.fromString("2bf52834-430b-4ec4-bade-ad6eb563c4ed")
 

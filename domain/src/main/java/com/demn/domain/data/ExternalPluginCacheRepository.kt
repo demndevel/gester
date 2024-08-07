@@ -1,6 +1,7 @@
 package com.demn.domain.data
 
 import com.demn.domain.models.PluginCommand
+import com.demn.domain.models.PluginFallbackCommand
 import com.demn.plugincore.PluginMetadata
 import java.util.UUID
 
@@ -14,5 +15,6 @@ interface ExternalPluginCacheRepository {
 
 data class PluginCache(
     val pluginMetadata: PluginMetadata,
-    val commands: List<PluginCommand>
+    val commands: List<PluginCommand>,
+    val fallbackCommands: List<PluginFallbackCommand>
 )

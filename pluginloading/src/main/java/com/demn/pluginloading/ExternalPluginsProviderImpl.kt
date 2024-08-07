@@ -8,15 +8,10 @@ import android.os.IBinder
 import com.demn.aidl.PluginAdapter
 import com.demn.domain.data.ExternalPluginCacheRepository
 import com.demn.domain.data.PluginCache
-import com.demn.domain.models.ExternalPlugin
-import com.demn.domain.models.PluginCommand
-import com.demn.domain.models.PluginInvocationResult
-import com.demn.domain.models.PluginService
+import com.demn.domain.models.*
 import com.demn.domain.plugin_providers.ExternalPluginsProvider
 import com.demn.plugincore.*
-import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
-import com.demn.plugincore.operation_result.ResultType
 import com.demn.plugincore.util.toParcelUuid
 import java.util.*
 import kotlin.coroutines.resume
@@ -70,9 +65,25 @@ class ExternalPluginsProviderImpl(
         externalPluginCacheRepository.updatePluginCache(
             PluginCache(
                 getPluginMetadataIpc(pluginService),
-                getPluginCommandsIpc(pluginSummary.pluginUuid, pluginService)
+                getPluginCommandsIpc(pluginSummary.pluginUuid, pluginService),
+                getPluginFallbackCommandsIpc(pluginSummary.pluginUuid, pluginService),
             )
         )
+    }
+
+    private suspend fun getPluginFallbackCommandsIpc(
+        pluginUuid: UUID,
+        pluginService: PluginService
+    ): List<PluginFallbackCommand> {
+        return suspendCoroutine { continuation ->
+            performOperationsWithPlugin(pluginService) { adapter ->
+                val fallbackCommands = adapter
+                    .getAllFallbackCommands()
+                    .map { it.toPluginFallbackCommand(pluginUuid) }
+
+                continuation.resume(fallbackCommands)
+            }
+        }
     }
 
     override suspend fun executeFallbackCommand(
@@ -93,6 +104,15 @@ class ExternalPluginsProviderImpl(
         return plugins
             .flatMap {
                 it.commands
+            }
+    }
+
+    override suspend fun getAllPluginFallbackCommands(): List<PluginFallbackCommand> {
+        val plugins = externalPluginCacheRepository.getAllPlugins()
+
+        return plugins
+            .flatMap {
+                it.fallbackCommands
             }
     }
 

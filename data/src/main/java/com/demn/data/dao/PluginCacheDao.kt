@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.demn.data.entities.PluginCacheDbo
 import com.demn.data.entities.PluginCommandCacheDbo
+import com.demn.data.entities.PluginFallbackCommandCacheDbo
 import com.demn.data.entities.PluginWithCommandsDbo
 import java.util.UUID
 
@@ -27,11 +28,15 @@ interface PluginCacheDao {
     suspend fun insertPluginCommands(commands: List<PluginCommandCacheDbo>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPluginFallbackCommands(commands: List<PluginFallbackCommandCacheDbo>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPluginCommand(command: PluginCommandCacheDbo)
 
     @Transaction
     suspend fun insertPluginWithCommands(pluginWithCommandsDbo: PluginWithCommandsDbo) {
         insertPluginCache(pluginWithCommandsDbo.pluginCacheDbo)
         insertPluginCommands(pluginWithCommandsDbo.commands)
+        insertPluginFallbackCommands(pluginWithCommandsDbo.fallbackCommands)
     }
 }

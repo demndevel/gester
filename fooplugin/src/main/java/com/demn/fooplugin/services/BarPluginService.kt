@@ -81,6 +81,16 @@ class BarPluginService : Service() {
                 )
             }
 
+            override fun getAllFallbackCommands(): MutableList<ParcelablePluginFallbackCommand> {
+                return mutableListOf(
+                    ParcelablePluginFallbackCommand(
+                        uuid = awesomeFallbackCommandUuid,
+                        name = "Search Google",
+                        description = "Opens google search page with default browser app"
+                    )
+                )
+            }
+
             override fun getPluginMetadata(): PluginMetadata {
                 return barPluginMetadata
             }

@@ -25,11 +25,26 @@ data class PluginWithCommandsDbo(
         parentColumn = "pluginUuid",
         entityColumn = "pluginUuid"
     )
-    val commands: List<PluginCommandCacheDbo>
+    val commands: List<PluginCommandCacheDbo>,
+
+    @Relation(
+        parentColumn = "pluginUuid",
+        entityColumn = "pluginUuid"
+    )
+    val fallbackCommands: List<PluginFallbackCommandCacheDbo>
 )
 
 @Entity
 data class PluginCommandCacheDbo(
+    @PrimaryKey
+    val commandUuid: UUID,
+    val pluginUuid: UUID,
+    val name: String,
+    val description: String? = null
+)
+
+@Entity
+data class PluginFallbackCommandCacheDbo(
     @PrimaryKey
     val commandUuid: UUID,
     val pluginUuid: UUID,

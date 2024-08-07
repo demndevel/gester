@@ -1,11 +1,9 @@
 package com.demn.data
 
-import com.demn.data.entities.PluginCacheDbo
-import com.demn.data.entities.PluginCommandCacheDbo
-import com.demn.data.entities.PluginWithCommandsDbo
-import com.demn.data.entities.ResultFrecencyDbo
+import com.demn.data.entities.*
 import com.demn.domain.data.PluginCache
 import com.demn.domain.models.PluginCommand
+import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.models.ResultFrecency
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginVersion
@@ -21,8 +19,17 @@ fun ResultFrecencyDbo.toResultFrecency(): ResultFrecency {
     )
 }
 
-fun PluginCommandCacheDbo.toPluginCommand(pluginUuid: UUID): PluginCommand {
+fun PluginCommandCacheDbo.toPluginCommand(): PluginCommand {
     return PluginCommand(
+        commandUuid,
+        pluginUuid,
+        name,
+        description
+    )
+}
+
+fun PluginFallbackCommandCacheDbo.toPluginFallbackCommand(): PluginFallbackCommand {
+    return PluginFallbackCommand(
         commandUuid,
         pluginUuid,
         name,
@@ -40,7 +47,8 @@ fun PluginWithCommandsDbo.toPluginCache(): PluginCache {
             version = PluginVersion(pluginCacheDbo.versionMajor, pluginCacheDbo.versionMinor)
             consumeAnyInput = pluginCacheDbo.consumeAnyInput
         },
-        commands = commands.map { it.toPluginCommand(pluginCacheDbo.pluginUuid) }
+        commands = commands.map { it.toPluginCommand() },
+        fallbackCommands = fallbackCommands.map { it.toPluginFallbackCommand() }
     )
 }
 
@@ -54,12 +62,22 @@ fun PluginCache.toPluginWithCommandsDbo(): PluginWithCommandsDbo {
             pluginMetadata.version.minor,
             pluginMetadata.consumeAnyInput
         ),
-        commands = commands.map(PluginCommand::toPluginCommandDbo)
+        commands = commands.map(PluginCommand::toPluginCommandDbo),
+        fallbackCommands = fallbackCommands.map(PluginFallbackCommand::toFallbackPluginCommandDbo)
     )
 }
 
 fun PluginCommand.toPluginCommandDbo(): PluginCommandCacheDbo {
     return PluginCommandCacheDbo(
+        commandUuid = uuid,
+        pluginUuid = pluginUuid,
+        name = name,
+        description = description
+    )
+}
+
+fun PluginFallbackCommand.toFallbackPluginCommandDbo(): PluginFallbackCommandCacheDbo {
+    return PluginFallbackCommandCacheDbo(
         commandUuid = uuid,
         pluginUuid = pluginUuid,
         name = name,

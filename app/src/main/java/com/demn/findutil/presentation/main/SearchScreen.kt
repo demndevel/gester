@@ -42,7 +42,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -52,12 +51,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.demn.data.repo.MockResultFrecencyRepository
+import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.usecase.MockCommandSearcherUseCase
 import com.demn.domain.usecase.MockOperationResultSorterUseCase
 import com.demn.domain.usecase.ProcessInputQueryUseCase
 import com.demn.findutil.R
 import com.demn.findutil.app_settings.MockPluginAvailabilityRepository
-import com.demn.plugincore.PluginFallbackCommand
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.IconOperationResult
@@ -501,7 +500,7 @@ fun FallbackCommandsResult(
     modifier: Modifier = Modifier
 ) {
     Card(
-        onClick = { onFallbackCommandClick(fallbackCommand.id) },
+        onClick = { onFallbackCommandClick(fallbackCommand.uuid) },
         modifier = modifier
     ) {
         Text(

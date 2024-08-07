@@ -44,6 +44,8 @@ class PluginWithSubmenuService : Service() {
                 )
             }
 
+            override fun getAllFallbackCommands(): MutableList<ParcelablePluginFallbackCommand> = mutableListOf()
+
             override fun getPluginMetadata(): PluginMetadata {
                 return buildPluginMetadata(
                     pluginUuid = summary.pluginUuid,

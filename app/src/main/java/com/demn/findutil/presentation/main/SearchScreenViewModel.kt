@@ -8,10 +8,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.demn.domain.data.ResultFrecencyRepository
+import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.plugin_management.PluginRepository
 import com.demn.domain.usecase.ProcessInputQueryUseCase
 import com.demn.plugincore.Plugin
-import com.demn.plugincore.PluginFallbackCommand
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.IconOperationResult
@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.UUID
 
 @Immutable

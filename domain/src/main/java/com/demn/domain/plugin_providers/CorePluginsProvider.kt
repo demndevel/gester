@@ -2,6 +2,7 @@ package com.demn.domain.plugin_providers
 
 import com.demn.domain.models.BuiltInPlugin
 import com.demn.domain.models.PluginCommand
+import com.demn.domain.models.PluginFallbackCommand
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.operation_result.OperationResult
 import java.util.UUID
@@ -14,6 +15,8 @@ interface CorePluginsProvider {
     fun getPluginCommands(plugin: BuiltInPlugin): List<PluginCommand>
 
     fun getAllPluginCommands(): List<PluginCommand>
+
+    fun getAllPluginFallbackCommands(): List<PluginFallbackCommand>
 
     fun invokePluginCommand(commandUuid: UUID, pluginUuid: UUID)
 

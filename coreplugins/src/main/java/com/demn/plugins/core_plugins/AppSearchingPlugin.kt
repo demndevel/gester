@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.demn.domain.models.PluginCommand
+import com.demn.domain.models.PluginFallbackCommand
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.PluginVersion
@@ -33,6 +34,8 @@ class AppSearchingPlugin(
     override fun invokeCommand(uuid: UUID) = Unit
 
     override fun getPluginCommands(): List<PluginCommand> = emptyList()
+
+    override fun getPluginFallbackCommands(): List<PluginFallbackCommand> = emptyList()
 
     private data class CachedApplicationInfo(
         val name: String,

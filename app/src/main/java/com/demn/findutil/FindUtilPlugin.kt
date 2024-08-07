@@ -3,6 +3,7 @@ package com.demn.findutil
 import android.content.Context
 import android.content.Intent
 import com.demn.domain.models.PluginCommand
+import com.demn.domain.models.PluginFallbackCommand
 import com.demn.plugincore.FindUtilPluginUuid
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
@@ -48,6 +49,8 @@ class FindUtilPlugin(
                 description = null
             )
         )
+
+    override fun getPluginFallbackCommands(): List<PluginFallbackCommand> = emptyList()
 
     override fun getPluginSettings(): List<PluginSetting> {
         return emptyList()

@@ -20,8 +20,4 @@ val barPluginMetadata = buildPluginMetadata(
     description = "some shitty description"
     consumeAnyInput = true
     version = barPluginSummary.pluginVersion
-
-    fallbackCommand(awesomeFallbackCommandUuid, "Search Google") {
-        description = "Opens google search page with default browser app"
-    }
 }

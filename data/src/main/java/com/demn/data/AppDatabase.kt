@@ -6,10 +6,16 @@ import com.demn.data.dao.PluginCacheDao
 import com.demn.data.dao.ResultFrecencyDao
 import com.demn.data.entities.PluginCacheDbo
 import com.demn.data.entities.PluginCommandCacheDbo
+import com.demn.data.entities.PluginFallbackCommandCacheDbo
 import com.demn.data.entities.ResultFrecencyDbo
 
 @Database(
-    entities = [ResultFrecencyDbo::class, PluginCacheDbo::class, PluginCommandCacheDbo::class],
+    entities = [
+        ResultFrecencyDbo::class,
+        PluginCacheDbo::class,
+        PluginCommandCacheDbo::class,
+        PluginFallbackCommandCacheDbo::class
+    ],
     version = 1,
     exportSchema = false
 )

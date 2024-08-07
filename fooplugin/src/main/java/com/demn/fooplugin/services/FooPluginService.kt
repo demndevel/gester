@@ -97,6 +97,8 @@ class FooPluginService : Service() {
                 )
             }
 
+            override fun getAllFallbackCommands(): MutableList<ParcelablePluginFallbackCommand> = mutableListOf()
+
             override fun getPluginMetadata(): PluginMetadata {
                 return fooPluginMetadata
             }

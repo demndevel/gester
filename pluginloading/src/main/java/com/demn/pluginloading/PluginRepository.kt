@@ -3,10 +3,10 @@ package com.demn.pluginloading
 import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.plugin_management.PluginRepository
 import com.demn.plugincore.Plugin
-import com.demn.plugincore.PluginFallbackCommand
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.domain.models.BuiltInPlugin
 import com.demn.domain.models.PluginCommand
+import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.plugin_providers.CorePluginsProvider
 import com.demn.domain.plugin_providers.ExternalPluginsProvider
 import java.util.UUID
@@ -48,11 +48,15 @@ class PluginRepositoryImpl(
     }
 
     override suspend fun getAllFallbackCommands(): List<PluginFallbackCommand> {
-        val commands = getPluginList()
-            .map { it.metadata.fallbackCommands }
-            .flatten()
+        return getAllExternalFallbackCommands() + getAllBuiltInFallbackCommands()
+    }
 
-        return commands
+    private suspend fun getAllExternalFallbackCommands(): List<PluginFallbackCommand> {
+        return externalPluginsProvider.getAllPluginFallbackCommands()
+    }
+
+    private fun getAllBuiltInFallbackCommands(): List<PluginFallbackCommand> {
+        return corePluginsProvider.getAllPluginFallbackCommands()
     }
 
     private suspend fun getAnyResultsWithExternalPlugin(
@@ -77,9 +81,13 @@ class PluginRepositoryImpl(
     }
 
     override suspend fun invokeFallbackCommand(input: String, commandUuid: UUID) {
+        val commandPluginUuid = getAllFallbackCommands()
+            .find { it.uuid == commandUuid }
+            ?.pluginUuid
+
         val plugin = getPluginList()
-            .find { plugin ->
-                plugin.metadata.fallbackCommands.any { it.id == commandUuid }
+            .find {
+                it.metadata.pluginUuid == commandPluginUuid
             }
 
         if (plugin == null) {
