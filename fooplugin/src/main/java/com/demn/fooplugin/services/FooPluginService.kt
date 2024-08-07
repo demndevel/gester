@@ -50,86 +50,84 @@ class FooPluginService : Service() {
 
     private fun addBinder(): PluginAdapter.Stub {
         val value = object : PluginAdapter.Stub() {
-//            override fun executeFallbackCommand(commandUuid: ParcelUuid?, input: String?) = Unit
-//
-//            override fun executeCommand(commandUuid: ParcelUuid?) {
-//                println("foo plugin: invoked command $commandUuid")
-//            }
-//
-//            override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {
-//                val drawableUri = Uri.Builder()
-//                    .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-//                    .authority(resources.getResourcePackageName(R.drawable.save_icon))
-//                    .appendPath(resources.getResourceTypeName(R.drawable.save_icon))
-//                    .appendPath(resources.getResourceEntryName(R.drawable.save_icon))
-//                    .build()
-//
-//                println(drawableUri)
-//
-//                throw NotImplementedError("lol kek")
-//
-//                return mutableListOf(
-//                    buildParcelableOperationResult(
-//                        BasicOperationResult(
-//                            text = "github.com",
-//                            intent = getLaunchWebPageIntent("https://github.com"),
-//                            type = ResultType.WebLink
-//                        )
-//                    ),
-//                    buildParcelableOperationResult(
-//                        IconOperationResult(
-//                            text = "Some icon result",
-//                            intent = null,
-//                            iconUri = drawableUri,
-//                        )
-//                    )
-//                )
-//            }
-//
-//            override fun getAllCommands(): MutableList<ParcelablePluginCommand> {
-//                return mutableListOf(
-//                    ParcelablePluginCommand(
-//                        uuid = UUID.fromString("c7b53672-d63a-400a-8148-e93ffa22d6e3"),
-//                        name = "Search BitWarden vault"
-//                    ),
-//                    ParcelablePluginCommand(
-//                        uuid = UUID.fromString("3a8680d5-853c-4e5c-aae0-84ec65b6f1d3"),
-//                        name = "Look though some items"
-//                    ),
-//                )
-//            }
-//
-//            override fun getPluginMetadata(): PluginMetadata {
-//                return fooPluginMetadata
-//            }
-//
+            override fun executeFallbackCommand(commandUuid: ParcelUuid?, input: String?) = Unit
+
+            override fun executeCommand(commandUuid: ParcelUuid?) {
+                println("foo plugin: invoked command $commandUuid")
+            }
+
+            override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {
+                val drawableUri = Uri.Builder()
+                    .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                    .authority(resources.getResourcePackageName(R.drawable.save_icon))
+                    .appendPath(resources.getResourceTypeName(R.drawable.save_icon))
+                    .appendPath(resources.getResourceEntryName(R.drawable.save_icon))
+                    .build()
+
+                println(drawableUri)
+
+                return mutableListOf(
+                    buildParcelableOperationResult(
+                        BasicOperationResult(
+                            text = "github.com",
+                            intent = getLaunchWebPageIntent("https://github.com"),
+                            type = ResultType.WebLink
+                        )
+                    ),
+                    buildParcelableOperationResult(
+                        IconOperationResult(
+                            text = "Some icon result",
+                            intent = null,
+                            iconUri = drawableUri,
+                        )
+                    )
+                )
+            }
+
+            override fun getAllCommands(): MutableList<ParcelablePluginCommand> {
+                return mutableListOf(
+                    ParcelablePluginCommand(
+                        uuid = UUID.fromString("c7b53672-d63a-400a-8148-e93ffa22d6e3"),
+                        name = "Search BitWarden vault"
+                    ),
+                    ParcelablePluginCommand(
+                        uuid = UUID.fromString("3a8680d5-853c-4e5c-aae0-84ec65b6f1d3"),
+                        name = "Look though some items"
+                    ),
+                )
+            }
+
+            override fun getPluginMetadata(): PluginMetadata {
+                return fooPluginMetadata
+            }
+
             override fun getPluginSummary(): PluginSummary {
                 return fooPluginSummary
             }
-//
-//            override fun setSetting(settingUuid: ParcelUuid?, newValue: String?) {
-//                val settingsRepository = BasicSettingsRepository(applicationContext)
-//
-//                println("setting the setting")
-//                println(settingUuid)
-//                println(newValue)
-//
-//                settingsRepository.write(settingUuid.toString(), newValue ?: "")
-//            }
-//
-//            override fun getPluginSettings(): MutableList<PluginSetting> {
-//                val settingsRepository = BasicSettingsRepository(applicationContext)
-//
-//                val fetchedSettings = settings.map {
-//                    val settingValue = settingsRepository.read(it.pluginSettingUuid.toString())
-//
-//                    it.copy(
-//                        settingValue = settingValue
-//                    )
-//                }
-//
-//                return fetchedSettings.toMutableList()
-//            }
+
+            override fun setSetting(settingUuid: ParcelUuid?, newValue: String?) {
+                val settingsRepository = BasicSettingsRepository(applicationContext)
+
+                println("setting the setting")
+                println(settingUuid)
+                println(newValue)
+
+                settingsRepository.write(settingUuid.toString(), newValue ?: "")
+            }
+
+            override fun getPluginSettings(): MutableList<PluginSetting> {
+                val settingsRepository = BasicSettingsRepository(applicationContext)
+
+                val fetchedSettings = settings.map {
+                    val settingValue = settingsRepository.read(it.pluginSettingUuid.toString())
+
+                    it.copy(
+                        settingValue = settingValue
+                    )
+                }
+
+                return fetchedSettings.toMutableList()
+            }
         }
 
         return value
