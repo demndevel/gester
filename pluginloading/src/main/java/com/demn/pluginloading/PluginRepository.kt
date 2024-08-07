@@ -22,7 +22,7 @@ class MockPluginRepository : PluginRepository {
 
     override suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID) = Unit
 
-    override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
+    override suspend fun getAnyResults(input: String, plugin: Plugin, onError: () -> Unit): List<OperationResult> {
         return emptyList()
     }
 
@@ -37,9 +37,9 @@ class PluginRepositoryImpl(
         return externalPluginsProvider.getPluginList()
     }
 
-    override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
+    override suspend fun getAnyResults(input: String, plugin: Plugin, onError: () -> Unit): List<OperationResult> {
         return when (plugin) {
-            is ExternalPlugin -> getAnyResultsWithExternalPlugin(plugin, input)
+            is ExternalPlugin -> getAnyResultsWithExternalPlugin(plugin, input, onError = onError)
 
             is BuiltInPlugin -> getAnyResultsWithBuiltInPlugin(input, plugin)
 
@@ -57,11 +57,13 @@ class PluginRepositoryImpl(
 
     private suspend fun getAnyResultsWithExternalPlugin(
         plugin: ExternalPlugin,
-        input: String
+        input: String,
+        onError: () -> Unit
     ): List<OperationResult> {
         return externalPluginsProvider.executeAnyInput(
             input = input,
-            pluginService = plugin.pluginService
+            pluginService = plugin.pluginService,
+            onError = onError
         )
     }
 

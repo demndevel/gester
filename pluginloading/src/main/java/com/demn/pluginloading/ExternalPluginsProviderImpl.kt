@@ -3,16 +3,20 @@ package com.demn.pluginloading
 import android.content.*
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.os.DeadObjectException
 import android.os.IBinder
 import com.demn.aidl.PluginAdapter
 import com.demn.domain.data.ExternalPluginCacheRepository
 import com.demn.domain.data.PluginCache
 import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.models.PluginCommand
+import com.demn.domain.models.PluginInvocationResult
 import com.demn.domain.models.PluginService
 import com.demn.domain.plugin_providers.ExternalPluginsProvider
 import com.demn.plugincore.*
+import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operation_result.ResultType
 import com.demn.plugincore.util.toParcelUuid
 import java.util.*
 import kotlin.coroutines.resume
@@ -31,25 +35,30 @@ class ExternalPluginsProviderImpl(
             packageManager.queryIntentServices(baseIntent, PackageManager.GET_RESOLVED_FILTER)
 
         return list.mapNotNull { resolveInfo ->
-            val serviceInfo = resolveInfo.serviceInfo
+            // TODO
+            try {
+                val serviceInfo = resolveInfo.serviceInfo
 
-            val pluginService = PluginService(
-                packageName = serviceInfo.packageName,
-                serviceName = serviceInfo.name,
-                actions = getActions(resolveInfo),
-                categories = getCategories(resolveInfo)
-            )
+                val pluginService = PluginService(
+                    packageName = serviceInfo.packageName,
+                    serviceName = serviceInfo.name,
+                    actions = getActions(resolveInfo),
+                    categories = getCategories(resolveInfo)
+                )
 
-            val pluginSummary = getPluginSummary(pluginService)
-            cacheIfRequired(pluginSummary, pluginService)
+                val pluginSummary = getPluginSummary(pluginService)
+                cacheIfRequired(pluginSummary, pluginService)
 
-            val pluginCache = externalPluginCacheRepository.getPluginCache(pluginSummary.pluginUuid)
-            val metadata = pluginCache?.pluginMetadata ?: return@mapNotNull null
+                val pluginCache = externalPluginCacheRepository.getPluginCache(pluginSummary.pluginUuid)
+                val metadata = pluginCache?.pluginMetadata ?: return@mapNotNull null
 
-            ExternalPlugin(
-                pluginService = pluginService,
-                metadata = metadata
-            )
+                ExternalPlugin(
+                    pluginService = pluginService,
+                    metadata = metadata
+                )
+            } catch (ex: NullPointerException) {
+                return@mapNotNull null
+            }
         }
     }
 
@@ -103,9 +112,21 @@ class ExternalPluginsProviderImpl(
         }
     }
 
-    override suspend fun executeAnyInput(input: String, pluginService: PluginService): List<OperationResult> {
+    override suspend fun executeAnyInput(
+        input: String,
+        pluginService: PluginService,
+        onError: () -> Unit
+    ): List<OperationResult> {
         return suspendCoroutine { continuation ->
-            performOperationsWithPlugin(pluginService) { pluginAdapter ->
+            performOperationsWithPlugin(
+                pluginService = pluginService,
+                onResult = { result ->
+                    if (result is PluginInvocationResult.Failure) {
+                        onError()
+                        continuation.resume(emptyList())
+                    }
+                }
+            ) { pluginAdapter ->
                 continuation.resume(
                     pluginAdapter
                         .executeAnyInput(input)
@@ -162,11 +183,22 @@ class ExternalPluginsProviderImpl(
 
     private fun performOperationsWithPlugin(
         pluginService: PluginService,
-        operationsWithPlugin: (PluginAdapter) -> Unit
+        onResult: (PluginInvocationResult) -> Unit = {},
+        operationsWithPlugin: (PluginAdapter) -> Unit,
     ) {
         val intent = getIntentForPlugin(pluginService)
 
-        val serviceConnection = getServiceConnectionForPlugin(operationsWithPlugin)
+        val serviceConnection = getServiceConnectionForPlugin(
+            operationsWithPlugin = {
+                try {
+                    operationsWithPlugin(it)
+
+                    onResult(PluginInvocationResult.Success)
+                } catch (ex: DeadObjectException) {
+                    onResult(PluginInvocationResult.Failure)
+                }
+            }
+        )
 
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }

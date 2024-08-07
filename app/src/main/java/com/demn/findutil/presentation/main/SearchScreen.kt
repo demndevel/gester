@@ -2,6 +2,7 @@ package com.demn.findutil.presentation.main
 
 import android.content.Context
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -140,7 +141,18 @@ private fun SearchScreenContent(
             SearchBar(
                 focusRequester = focusRequester,
                 searchBarValue = vm.searchBarState,
-                onSearchBarValueChange = vm::updateSearchBarValue,
+                onSearchBarValueChange = {
+                    vm.updateSearchBarValue(
+                        it,
+                        onError = {
+                            Toast(context)
+                                .apply {
+                                    setText("some error with plugin N occured")
+                                }
+                                .show()
+                        }
+                    )
+                },
                 onEnterClick = {
                     val firstResult = state.searchResults.firstOrNull()
 

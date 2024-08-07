@@ -37,7 +37,8 @@ interface ExternalPluginsProvider {
 
     suspend fun executeAnyInput(
         input: String,
-        pluginService: PluginService
+        pluginService: PluginService,
+        onError: () -> Unit
     ): List<OperationResult>
 
     suspend fun setPluginSetting(

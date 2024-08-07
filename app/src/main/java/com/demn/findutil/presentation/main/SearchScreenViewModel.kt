@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.UUID
 
 @Immutable
@@ -64,7 +65,7 @@ class SearchScreenViewModel(
         }
     }
 
-    fun updateSearchBarValue(newValue: String) {
+    fun updateSearchBarValue(newValue: String, onError: () -> Unit = {}) {
         if (newValue.isBlank()) {
             searchBarState = newValue
             _state.update {
@@ -76,7 +77,13 @@ class SearchScreenViewModel(
         searchBarState = newValue
 
         viewModelScope.launch(Dispatchers.IO) {
-            val results = processQueryUseCase(_state.value.pluginList, newValue)
+            val results = processQueryUseCase(
+                plugins = _state.value.pluginList,
+                inputQuery = newValue,
+                onError = {
+                    onError()
+                }
+            )
 
             _state.update {
                 it.copy(searchResults = results)
