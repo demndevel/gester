@@ -20,11 +20,11 @@ jetbrainsKotlinJvm = "2.0.0"
 junit-junit = "4.13.2"
 ksp = "2.0.0-1.0.23"
 room = "2.6.1"
+glide-compose = "1.0.0-beta01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+glide = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glide-compose" }
 fuzzywuzzy-kotlin = { group = "com.github.jens-muenker", name = "fuzzywuzzy-kotlin", version.ref = "fuzzywuzzyKotlin" }
 junit = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -46,7 +46,6 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 junit-junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
-kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin" }
 
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }

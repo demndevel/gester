@@ -1,6 +1,7 @@
 package com.demn.findutil.presentation.main
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -39,17 +41,17 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.demn.data.repo.MockResultFrecencyRepository
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.usecase.MockCommandSearcherUseCase
@@ -75,52 +77,20 @@ fun SearchScreen(
     val context = LocalContext.current
     val state by vm.state.collectAsState()
     val searchBarFocusRequester = remember { FocusRequester() }
-    val keyboard = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {
         vm.loadPlugins()
     }
 
-    Box(
+    SearchScreenContent(
+        vm,
+        state,
+        context,
+        searchBarFocusRequester,
         modifier
-    ) {
-        SearchScreenContent(
-            vm,
-            state,
-            context,
-            searchBarFocusRequester,
-            Modifier
-                .fillMaxSize()
-                .align(Alignment.Center)
-                .imePadding(),
-        )
-
-        ShowKeyboardButton(
-            onClick = { keyboard?.show() },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-        )
-    }
-}
-
-@Composable
-private fun ShowKeyboardButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    IconButton(
-        onClick = onClick,
-        colors = IconButtonDefaults.filledIconButtonColors(),
-        modifier = modifier
-            .size(48.dp)
-    ) {
-        Icon(
-            painterResource(R.drawable.keyboard_icon),
-            contentDescription = null,
-            modifier = Modifier
-                .size(24.dp)
-        )
-    }
+            .fillMaxSize()
+            .imePadding(),
+    )
 }
 
 @Composable
@@ -131,63 +101,65 @@ private fun SearchScreenContent(
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
-        modifier
+    Column(
+        modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        item {
-            Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            SearchBar(
-                focusRequester = focusRequester,
-                searchBarValue = vm.searchBarState,
-                onSearchBarValueChange = {
-                    vm.updateSearchBarValue(
-                        it,
-                        onError = {
-                            Toast(context)
-                                .apply {
-                                    setText("some error with plugin N occured")
-                                }
-                                .show()
-                        }
-                    )
-                },
-                onEnterClick = {
-                    val firstResult = state.searchResults.firstOrNull()
-
-                    firstResult?.let {
-                        vm.executeResult(firstResult, context::startActivity)
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-
-        itemsIndexed(state.searchResults) { index, item ->
-            ResultItem(
-                item,
-                index,
-                onResultClick = { vm.executeResult(it, context::startActivity) },
-                Modifier
-            )
-
-            Spacer(Modifier.height(4.dp))
-        }
-
-        if (vm.searchBarState.isNotBlank()) {
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-
-                FallbackCommandsResultsList(
-                    currentInput = vm.searchBarState,
-                    fallbackCommands = state.fallbackCommands,
-                    onFallbackCommandClick = vm::invokeFallbackCommand
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            itemsIndexed(state.searchResults) { index, item ->
+                ResultItem(
+                    item,
+                    index,
+                    onResultClick = { vm.executeResult(it, context::startActivity) },
+                    Modifier
                 )
             }
+
+            item { Spacer(Modifier.height(4.dp)) }
+
+            if (vm.searchBarState.isNotBlank()) {
+                item {
+                    FallbackCommandsResultsList(
+                        currentInput = vm.searchBarState,
+                        fallbackCommands = state.fallbackCommands,
+                        onFallbackCommandClick = vm::invokeFallbackCommand
+                    )
+                }
+            }
         }
+
+        SearchBar(
+            focusRequester = focusRequester,
+            searchBarValue = vm.searchBarState,
+            onSearchBarValueChange = {
+                vm.updateSearchBarValue(
+                    it,
+                    onError = {
+                        Toast(context)
+                            .apply {
+                                setText("some error with plugin N occured") // TODO
+                            }
+                            .show()
+                    }
+                )
+            },
+            onEnterClick = {
+                val firstResult = state.searchResults.firstOrNull()
+
+                firstResult?.let {
+                    vm.executeResult(firstResult, context::startActivity)
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+        )
     }
 }
 
@@ -221,7 +193,7 @@ fun SearchBar(
             disabledIndicatorColor = Color.Transparent
         ),
         shape = RoundedCornerShape(16.dp),
-        textStyle = MaterialTheme.typography.headlineMedium,
+        textStyle = MaterialTheme.typography.headlineSmall,
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Go
@@ -296,6 +268,11 @@ fun BasicResult(
     iconUri: Uri? = null,
     resultType: ResultType = ResultType.Other
 ) {
+    SideEffect {
+        if (text == "Tinkoff") {
+            println("$text is recompositing")
+        }
+    }
     Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = when (isFirst) {
@@ -332,7 +309,7 @@ fun BasicResult(
 
             Text(
                 text = text,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier
                     .weight(1f)
             )
@@ -373,19 +350,22 @@ fun getResultTypeText(type: ResultType): String {
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun UriIcon(
     iconUri: Uri,
     modifier: Modifier = Modifier
 ) {
-    AsyncImage(
-        ImageRequest.Builder(LocalContext.current)
-            .data(iconUri)
-            .build(),
+    val placeholderColor = MaterialTheme.colorScheme.primary.toArgb()
+    GlideImage(
+        model = iconUri,
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = modifier
-    )
+    ) {
+        it
+            .placeholder(ColorDrawable(placeholderColor))
+    }
 }
 
 @Composable
@@ -509,27 +489,10 @@ fun FallbackCommandsResult(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 16.dp,
-                    bottom = 8.dp
+                    horizontal = 16.dp,
+                    vertical = 8.dp
                 )
         )
-
-        val description = fallbackCommand.description
-        if (description != null) {
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        bottom = 16.dp,
-                        start = 16.dp,
-                        end = 16.dp
-                    )
-            )
-        }
     }
 }
 
@@ -564,7 +527,6 @@ fun ConversionResultPreview() {
             leftLabel = "american dollar",
             rightText = "500₽",
             rightLabel = "russian rouble",
-//        modifier = Modifier.height(100.dp)
         )
     }
 }

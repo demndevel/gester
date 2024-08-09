@@ -2,6 +2,7 @@ package com.demn.findutil.presentation.main
 
 import android.content.Intent
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 @Immutable
+@Stable
 data class SearchScreenState(
     val searchResults: List<OperationResult> = emptyList(),
     val pluginList: List<Plugin> = emptyList(),

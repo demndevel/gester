@@ -49,20 +49,11 @@ class ApplicationsRetriever(
 
                 val ratio = FuzzySearch.tokenSetPartialRatio(formattedInput, formattedAppName)
 
-                ratio >= 45
+                ratio >= 55
             }
 
         return filteredResults
             .map(ApplicationInfo::toOperationResult)
-    }
-
-    private fun fetchApplicationPackages(): List<String> {
-        val mainIntent = Intent(Intent.ACTION_MAIN)
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
-
-        val apps = packageManager.queryIntentActivities(mainIntent, 0)
-
-        return apps.mapNotNull { it.activityInfo.packageName }
     }
 
     suspend fun cacheAllApplications() = coroutineScope {
