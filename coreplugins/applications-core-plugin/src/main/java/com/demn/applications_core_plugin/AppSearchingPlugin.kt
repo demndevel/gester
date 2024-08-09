@@ -44,10 +44,16 @@ class AppSearchingPlugin(
 ) : CorePlugin {
     override val metadata: PluginMetadata = appSearchingMetadata
 
+    private var applications =
+        runBlocking(Dispatchers.IO) {
+            applicationsRetriever.retrieveApplications()
+        }
+
     override suspend fun invokeCommand(uuid: UUID) {
         if (uuid == syncAppsCacheCommandUuid) {
             withContext(Dispatchers.IO) {
                 applicationsRetriever.cacheAllApplications()
+                applications = applicationsRetriever.retrieveApplications()
             }
         }
     }
@@ -55,11 +61,6 @@ class AppSearchingPlugin(
     override suspend fun getPluginCommands(): List<PluginCommand> = appSearchingPluginCommands
 
     override suspend fun getPluginFallbackCommands(): List<PluginFallbackCommand> = emptyList()
-
-    private val applications =
-        runBlocking(Dispatchers.IO) {
-            applicationsRetriever.retrieveApplications()
-        }
 
     override suspend fun getPluginSettings(): List<PluginSetting> {
         return emptyList()
