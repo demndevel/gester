@@ -12,15 +12,15 @@ interface CorePluginsProvider {
 
     suspend fun invokeAnyInput(input: String, uuid: UUID): List<OperationResult>
 
-    fun getPluginCommands(plugin: BuiltInPlugin): List<PluginCommand>
+    suspend fun getPluginCommands(plugin: BuiltInPlugin): List<PluginCommand>
 
-    fun getAllPluginCommands(): List<PluginCommand>
+    suspend fun getAllPluginCommands(): List<PluginCommand>
 
-    fun getAllPluginFallbackCommands(): List<PluginFallbackCommand>
+    suspend fun getAllPluginFallbackCommands(): List<PluginFallbackCommand>
 
-    fun invokePluginCommand(commandUuid: UUID, pluginUuid: UUID)
+    suspend fun invokePluginCommand(commandUuid: UUID, pluginUuid: UUID)
 
-    fun invokePluginFallbackCommand(
+    suspend fun invokePluginFallbackCommand(
         input: String,
         pluginFallbackCommandId: UUID,
         pluginUuid: UUID,

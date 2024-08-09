@@ -17,9 +17,8 @@ import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.IconOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -30,6 +29,7 @@ data class SearchScreenState(
     val fallbackCommands: List<PluginFallbackCommand> = emptyList()
 )
 
+@OptIn(FlowPreview::class)
 class SearchScreenViewModel(
     private val pluginRepository: PluginRepository,
     private val processQueryUseCase: ProcessInputQueryUseCase,
@@ -41,6 +41,29 @@ class SearchScreenViewModel(
 
     var searchBarState by mutableStateOf("")
         private set
+
+    private val _searchQueryState = MutableStateFlow("")
+
+    init {
+        viewModelScope.launch {
+            _searchQueryState
+                .debounce(50)
+                .collect { query ->
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val results = processQueryUseCase(
+                            plugins = _state.value.pluginList,
+                            inputQuery = query,
+                            onError = {}
+                        )
+
+                        _state.update {
+                            it.copy(searchResults = results)
+                        }
+                    }
+                }
+
+        }
+    }
 
     fun loadPlugins() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -75,19 +98,7 @@ class SearchScreenViewModel(
 
         searchBarState = newValue
 
-        viewModelScope.launch(Dispatchers.IO) {
-            val results = processQueryUseCase(
-                plugins = _state.value.pluginList,
-                inputQuery = newValue,
-                onError = {
-                    onError()
-                }
-            )
-
-            _state.update {
-                it.copy(searchResults = results)
-            }
-        }
+        _searchQueryState.tryEmit(newValue)
     }
 
     fun executeResult(operationResult: OperationResult, runIntent: (Intent) -> Unit) {

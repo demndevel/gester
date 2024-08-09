@@ -8,7 +8,6 @@ import com.demn.plugincore.FindUtilPluginUuid
 import com.demn.plugincore.PluginMetadata
 import com.demn.plugincore.PluginSetting
 import com.demn.plugincore.buildPluginMetadata
-import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugins.CorePlugin
 import java.util.UUID
@@ -30,7 +29,7 @@ class FindUtilPlugin(
 ) : CorePlugin {
     override val metadata: PluginMetadata = findUtilPluginMetadata
 
-    override fun invokeCommand(uuid: UUID) {
+    override suspend fun invokeCommand(uuid: UUID) {
         if (uuid == openSettingsCommandUuid) {
             val intent = Intent(context, SettingsActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -40,7 +39,7 @@ class FindUtilPlugin(
         }
     }
 
-    override fun getPluginCommands(): List<PluginCommand> =
+    override suspend fun getPluginCommands(): List<PluginCommand> =
         listOf(
             PluginCommand(
                 uuid = openSettingsCommandUuid,
@@ -50,15 +49,15 @@ class FindUtilPlugin(
             )
         )
 
-    override fun getPluginFallbackCommands(): List<PluginFallbackCommand> = emptyList()
+    override suspend fun getPluginFallbackCommands(): List<PluginFallbackCommand> = emptyList()
 
-    override fun getPluginSettings(): List<PluginSetting> {
+    override suspend fun getPluginSettings(): List<PluginSetting> {
         return emptyList()
     }
 
-    override fun invokeAnyInput(input: String): List<OperationResult> {
+    override suspend fun invokeAnyInput(input: String): List<OperationResult> {
         return emptyList()
     }
 
-    override fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit
+    override suspend fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit
 }

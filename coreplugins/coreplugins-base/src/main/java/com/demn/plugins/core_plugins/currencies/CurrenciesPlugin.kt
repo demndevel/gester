@@ -7,7 +7,6 @@ import com.demn.plugincore.PluginSettingType
 import com.demn.plugincore.PluginVersion
 import com.demn.plugincore.buildPluginMetadata
 import com.demn.plugincore.operation_result.OperationResult
-import com.demn.plugincore.operation_result.TransitionOperationResult
 import com.demn.plugins.CorePlugin
 import com.demn.plugins.CorePluginsSettingsRepository
 import java.util.Locale
@@ -71,17 +70,17 @@ class CurrenciesPlugin(
 ) : CorePlugin {
     override val metadata = currenciesPluginMetadata
 
-    override fun invokeCommand(uuid: UUID) {
+    override suspend fun invokeCommand(uuid: UUID) {
         TODO("Not yet implemented")
     }
 
-    override fun getPluginCommands(): List<PluginCommand> = emptyList()
+    override suspend fun getPluginCommands(): List<PluginCommand> = emptyList()
 
-    override fun getPluginFallbackCommands(): List<PluginFallbackCommand> = emptyList()
+    override suspend fun getPluginFallbackCommands(): List<PluginFallbackCommand> = emptyList()
 
     private val usdCostSettingUuid = UUID.fromString("2bf52834-430b-4ec4-bade-ad6eb563c4ed")
 
-    override fun getPluginSettings(): List<PluginSetting> {
+    override suspend fun getPluginSettings(): List<PluginSetting> {
         return listOf(
             PluginSetting(
                 pluginUuid = metadata.pluginUuid,
@@ -94,9 +93,9 @@ class CurrenciesPlugin(
         )
     }
 
-    override fun invokeAnyInput(input: String): List<OperationResult> {
+    override suspend fun invokeAnyInput(input: String): List<OperationResult> {
         return emptyList()
     }
 
-    override fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit
+    override suspend fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit
 }

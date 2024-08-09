@@ -13,9 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.demn.findutil.di.appModule
+import com.demn.findutil.di.coreplugins.appSearchingPluginModule
 import com.demn.findutil.presentation.main.SearchScreen
 import com.demn.findutil.ui.theme.FindUtilTheme
-import com.demn.findutil.di.corePluginsModule
+import com.demn.findutil.di.coreplugins.corePluginsModule
 import com.demn.findutil.di.dataModule
 import com.demn.findutil.di.domainModule
 import com.demn.findutil.di.pluginManagementModule
@@ -34,6 +35,7 @@ class MainActivity : ComponentActivity() {
                     listOf(
                         appModule,
                         corePluginsModule,
+                        appSearchingPluginModule,
                         dataModule,
                         pluginManagementModule,
                         domainModule

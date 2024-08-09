@@ -55,7 +55,7 @@ class PluginRepositoryImpl(
         return externalPluginsProvider.getAllPluginFallbackCommands()
     }
 
-    private fun getAllBuiltInFallbackCommands(): List<PluginFallbackCommand> {
+    private suspend fun getAllBuiltInFallbackCommands(): List<PluginFallbackCommand> {
         return corePluginsProvider.getAllPluginFallbackCommands()
     }
 
@@ -122,7 +122,7 @@ class PluginRepositoryImpl(
         }
     }
 
-    private fun invokeBuiltInPluginFallbackCommand(
+    private suspend fun invokeBuiltInPluginFallbackCommand(
         input: String,
         commandUuid: UUID,
         plugin: BuiltInPlugin

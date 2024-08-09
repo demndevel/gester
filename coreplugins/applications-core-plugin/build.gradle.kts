@@ -1,14 +1,15 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.demn.plugins"
+    namespace = "com.demn.applications_core_plugin"
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 27
+        minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -17,10 +18,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -34,16 +32,17 @@ android {
 
 dependencies {
     implementation(project(":plugincore"))
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(project(":domain"))
+    implementation(project(":coreplugins:coreplugins-base"))
 
+    api(libs.room.runtime)
+    implementation(libs.room.ktx)
+    implementation(project(":domain"))
+    ksp(libs.room.compiler)
     implementation(libs.fuzzywuzzy.kotlin)
+    implementation(libs.androidx.core.ktx)
 
-    testImplementation(kotlin("test"))
-
+    testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

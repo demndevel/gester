@@ -26,7 +26,7 @@ class CorePluginsProviderImpl(
         return plugin.invokeAnyInput(input)
     }
 
-    override fun getPluginCommands(plugin: BuiltInPlugin): List<PluginCommand> {
+    override suspend fun getPluginCommands(plugin: BuiltInPlugin): List<PluginCommand> {
         plugins
             .find { it.metadata.pluginUuid == plugin.metadata.pluginUuid }
             ?.let {
@@ -36,21 +36,21 @@ class CorePluginsProviderImpl(
         return emptyList()
     }
 
-    override fun getAllPluginCommands(): List<PluginCommand> {
+    override suspend fun getAllPluginCommands(): List<PluginCommand> {
         return plugins.flatMap { it.getPluginCommands() }
     }
 
-    override fun getAllPluginFallbackCommands(): List<PluginFallbackCommand> {
+    override suspend fun getAllPluginFallbackCommands(): List<PluginFallbackCommand> {
         return plugins.flatMap { it.getPluginFallbackCommands() }
     }
 
-    override fun invokePluginCommand(commandUuid: UUID, pluginUuid: UUID) {
+    override suspend fun invokePluginCommand(commandUuid: UUID, pluginUuid: UUID) {
         plugins
             .find { it.metadata.pluginUuid == pluginUuid }
             ?.invokeCommand(commandUuid)
     }
 
-    override fun invokePluginFallbackCommand(
+    override suspend fun invokePluginFallbackCommand(
         input: String,
         pluginFallbackCommandId: UUID,
         pluginUuid: UUID

@@ -30,11 +30,11 @@ dependencyResolutionManagement {
 
 rootProject.name = "FindUtil"
 include(":app")
-include(":coreplugins")
+include(":coreplugins:applications-core-plugin")
+include(":coreplugins:coreplugins-base")
 include(":plugincore")
 
 include(":fooplugin")
-include("pluginloading")
 include(":pluginloading")
 include(":data")
 include(":core")
