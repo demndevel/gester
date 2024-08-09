@@ -26,6 +26,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -183,7 +185,7 @@ fun SearchBar(
         placeholder = {
             Text(
                 text = "Look for something…",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineSmall
             )
         },
         colors = TextFieldDefaults.colors(
@@ -201,6 +203,14 @@ fun SearchBar(
         keyboardActions = KeyboardActions(
             onGo = { onEnterClick() },
         ),
+        trailingIcon = {
+            IconButton(onClick = { onSearchBarValueChange("") }) {
+                Icon(
+                    Icons.Outlined.Clear,
+                    null
+                )
+            }
+        },
         maxLines = 1,
         minLines = 1,
         modifier = modifier
@@ -250,7 +260,7 @@ fun ResultItem(
 
     if (result is CommandOperationResult) {
         BasicResult(
-            text = "[command] ${result.name}",
+            text = result.name,
             onResultClick = { onResultClick(result) },
             isFirst = index == 0,
             modifier = modifier.fillMaxWidth(),
