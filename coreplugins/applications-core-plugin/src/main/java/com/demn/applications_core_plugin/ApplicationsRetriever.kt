@@ -49,7 +49,7 @@ class ApplicationsRetriever(
 
                 val ratio = FuzzySearch.tokenSetPartialRatio(formattedInput, formattedAppName)
 
-                ratio >= 55
+                ratio >= 65
             }
 
         return filteredResults

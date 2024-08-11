@@ -59,6 +59,7 @@ class OperationResultSorterUseCaseImpl(
         val fuzzySorted = fuzzyExtracted
             .sortedByDescending { it.score }
             .map { it.referent }
+
         return fuzzySorted
     }
 
@@ -70,8 +71,8 @@ class OperationResultSorterUseCaseImpl(
 
             if (o1 == ResultType.Information && o2 == ResultType.Information) return 0
 
-            if (o1 == ResultType.Information) return -1
-            if (o2 == ResultType.Information) return 1
+            if (o1 == ResultType.Information) return 1
+            if (o2 == ResultType.Information) return -1
 
             return 0
         }
