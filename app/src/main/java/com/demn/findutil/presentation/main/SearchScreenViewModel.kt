@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.UUID
 
 @Immutable
@@ -51,7 +52,9 @@ class SearchScreenViewModel(
             _searchQueryState
                 .debounce(50)
                 .collect { query ->
-                    viewModelScope.launch(Dispatchers.IO) {
+                    withContext(Dispatchers.IO) {
+                        if (query.isBlank()) return@withContext
+
                         val results = processQueryUseCase(
                             plugins = _state.value.pluginList,
                             inputQuery = query,
@@ -63,7 +66,6 @@ class SearchScreenViewModel(
                         }
                     }
                 }
-
         }
     }
 
@@ -91,11 +93,9 @@ class SearchScreenViewModel(
 
     fun updateSearchBarValue(newValue: String, onError: () -> Unit = {}) {
         if (newValue.isBlank()) {
-            searchBarState = newValue
             _state.update {
                 it.copy(searchResults = emptyList())
             }
-            return
         }
 
         searchBarState = newValue
