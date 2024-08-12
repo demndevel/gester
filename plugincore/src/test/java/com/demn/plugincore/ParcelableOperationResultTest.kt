@@ -2,6 +2,8 @@ package com.demn.plugincore
 
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
+import com.demn.plugincore.parcelables.ParcelableOperationResult
+import com.demn.plugincore.parcelables.toOperationResult
 import kotlin.test.Test
 
 class ParcelableOperationResultTest {

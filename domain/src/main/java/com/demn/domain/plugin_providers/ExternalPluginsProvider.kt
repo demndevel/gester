@@ -4,7 +4,7 @@ import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.models.PluginService
-import com.demn.plugincore.PluginSetting
+import com.demn.plugincore.parcelables.PluginSetting
 import com.demn.plugincore.operation_result.OperationResult
 import java.util.UUID
 

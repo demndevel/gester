@@ -12,6 +12,7 @@ import com.demn.domain.models.*
 import com.demn.domain.plugin_providers.ExternalPluginsProvider
 import com.demn.plugincore.*
 import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.parcelables.*
 import com.demn.plugincore.util.toParcelUuid
 import java.util.*
 import kotlin.coroutines.resume

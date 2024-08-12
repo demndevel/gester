@@ -3,9 +3,9 @@ package com.demn.pluginloading
 import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.models.PluginSettingsInfo
 import com.demn.domain.plugin_management.PluginSettingsRepository
-import com.demn.plugincore.Plugin
-import com.demn.plugincore.PluginSetting
-import com.demn.plugincore.PluginSettingType
+import com.demn.domain.models.Plugin
+import com.demn.plugincore.parcelables.PluginSetting
+import com.demn.plugincore.parcelables.PluginSettingType
 import com.demn.domain.models.BuiltInPlugin
 import com.demn.domain.plugin_providers.CorePluginsProvider
 import com.demn.domain.plugin_providers.ExternalPluginsProvider

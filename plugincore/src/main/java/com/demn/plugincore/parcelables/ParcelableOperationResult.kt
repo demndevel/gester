@@ -1,4 +1,4 @@
-package com.demn.plugincore
+package com.demn.plugincore.parcelables
 
 import android.content.Intent
 import android.net.Uri

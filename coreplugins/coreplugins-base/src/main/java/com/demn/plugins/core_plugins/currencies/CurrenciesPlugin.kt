@@ -2,10 +2,10 @@ package com.demn.plugins.core_plugins.currencies
 
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
-import com.demn.plugincore.PluginSetting
-import com.demn.plugincore.PluginSettingType
-import com.demn.plugincore.PluginVersion
-import com.demn.plugincore.buildPluginMetadata
+import com.demn.plugincore.parcelables.PluginSetting
+import com.demn.plugincore.parcelables.PluginSettingType
+import com.demn.plugincore.parcelables.PluginVersion
+import com.demn.plugincore.parcelables.buildPluginMetadata
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugins.CorePlugin
 import com.demn.plugins.CorePluginsSettingsRepository

@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.demn.plugincore.PluginMetadata
+import com.demn.plugincore.parcelables.PluginMetadata
 
 @Composable
 fun PluginAvailability(

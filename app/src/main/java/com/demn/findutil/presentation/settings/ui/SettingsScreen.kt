@@ -22,7 +22,7 @@ import com.demn.findutil.presentation.settings.*
 import com.demn.findutil.presentation.settings.ui.states.HasDataState
 import com.demn.findutil.presentation.settings.ui.states.LoadingState
 import com.demn.findutil.presentation.settings.ui.states.NoDataState
-import com.demn.plugincore.PluginMetadata
+import com.demn.plugincore.parcelables.PluginMetadata
 import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.usecase.MockPluginCacheSyncUseCase
 import com.demn.findutil.app_settings.MockPluginAvailabilityRepository

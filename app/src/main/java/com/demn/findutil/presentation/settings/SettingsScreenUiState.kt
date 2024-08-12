@@ -1,9 +1,8 @@
 package com.demn.findutil.presentation.settings
 
-import com.demn.domain.models.AppSettingMetadata
-import com.demn.plugincore.Plugin
-import com.demn.plugincore.PluginMetadata
-import com.demn.plugincore.PluginSetting
+import com.demn.domain.models.Plugin
+import com.demn.plugincore.parcelables.PluginMetadata
+import com.demn.plugincore.parcelables.PluginSetting
 
 sealed interface SettingsScreenUiState {
     val saveButtonVisible: Boolean

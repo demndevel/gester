@@ -2,7 +2,7 @@ package com.demn.domain.plugin_management
 
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
-import com.demn.plugincore.Plugin
+import com.demn.domain.models.Plugin
 import com.demn.plugincore.operation_result.OperationResult
 import java.util.UUID
 

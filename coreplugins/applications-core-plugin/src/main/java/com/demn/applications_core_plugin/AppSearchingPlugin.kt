@@ -1,22 +1,18 @@
 package com.demn.applications_core_plugin
 
-import android.app.Application
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
-import com.demn.plugincore.PluginMetadata
-import com.demn.plugincore.PluginSetting
-import com.demn.plugincore.PluginVersion
-import com.demn.plugincore.buildPluginMetadata
+import com.demn.plugincore.parcelables.PluginMetadata
+import com.demn.plugincore.parcelables.PluginSetting
+import com.demn.plugincore.parcelables.PluginVersion
+import com.demn.plugincore.parcelables.buildPluginMetadata
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.plugins.CorePlugin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.*
-import kotlin.coroutines.suspendCoroutine
 
 val syncAppsCacheCommandUuid = UUID.fromString("0b8dd1b6-4534-46db-b0aa-e78b467c34be")
 

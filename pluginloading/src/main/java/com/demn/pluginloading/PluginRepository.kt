@@ -2,7 +2,7 @@ package com.demn.pluginloading
 
 import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.plugin_management.PluginRepository
-import com.demn.plugincore.Plugin
+import com.demn.domain.models.Plugin
 import com.demn.plugincore.operation_result.OperationResult
 import com.demn.domain.models.BuiltInPlugin
 import com.demn.domain.models.PluginCommand

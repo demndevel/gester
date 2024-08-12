@@ -14,8 +14,7 @@ import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.Boole
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.IntSetting
 import com.demn.findutil.presentation.settings.ui.primitive_setting_fields.StringSetting
 import com.demn.findutil.presentation.settings.ui.settingErrorMessage
-import com.demn.plugincore.PluginMetadata
-import java.util.*
+import com.demn.plugincore.parcelables.PluginMetadata
 
 @Composable
 fun AppSettings(

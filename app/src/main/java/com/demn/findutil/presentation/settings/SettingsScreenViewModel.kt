@@ -5,12 +5,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.demn.plugincore.*
 import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.models.Plugin
 import com.demn.domain.plugin_management.PluginRepository
 import com.demn.domain.plugin_management.PluginSettingsRepository
 import com.demn.domain.plugin_management.PluginUninstaller
 import com.demn.domain.settings.AppSettingsRepository
 import com.demn.domain.settings.PluginAvailabilityRepository
 import com.demn.domain.usecase.PluginCacheSyncUseCase
+import com.demn.plugincore.parcelables.PluginMetadata
+import com.demn.plugincore.parcelables.PluginSetting
+import com.demn.plugincore.parcelables.PluginSettingType
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

@@ -4,8 +4,8 @@ import com.demn.domain.data.PluginCache
 import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
-import com.demn.plugincore.ParcelablePluginCommand
-import com.demn.plugincore.ParcelablePluginFallbackCommand
+import com.demn.plugincore.parcelables.ParcelablePluginCommand
+import com.demn.plugincore.parcelables.ParcelablePluginFallbackCommand
 import java.util.UUID
 
 fun ParcelablePluginCommand.toPluginCommand(pluginUuid: UUID): PluginCommand = PluginCommand(

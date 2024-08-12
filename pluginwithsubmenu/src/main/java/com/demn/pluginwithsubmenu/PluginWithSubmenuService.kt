@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.IBinder
 import android.os.ParcelUuid
 import com.demn.aidl.PluginAdapter
-import com.demn.plugincore.*
+import com.demn.plugincore.parcelables.*
 import java.util.UUID
 
 class PluginWithSubmenuService : Service() {

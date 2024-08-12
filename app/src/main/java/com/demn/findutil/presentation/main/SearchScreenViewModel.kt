@@ -12,7 +12,7 @@ import com.demn.domain.data.ResultFrecencyRepository
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.plugin_management.PluginRepository
 import com.demn.domain.usecase.ProcessInputQueryUseCase
-import com.demn.plugincore.Plugin
+import com.demn.domain.models.Plugin
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.CommandOperationResult
 import com.demn.plugincore.operation_result.IconOperationResult

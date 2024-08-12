@@ -2,7 +2,7 @@ package com.demn.domain.data
 
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
-import com.demn.plugincore.PluginMetadata
+import com.demn.plugincore.parcelables.PluginMetadata
 import java.util.UUID
 
 interface ExternalPluginCacheRepository {

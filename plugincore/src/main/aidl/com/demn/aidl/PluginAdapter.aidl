@@ -1,11 +1,11 @@
 package com.demn.aidl;
 
-import com.demn.plugincore.ParcelableOperationResult;
-import com.demn.plugincore.PluginMetadata;
-import com.demn.plugincore.PluginSetting;
-import com.demn.plugincore.PluginSummary;
-import com.demn.plugincore.ParcelablePluginCommand;
-import com.demn.plugincore.ParcelablePluginFallbackCommand;
+import com.demn.plugincore.parcelables.ParcelableOperationResult;
+import com.demn.plugincore.parcelables.PluginMetadata;
+import com.demn.plugincore.parcelables.PluginSetting;
+import com.demn.plugincore.parcelables.PluginSummary;
+import com.demn.plugincore.parcelables.ParcelablePluginCommand;
+import com.demn.plugincore.parcelables.ParcelablePluginFallbackCommand;
 import android.os.ParcelUuid;
 
 interface PluginAdapter {

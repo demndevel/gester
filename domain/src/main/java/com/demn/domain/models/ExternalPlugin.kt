@@ -1,7 +1,6 @@
 package com.demn.domain.models
 
-import com.demn.plugincore.Plugin
-import com.demn.plugincore.PluginMetadata
+import com.demn.plugincore.parcelables.PluginMetadata
 
 data class ExternalPlugin(
     override val metadata: PluginMetadata,
