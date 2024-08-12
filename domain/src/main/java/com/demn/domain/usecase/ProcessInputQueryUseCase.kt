@@ -51,6 +51,7 @@ private fun PluginCommand.toOperationResult(): OperationResult {
     return CommandOperationResult(
         uuid = uuid,
         pluginUuid = pluginUuid,
+        iconUri = iconUri,
         name = name
     )
 }

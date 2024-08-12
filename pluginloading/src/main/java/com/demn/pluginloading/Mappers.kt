@@ -12,6 +12,7 @@ fun ParcelablePluginCommand.toPluginCommand(pluginUuid: UUID): PluginCommand = P
     uuid = this.uuid,
     pluginUuid = pluginUuid,
     name = this.name,
+    iconUri = this.iconUri,
     description = this.description
 )
 
@@ -19,6 +20,7 @@ fun ParcelablePluginFallbackCommand.toPluginFallbackCommand(pluginUuid: UUID): P
     uuid = this.uuid,
     pluginUuid = pluginUuid,
     name = this.name,
+    iconUri = this.iconUri,
     description = this.description
 )
 

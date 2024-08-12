@@ -1,5 +1,6 @@
 package com.demn.data
 
+import android.net.Uri
 import com.demn.data.entities.*
 import com.demn.domain.data.PluginCache
 import com.demn.domain.models.PluginCommand
@@ -21,6 +22,7 @@ fun PluginCommandCacheDbo.toPluginCommand(): PluginCommand {
     return PluginCommand(
         commandUuid,
         pluginUuid,
+        Uri.parse(iconUri),
         name,
         description
     )
@@ -28,10 +30,11 @@ fun PluginCommandCacheDbo.toPluginCommand(): PluginCommand {
 
 fun PluginFallbackCommandCacheDbo.toPluginFallbackCommand(): PluginFallbackCommand {
     return PluginFallbackCommand(
-        commandUuid,
-        pluginUuid,
-        name,
-        description
+        uuid = commandUuid,
+        pluginUuid = pluginUuid,
+        name = name,
+        iconUri = Uri.parse(iconUri),
+        description = description
     )
 }
 
@@ -70,7 +73,8 @@ fun PluginCommand.toPluginCommandDbo(): PluginCommandCacheDbo {
         commandUuid = uuid,
         pluginUuid = pluginUuid,
         name = name,
-        description = description
+        description = description,
+        iconUri = iconUri.toString(),
     )
 }
 
@@ -79,6 +83,7 @@ fun PluginFallbackCommand.toFallbackPluginCommandDbo(): PluginFallbackCommandCac
         commandUuid = uuid,
         pluginUuid = pluginUuid,
         name = name,
+        iconUri = iconUri.toString(),
         description = description
     )
 }

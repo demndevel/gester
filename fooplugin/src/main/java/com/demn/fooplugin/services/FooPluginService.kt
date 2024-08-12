@@ -78,12 +78,7 @@ class FooPluginService : Service() {
             }
 
             override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {
-                val drawableUri = Uri.Builder()
-                    .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-                    .authority(resources.getResourcePackageName(R.drawable.save_icon))
-                    .appendPath(resources.getResourceTypeName(R.drawable.save_icon))
-                    .appendPath(resources.getResourceEntryName(R.drawable.save_icon))
-                    .build()
+                val drawableUri = buildDrawableUri(R.drawable.save_icon)
 
                 println(drawableUri)
 
@@ -109,11 +104,13 @@ class FooPluginService : Service() {
                 return mutableListOf(
                     ParcelablePluginCommand(
                         uuid = openDeveloperSettingsCommandUuid,
-                        name = "Open developer settings"
+                        name = "Open developer settings",
+                        iconUri = buildDrawableUri(R.drawable.code_icon),
                     ),
                     ParcelablePluginCommand(
                         uuid = openManageAllApplicationsSettingsCommandUuid,
-                        name = "Manage all application settings"
+                        name = "Manage all application settings",
+                        iconUri = buildDrawableUri(R.drawable.apps_icon),
                     ),
                 )
             }
@@ -155,6 +152,13 @@ class FooPluginService : Service() {
 
         return value
     }
+
+    private fun buildDrawableUri(resourceId: Int): Uri = Uri.Builder()
+        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+        .authority(resources.getResourcePackageName(resourceId))
+        .appendPath(resources.getResourceTypeName(resourceId))
+        .appendPath(resources.getResourceEntryName(resourceId))
+        .build()
 }
 
 fun getLaunchWebPageIntent(url: String): Intent {

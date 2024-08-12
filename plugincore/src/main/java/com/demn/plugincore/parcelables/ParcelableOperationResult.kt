@@ -30,6 +30,7 @@ class ParcelableOperationResult private constructor(
     val finalDescription: String? = null,
     val intent: Intent? = null,
     val commandName: String? = null,
+    val commandIconUri: Uri? = null,
     val commandUuid: ParcelUuid? = null,
     val commandPluginUuid: ParcelUuid? = null,
 ) : Parcelable {
@@ -105,11 +106,12 @@ fun ParcelableOperationResult.toOperationResult(): OperationResult {
         )
     }
 
-    if (commandUuid != null && commandName != null && commandPluginUuid != null) { // TODO: write tests for this case
+    if (commandUuid != null && commandName != null && commandPluginUuid != null && commandIconUri != null) { // TODO: write tests for this case
         return CommandOperationResult(
             uuid = commandUuid.uuid,
             pluginUuid = commandPluginUuid.uuid,
-            name = commandName
+            name = commandName,
+            iconUri = commandIconUri
         )
     }
 

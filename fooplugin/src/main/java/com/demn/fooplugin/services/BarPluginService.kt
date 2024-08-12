@@ -1,11 +1,13 @@
 package com.demn.fooplugin.services
 
 import android.app.Service
+import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
 import android.os.ParcelUuid
 import com.demn.aidl.PluginAdapter
+import com.demn.fooplugin.R
 import com.demn.plugincore.operation_result.TransitionOperationResult
 import com.demn.plugincore.parcelables.*
 import java.net.URLEncoder
@@ -52,32 +54,7 @@ class BarPluginService : Service() {
             }
 
             override fun getAllCommands(): MutableList<ParcelablePluginCommand> {
-                return mutableListOf(
-                    ParcelablePluginCommand(
-                        uuid = UUID.fromString("94244b9c-8882-49ae-a169-1c2751824dc0"),
-                        name = "Search BitWarden Vault"
-                    ),
-                    ParcelablePluginCommand(
-                        uuid = UUID.fromString("f9e4e3b1-6954-48e9-8fc6-47605468e7ac"),
-                        name = "My Schedule"
-                    ),
-                    ParcelablePluginCommand(
-                        uuid = UUID.fromString("fe6829e5-c3f5-437a-ba55-4cb052a10f34"),
-                        name = "Search through all files"
-                    ),
-                    ParcelablePluginCommand(
-                        uuid = UUID.fromString("e02d112e-96e1-44ed-aaa6-196ffa7b09d9"),
-                        name = "Close all apps"
-                    ),
-                    ParcelablePluginCommand(
-                        uuid = UUID.fromString("7638d491-a901-4355-b260-e1b0315e5212"),
-                        name = "Confetti"
-                    ),
-                    ParcelablePluginCommand(
-                        uuid = UUID.fromString("18708475-e695-43d8-9d5b-37349989a0b0"),
-                        name = "Shutdown"
-                    )
-                )
+                return mutableListOf()
             }
 
             override fun getAllFallbackCommands(): MutableList<ParcelablePluginFallbackCommand> {
@@ -85,6 +62,7 @@ class BarPluginService : Service() {
                     ParcelablePluginFallbackCommand(
                         uuid = awesomeFallbackCommandUuid,
                         name = "Search Google",
+                        iconUri = buildDrawableUri(R.drawable.travel_explore_icon),
                         description = "Opens google search page with default browser app"
                     )
                 )
@@ -109,4 +87,11 @@ class BarPluginService : Service() {
 
         return value
     }
+
+    private fun buildDrawableUri(resourceId: Int): Uri = Uri.Builder()
+        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+        .authority(resources.getResourcePackageName(resourceId))
+        .appendPath(resources.getResourceTypeName(resourceId))
+        .appendPath(resources.getResourceEntryName(resourceId))
+        .build()
 }

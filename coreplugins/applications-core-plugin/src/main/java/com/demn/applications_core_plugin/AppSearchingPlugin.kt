@@ -1,6 +1,8 @@
 package com.demn.applications_core_plugin
 
+import android.content.ContentResolver
 import android.content.Context
+import android.net.Uri
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.plugincore.parcelables.PluginMetadata
@@ -25,20 +27,28 @@ val appSearchingMetadata = buildPluginMetadata(
     consumeAnyInput = true
 }
 
-val appSearchingPluginCommands = listOf(
-    PluginCommand(
-        uuid = syncAppsCacheCommandUuid,
-        pluginUuid = appSearchingMetadata.pluginUuid,
-        name = "Sync applications cache",
-        description = null
-    )
-)
-
 class AppSearchingPlugin(
-    context: Context,
+    private val context: Context,
     private val applicationsRetriever: ApplicationsRetriever,
 ) : CorePlugin {
     override val metadata: PluginMetadata = appSearchingMetadata
+
+    private val appSearchingPluginCommands = listOf(
+        PluginCommand(
+            uuid = syncAppsCacheCommandUuid,
+            pluginUuid = appSearchingMetadata.pluginUuid,
+            name = "Sync applications cache",
+            iconUri = buildDrawableUri(R.drawable.sync_icon),
+            description = null
+        )
+    )
+
+    private fun buildDrawableUri(resourceId: Int): Uri = Uri.Builder()
+        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+        .authority(context.resources.getResourcePackageName(resourceId))
+        .appendPath(context.resources.getResourceTypeName(resourceId))
+        .appendPath(context.resources.getResourceEntryName(resourceId))
+        .build()
 
     private var applications =
         runBlocking(Dispatchers.IO) {

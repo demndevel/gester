@@ -261,6 +261,7 @@ fun ResultItem(
     if (result is CommandOperationResult) {
         BasicResult(
             text = result.name,
+            iconUri = result.iconUri,
             onResultClick = { onResultClick(result) },
             isFirst = index == 0,
             modifier = modifier.fillMaxWidth(),
@@ -477,7 +478,8 @@ fun FallbackCommandsResultsList(
         fallbackCommands.forEach { command ->
             FallbackCommandsResult(
                 fallbackCommand = command,
-                onFallbackCommandClick = onFallbackCommandClick
+                onFallbackCommandClick = onFallbackCommandClick,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -491,18 +493,30 @@ fun FallbackCommandsResult(
 ) {
     Card(
         onClick = { onFallbackCommandClick(fallbackCommand.uuid) },
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = modifier
     ) {
-        Text(
-            text = fallbackCommand.name,
-            style = MaterialTheme.typography.headlineSmall,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 16.dp,
-                    vertical = 8.dp
-                )
-        )
+                .fillMaxSize()
+                .padding(8.dp)
+        ) {
+            UriIcon(
+                fallbackCommand.iconUri,
+                Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+            )
+
+            Text(
+                text = fallbackCommand.name,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
     }
 }
 

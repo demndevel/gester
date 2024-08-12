@@ -40,6 +40,7 @@ data class PluginCommandCacheDbo(
     val commandUuid: UUID,
     val pluginUuid: UUID,
     val name: String,
+    val iconUri: String,
     val description: String? = null
 )
 
@@ -49,5 +50,6 @@ data class PluginFallbackCommandCacheDbo(
     val commandUuid: UUID,
     val pluginUuid: UUID,
     val name: String,
+    val iconUri: String,
     val description: String? = null
 )

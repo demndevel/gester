@@ -1,7 +1,9 @@
 package com.demn.findutil
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.plugincore.FindUtilPluginUuid
@@ -39,12 +41,20 @@ class FindUtilPlugin(
         }
     }
 
+    private fun buildDrawableUri(resourceId: Int): Uri = Uri.Builder()
+        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+        .authority(context.resources.getResourcePackageName(resourceId))
+        .appendPath(context.resources.getResourceTypeName(resourceId))
+        .appendPath(context.resources.getResourceEntryName(resourceId))
+        .build()
+
     override suspend fun getPluginCommands(): List<PluginCommand> =
         listOf(
             PluginCommand(
                 uuid = openSettingsCommandUuid,
                 pluginUuid = metadata.pluginUuid,
                 name = "FindUtil settings",
+                iconUri = buildDrawableUri(R.drawable.settings_icon),
                 description = null
             )
         )
