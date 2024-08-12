@@ -1,9 +1,8 @@
 package com.demn.fooplugin.services
 
-import com.demn.plugincore.PluginSummary
-import com.demn.plugincore.PluginVersion
-import com.demn.plugincore.buildPluginMetadata
-import com.demn.plugincore.util.toParcelUuid
+import com.demn.plugincore.parcelables.PluginSummary
+import com.demn.plugincore.parcelables.PluginVersion
+import com.demn.plugincore.parcelables.buildPluginMetadata
 import java.util.UUID
 
 val fooPluginSummary = PluginSummary(

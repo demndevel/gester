@@ -3,17 +3,19 @@ package com.demn.fooplugin.services
 import android.app.Service
 import android.content.ContentResolver
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.os.IBinder
+import android.provider.Settings.*
 import android.os.ParcelUuid
-import androidx.core.content.res.ResourcesCompat
 import com.demn.aidl.PluginAdapter
 import com.demn.fooplugin.R
 import com.demn.plugincore.*
-import com.demn.plugincore.ParcelableOperationResult.Companion.buildParcelableOperationResult
+import com.demn.plugincore.parcelables.ParcelableOperationResult.Companion.buildParcelableOperationResult
 import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.IconOperationResult
 import com.demn.plugincore.operation_result.ResultType
+import com.demn.plugincore.parcelables.*
 import java.util.UUID
 
 class FooPluginService : Service() {
@@ -44,6 +46,9 @@ class FooPluginService : Service() {
         )
     )
 
+    private val openDeveloperSettingsCommandUuid = UUID.fromString("3a8680d5-853c-4e5c-aae0-84ec65b6f1d3")
+    private val openManageAllApplicationsSettingsCommandUuid = UUID.fromString("e15d693c-514e-4cf9-babb-2463cb4491d3")
+
     override fun onBind(intent: Intent?): IBinder {
         return addBinder()
     }
@@ -53,6 +58,22 @@ class FooPluginService : Service() {
             override fun executeFallbackCommand(commandUuid: ParcelUuid?, input: String?) = Unit
 
             override fun executeCommand(commandUuid: ParcelUuid?) {
+                if (commandUuid?.uuid == openDeveloperSettingsCommandUuid) {
+                    val intent = Intent(ACTION_APPLICATION_DEVELOPMENT_SETTINGS).apply {
+                        flags = FLAG_ACTIVITY_NEW_TASK
+                    }
+
+                    startActivity(intent)
+                }
+
+                if (commandUuid?.uuid == openManageAllApplicationsSettingsCommandUuid) {
+                    val intent = Intent(ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS).apply {
+                        flags = FLAG_ACTIVITY_NEW_TASK
+                    }
+
+                    startActivity(intent)
+                }
+
                 println("foo plugin: invoked command $commandUuid")
             }
 
@@ -87,12 +108,12 @@ class FooPluginService : Service() {
             override fun getAllCommands(): MutableList<ParcelablePluginCommand> {
                 return mutableListOf(
                     ParcelablePluginCommand(
-                        uuid = UUID.fromString("c7b53672-d63a-400a-8148-e93ffa22d6e3"),
-                        name = "Search BitWarden vault"
+                        uuid = openDeveloperSettingsCommandUuid,
+                        name = "Open developer settings"
                     ),
                     ParcelablePluginCommand(
-                        uuid = UUID.fromString("3a8680d5-853c-4e5c-aae0-84ec65b6f1d3"),
-                        name = "Look though some items"
+                        uuid = openManageAllApplicationsSettingsCommandUuid,
+                        name = "Manage all application settings"
                     ),
                 )
             }

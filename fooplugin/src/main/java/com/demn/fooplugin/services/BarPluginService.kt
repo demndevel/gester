@@ -6,9 +6,8 @@ import android.net.Uri
 import android.os.IBinder
 import android.os.ParcelUuid
 import com.demn.aidl.PluginAdapter
-import com.demn.plugincore.*
-import com.demn.plugincore.operation_result.BasicOperationResult
 import com.demn.plugincore.operation_result.TransitionOperationResult
+import com.demn.plugincore.parcelables.*
 import java.net.URLEncoder
 import java.util.UUID
 
