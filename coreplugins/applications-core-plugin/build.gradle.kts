@@ -41,6 +41,7 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.fuzzywuzzy.kotlin)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.latin.to.cyrillic)
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.junit)
