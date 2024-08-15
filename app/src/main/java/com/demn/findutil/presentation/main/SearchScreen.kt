@@ -279,11 +279,6 @@ fun BasicResult(
     iconUri: Uri? = null,
     resultType: ResultType = ResultType.Other
 ) {
-    SideEffect {
-        if (text == "Tinkoff") {
-            println("$text is recompositing")
-        }
-    }
     Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = when (isFirst) {
