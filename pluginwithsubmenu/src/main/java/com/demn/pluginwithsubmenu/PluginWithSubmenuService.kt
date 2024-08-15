@@ -2,6 +2,7 @@ package com.demn.pluginwithsubmenu
 
 import android.app.Service
 import android.content.Intent
+import android.net.Uri
 import android.os.IBinder
 import android.os.ParcelUuid
 import com.demn.aidl.PluginAdapter
@@ -39,7 +40,8 @@ class PluginWithSubmenuService : Service() {
                 return mutableListOf(
                     ParcelablePluginCommand(
                         uuid = UUID.fromString("075d1caf-2dd7-4ce3-89a3-67d6f4378935"),
-                        name = "Open example plugin submenu"
+                        name = "Open example plugin submenu",
+                        iconUri = Uri.EMPTY
                     )
                 )
             }
