@@ -68,7 +68,7 @@ fun SearchBar(
         maxLines = 1,
         minLines = 1,
         modifier = modifier
-//            .focusRequester(focusRequester)
+            .focusRequester(focusRequester)
             .shadow(elevation = 6.dp, shape = RoundedCornerShape(16.dp))
             .onFocusChanged { if (it.hasFocus) keyboard?.show() },
     )

@@ -1,7 +1,5 @@
 package com.demn.findutil.presentation.main.components
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -17,15 +15,18 @@ import androidx.compose.ui.unit.dp
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.findutil.R
 import com.demn.findutil.presentation.main.SearchScreenState
-import com.demn.findutil.presentation.main.SearchScreenViewModel
-import java.util.UUID
+import com.demn.plugincore.operation_result.OperationResult
+import java.util.*
 
 @Composable
 fun SearchScreenContent(
-    vm: SearchScreenViewModel,
     state: SearchScreenState,
-    context: Context,
     focusRequester: FocusRequester,
+    onResultClick: (OperationResult) -> Unit,
+    searchBarState: String,
+    onFallbackCommandClick: (id: UUID) -> Unit,
+    onSearchBarValueChange: (String) -> Unit,
+    onEnterClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -40,16 +41,19 @@ fun SearchScreenContent(
                 .weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            resultsList(state, vm, context)
+            resultsList(
+                state,
+                onResultClick = onResultClick,
+            )
 
             item { Spacer(Modifier.height(4.dp)) }
 
-            if (vm.searchBarState.isNotBlank()) {
+            if (searchBarState.isNotBlank()) {
                 item {
                     FallbackCommandsResultsList(
-                        currentInput = vm.searchBarState,
+                        currentInput = searchBarState,
                         fallbackCommands = state.fallbackCommands,
-                        onFallbackCommandClick = vm::invokeFallbackCommand
+                        onFallbackCommandClick = onFallbackCommandClick
                     )
                 }
             }
@@ -57,26 +61,9 @@ fun SearchScreenContent(
 
         SearchBar(
             focusRequester = focusRequester,
-            searchBarValue = vm.searchBarState,
-            onSearchBarValueChange = {
-                vm.updateSearchBarValue(
-                    it,
-                    onError = {
-                        Toast(context)
-                            .apply {
-                                setText("some error with plugin N occured") // TODO
-                            }
-                            .show()
-                    }
-                )
-            },
-            onEnterClick = {
-                val firstResult = state.searchResults.firstOrNull()
-
-                firstResult?.let {
-                    vm.executeResult(firstResult, context::startActivity)
-                }
-            },
+            searchBarValue = searchBarState,
+            onSearchBarValueChange = onSearchBarValueChange,
+            onEnterClick = onEnterClick,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -85,14 +72,13 @@ fun SearchScreenContent(
 
 private fun LazyListScope.resultsList(
     state: SearchScreenState,
-    vm: SearchScreenViewModel,
-    context: Context
+    onResultClick: (OperationResult) -> Unit
 ) {
     itemsIndexed(state.searchResults) { index, item ->
         ResultItem(
             item,
             index,
-            onResultClick = { vm.executeResult(it, context::startActivity) },
+            onResultClick = onResultClick,
             Modifier
         )
     }
