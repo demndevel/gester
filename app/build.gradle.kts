@@ -55,6 +55,7 @@ android {
 dependencies {
     implementation(project(":coreplugins:coreplugins-base"))
     implementation(project(":coreplugins:applications-core-plugin"))
+    implementation(project(":coreplugins:unit-calc-core-plugin"))
     implementation(project(":plugincore"))
     implementation(project(":data"))
 

@@ -32,6 +32,7 @@ rootProject.name = "FindUtil"
 include(":app")
 include(":coreplugins:applications-core-plugin")
 include(":coreplugins:coreplugins-base")
+include(":coreplugins:unit-calc-core-plugin")
 include(":plugincore")
 
 include(":fooplugin")

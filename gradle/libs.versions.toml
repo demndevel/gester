@@ -22,6 +22,7 @@ junit-junit = "4.13.2"
 ksp = "2.0.0-1.0.23"
 room = "2.6.1"
 glide-compose = "1.0.0-beta01"
+calkt = "0.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +49,8 @@ latin-to-cyrillic = { module = "com.michaeltroger:latin-to-cyrillic", version.re
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 junit-junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
+
+calkt = { module = "me.y9san9.calkt:units", version.ref = "calkt" }
 
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
