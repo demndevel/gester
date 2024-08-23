@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "485747103465",
+    "project_id": "findutil",
+    "storage_bucket": "findutil.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:485747103465:android:ce0e91c3e714d277794278",
+        "android_client_info": {
+          "package_name": "com.demn.findutil"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG4HFzU7m_Gm2t4hw0btWzukqw0QRUL8k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

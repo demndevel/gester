@@ -23,6 +23,9 @@ ksp = "2.0.0-1.0.23"
 room = "2.6.1"
 glide-compose = "1.0.0-beta01"
 calkt = "0.0.4"
+googleServicesPlugin = "4.4.2"
+firebaseBom = "33.2.0"
+firebaseCrashlyticsPlugin = "3.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -56,6 +59,10 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
+firebaseBom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebaseAnalytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebaseCrashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -63,3 +70,5 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+googleServicesPlugin = { id = "com.google.gms.google-services", version.ref = "googleServicesPlugin" }
+firebaseCrashlyticsPlugin = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }

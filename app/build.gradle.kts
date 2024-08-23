@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.googleServicesPlugin)
+    alias(libs.plugins.firebaseCrashlyticsPlugin)
 }
 
 android {
@@ -73,6 +75,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.documentfile)
     implementation(libs.glide)
+
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseAnalytics)
+    implementation(libs.firebaseCrashlytics)
 
     implementation(project(":pluginloading"))
     implementation(project(":domain"))
