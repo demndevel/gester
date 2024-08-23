@@ -48,7 +48,7 @@ fun SearchScreenContent(
 
             item { Spacer(Modifier.height(4.dp)) }
 
-            if (searchBarState.isNotBlank()) {
+            if (searchBarState.isNotBlank() && state.fallbackCommands.isNotEmpty()) {
                 item {
                     FallbackCommandsResultsList(
                         currentInput = searchBarState,
