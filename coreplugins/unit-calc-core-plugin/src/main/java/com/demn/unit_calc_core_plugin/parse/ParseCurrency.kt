@@ -5,27 +5,27 @@ import me.y9san9.calkt.units.parse.UnitsParseUnitKeyFunction
 import me.y9san9.calkt.units.parse.plus
 
 object ParseCurrency {
-    val usd = UnitsParseUnitKeyFunction.ofWords(
+    val usd = UnitsParseUnitKeyFunction.ofStrings(
         CurrencyUnitKey.Usd,
         "$", "USD", "usd", "dollar", "dollars"
     )
 
-    val rub = UnitsParseUnitKeyFunction.ofWords(
+    val rub = UnitsParseUnitKeyFunction.ofStrings(
         CurrencyUnitKey.Rub,
         "RUB", "rub", "rouble", "roubles"
     )
 
-    val eur = UnitsParseUnitKeyFunction.ofWords(
+    val eur = UnitsParseUnitKeyFunction.ofStrings(
         CurrencyUnitKey.Eur,
         "€", "EUR", "eur", "EURO", "euros", "euro"
     )
 
-    val ton = UnitsParseUnitKeyFunction.ofWords(
+    val ton = UnitsParseUnitKeyFunction.ofStrings(
         CurrencyUnitKey.Ton,
         "TON", "ton"
     )
 
-    val meow = UnitsParseUnitKeyFunction.ofWords(
+    val meow = UnitsParseUnitKeyFunction.ofStrings(
         CurrencyUnitKey.Meow,
         "MEOW", "meow"
     )

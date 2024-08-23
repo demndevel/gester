@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":coreplugins:coreplugins-base"))
     implementation(project(":domain"))
     implementation(project(":plugincore"))
+
     implementation(libs.calkt)
 
     testImplementation(libs.junit.junit)

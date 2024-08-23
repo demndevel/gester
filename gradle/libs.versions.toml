@@ -22,7 +22,7 @@ junit-junit = "4.13.2"
 ksp = "2.0.0-1.0.23"
 room = "2.6.1"
 glide-compose = "1.0.0-beta01"
-calkt = "0.0.3"
+calkt = "0.0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
