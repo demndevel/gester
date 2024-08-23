@@ -12,6 +12,7 @@ import com.demn.plugincore.parcelables.buildPluginMetadata
 import com.demn.plugins.CorePlugin
 import com.demn.unit_calc_core_plugin.calculate.DefaultUnitsConvert
 import com.demn.unit_calc_core_plugin.parse.DefaultParseUnitKey
+import me.y9san9.calkt.Expression
 import me.y9san9.calkt.calculate.tryCalculate
 import me.y9san9.calkt.math.calculate.MathCalculateSuccess
 import me.y9san9.calkt.parse.ParseResult
@@ -64,7 +65,7 @@ class UnitCalcCorePlugin() : CorePlugin {
             is MathCalculateSuccess -> {
                 listOf(
                     TransitionOperationResult(
-                        initialText = expression.toString(),
+                        initialText = expression.toPrettyString(),
                         initialDescription = "Math expression",
                         finalText = result.number.toString(),
                         finalDescription = "Result"
@@ -75,7 +76,7 @@ class UnitCalcCorePlugin() : CorePlugin {
             is UnitsCalculateSuccess -> {
                 listOf(
                     TransitionOperationResult(
-                        initialText = expression.toString(),
+                        initialText = expression.toPrettyString(),
                         initialDescription = "Units expression",
                         finalText = "${result.number} ${result.key}",
                         finalDescription = "Result"
@@ -92,4 +93,13 @@ class UnitCalcCorePlugin() : CorePlugin {
     }
 
     override suspend fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit
+}
+
+private fun Expression.toPrettyString(): String {
+    return this.toString()
+        .replace("plus", "+")
+        .replace("minus", "-")
+        .replace("div", "/")
+        .replace("times", "*")
+        .replace(".convert", " to ")
 }
