@@ -14,6 +14,8 @@ class MockExternalPluginCacheRepository() : ExternalPluginCacheRepository {
     override suspend fun getPluginCache(uuid: UUID): PluginCache? = null
 
     override suspend fun updatePluginCache(pluginCache: PluginCache) = Unit
+
+    override suspend fun removePluginCache(uuid: UUID) = Unit
 }
 
 class ExternalPluginCacheRepositoryImpl(
@@ -33,5 +35,9 @@ class ExternalPluginCacheRepositoryImpl(
 
     override suspend fun updatePluginCache(pluginCache: PluginCache) {
         pluginCacheDao.insertPluginWithCommands(pluginCache.toPluginWithCommandsDbo())
+    }
+
+    override suspend fun removePluginCache(uuid: UUID) {
+        pluginCacheDao.deletePluginWithCorrespondingData(uuid)
     }
 }

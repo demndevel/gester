@@ -9,6 +9,6 @@ import org.koin.dsl.module
 
 val domainModule = module {
     single<ProcessInputQueryUseCase> { ProcessInputQueryUseCase(get(), get(), get(), get()) }
-    single<CommandSearcherUseCase> { CommandSearcherUseCaseImpl(get()) }
-    single<PluginCacheSyncUseCase> { PluginCacheSyncUseCaseImpl(get()) }
+    single<CommandSearcherUseCase> { CommandSearcherUseCaseImpl(get(), get()) }
+    single<PluginCacheSyncUseCase> { PluginCacheSyncUseCaseImpl(get(), get()) }
 }

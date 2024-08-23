@@ -1,10 +1,6 @@
 package com.demn.data.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
 import com.demn.data.entities.PluginCacheDbo
 import com.demn.data.entities.PluginCommandCacheDbo
 import com.demn.data.entities.PluginFallbackCommandCacheDbo
@@ -38,5 +34,21 @@ interface PluginCacheDao {
         insertPluginCache(pluginWithCommandsDbo.pluginCacheDbo)
         insertPluginCommands(pluginWithCommandsDbo.commands)
         insertPluginFallbackCommands(pluginWithCommandsDbo.fallbackCommands)
+    }
+
+    @Query("DELETE FROM PluginCacheDbo WHERE pluginUuid = :pluginUuid")
+    suspend fun deletePluginCache(pluginUuid: UUID)
+
+    @Query("DELETE FROM PluginCommandCacheDbo WHERE pluginUuid = :pluginUuid")
+    suspend fun deletePluginCommands(pluginUuid: UUID)
+
+    @Query("DELETE FROM PluginFallbackCommandCacheDbo WHERE pluginUuid = :pluginUuid")
+    suspend fun deletePluginFallbackCommands(pluginUuid: UUID)
+
+    @Transaction
+    suspend fun deletePluginWithCorrespondingData(pluginUuid: UUID) {
+        deletePluginFallbackCommands(pluginUuid)
+        deletePluginCommands(pluginUuid)
+        deletePluginCache(pluginUuid)
     }
 }

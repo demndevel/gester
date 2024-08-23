@@ -11,6 +11,8 @@ interface ExternalPluginCacheRepository {
     suspend fun getPluginCache(uuid: UUID): PluginCache?
 
     suspend fun updatePluginCache(pluginCache: PluginCache)
+
+    suspend fun removePluginCache(uuid: UUID)
 }
 
 data class PluginCache(

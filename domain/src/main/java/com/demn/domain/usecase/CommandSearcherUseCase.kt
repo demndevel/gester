@@ -2,6 +2,7 @@ package com.demn.domain.usecase
 
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.plugin_management.PluginRepository
+import com.demn.domain.settings.PluginAvailabilityRepository
 import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
 
 interface CommandSearcherUseCase {
@@ -13,10 +14,15 @@ class MockCommandSearcherUseCase : CommandSearcherUseCase {
 }
 
 class CommandSearcherUseCaseImpl(
-    private val pluginRepository: PluginRepository
+    private val pluginRepository: PluginRepository,
+    private val pluginAvailabilityRepository: PluginAvailabilityRepository
 ) : CommandSearcherUseCase {
     override suspend fun invoke(input: String): List<PluginCommand> {
-        val commands = pluginRepository.getAllCommands()
+        val commands = pluginRepository
+            .getAllCommands()
+            .filter {
+                pluginAvailabilityRepository.checkPluginEnabled(it.pluginUuid)
+            }
 
         return commands.filter { command ->
             val formattedCommandName = command.name
