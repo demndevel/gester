@@ -12,9 +12,9 @@ import com.demn.aidl.PluginAdapter
 import com.demn.fooplugin.R
 import com.demn.plugincore.*
 import com.demn.plugincore.parcelables.ParcelableOperationResult.Companion.buildParcelableOperationResult
-import com.demn.plugincore.operation_result.BasicOperationResult
-import com.demn.plugincore.operation_result.IconOperationResult
-import com.demn.plugincore.operation_result.ResultType
+import com.demn.plugincore.operationresult.BasicOperationResult
+import com.demn.plugincore.operationresult.IconOperationResult
+import com.demn.plugincore.operationresult.ResultType
 import com.demn.plugincore.parcelables.*
 import java.util.UUID
 

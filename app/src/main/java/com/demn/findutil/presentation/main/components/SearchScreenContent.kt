@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.findutil.R
 import com.demn.findutil.presentation.main.SearchScreenState
-import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operationresult.OperationResult
 import java.util.*
 
 @Composable

@@ -3,7 +3,7 @@ package com.demn.findutil.presentation.main.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.demn.plugincore.operation_result.*
+import com.demn.plugincore.operationresult.*
 
 @Composable
 fun ResultItem(

@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.demn.plugincore.*
 import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.models.Plugin
-import com.demn.domain.plugin_management.PluginRepository
-import com.demn.domain.plugin_management.PluginSettingsRepository
-import com.demn.domain.plugin_management.PluginUninstaller
+import com.demn.domain.pluginmanagement.PluginRepository
+import com.demn.domain.pluginmanagement.PluginSettingsRepository
+import com.demn.domain.pluginmanagement.PluginUninstaller
 import com.demn.domain.settings.AppSettingsRepository
 import com.demn.domain.settings.PluginAvailabilityRepository
 import com.demn.domain.usecase.PluginCacheSyncUseCase

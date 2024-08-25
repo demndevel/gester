@@ -32,7 +32,7 @@ android {
 
 dependencies {
     implementation(project(":plugincore"))
-    implementation(project(":coreplugins:coreplugins-base"))
+    implementation(project(":coreplugins:base"))
     implementation(project(":domain"))
 
     testImplementation(libs.junit.junit)

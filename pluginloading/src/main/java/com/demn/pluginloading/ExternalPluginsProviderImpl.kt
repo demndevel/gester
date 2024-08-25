@@ -9,9 +9,9 @@ import com.demn.aidl.PluginAdapter
 import com.demn.domain.data.ExternalPluginCacheRepository
 import com.demn.domain.data.PluginCache
 import com.demn.domain.models.*
-import com.demn.domain.plugin_providers.ExternalPluginsProvider
+import com.demn.domain.pluginproviders.ExternalPluginsProvider
 import com.demn.plugincore.*
-import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operationresult.OperationResult
 import com.demn.plugincore.parcelables.*
 import com.demn.plugincore.util.toParcelUuid
 import java.util.*

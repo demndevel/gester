@@ -1,11 +1,11 @@
 package com.demn.domain.usecase
 
 import com.demn.domain.models.PluginCommand
-import com.demn.domain.plugin_management.PluginRepository
+import com.demn.domain.pluginmanagement.PluginRepository
 import com.demn.domain.settings.PluginAvailabilityRepository
 import com.demn.domain.models.Plugin
-import com.demn.plugincore.operation_result.CommandOperationResult
-import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operationresult.CommandOperationResult
+import com.demn.plugincore.operationresult.OperationResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

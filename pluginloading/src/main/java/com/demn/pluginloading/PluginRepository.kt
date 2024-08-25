@@ -1,14 +1,14 @@
 package com.demn.pluginloading
 
 import com.demn.domain.models.ExternalPlugin
-import com.demn.domain.plugin_management.PluginRepository
+import com.demn.domain.pluginmanagement.PluginRepository
 import com.demn.domain.models.Plugin
-import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operationresult.OperationResult
 import com.demn.domain.models.BuiltInPlugin
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
-import com.demn.domain.plugin_providers.CorePluginsProvider
-import com.demn.domain.plugin_providers.ExternalPluginsProvider
+import com.demn.domain.pluginproviders.CorePluginsProvider
+import com.demn.domain.pluginproviders.ExternalPluginsProvider
 import java.util.UUID
 
 class MockPluginRepository : PluginRepository {

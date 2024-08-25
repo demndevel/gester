@@ -1,9 +1,9 @@
 package com.demn.findutil.di
 
-import com.demn.domain.plugin_management.PluginRepository
-import com.demn.domain.plugin_management.PluginSettingsRepository
-import com.demn.domain.plugin_management.PluginUninstaller
-import com.demn.domain.plugin_providers.ExternalPluginsProvider
+import com.demn.domain.pluginmanagement.PluginRepository
+import com.demn.domain.pluginmanagement.PluginSettingsRepository
+import com.demn.domain.pluginmanagement.PluginUninstaller
+import com.demn.domain.pluginproviders.ExternalPluginsProvider
 import com.demn.domain.settings.PluginAvailabilityRepository
 import com.demn.domain.usecase.OperationResultSorterUseCase
 import com.demn.domain.usecase.OperationResultSorterUseCaseImpl
