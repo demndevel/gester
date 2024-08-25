@@ -14,6 +14,8 @@ import com.demn.plugincore.*
 import com.demn.plugincore.operationresult.OperationResult
 import com.demn.plugincore.parcelables.*
 import com.demn.plugincore.util.toParcelUuid
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -75,8 +77,8 @@ class ExternalPluginsProviderImpl(
     private suspend fun getPluginFallbackCommandsIpc(
         pluginUuid: UUID,
         pluginService: PluginService
-    ): List<PluginFallbackCommand> {
-        return suspendCoroutine { continuation ->
+    ): List<PluginFallbackCommand> = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
             performOperationsWithPlugin(pluginService) { adapter ->
                 val fallbackCommands = adapter
                     .getAllFallbackCommands()
@@ -91,8 +93,8 @@ class ExternalPluginsProviderImpl(
         input: String,
         fallbackCommandUuid: UUID,
         pluginService: PluginService
-    ) {
-        return suspendCoroutine { continuation ->
+    ) = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
             performOperationsWithPlugin(pluginService) { adapter ->
                 continuation.resume(adapter.executeFallbackCommand(fallbackCommandUuid.toParcelUuid(), input))
             }
@@ -117,13 +119,13 @@ class ExternalPluginsProviderImpl(
             }
     }
 
-    override suspend fun executeCommand(uuid: UUID, pluginUuid: UUID) {
+    override suspend fun executeCommand(uuid: UUID, pluginUuid: UUID) = withContext(Dispatchers.IO) {
         val plugin = getPluginList()
             .find { it.metadata.pluginUuid == pluginUuid }
 
-        if (plugin == null) return
+        if (plugin == null) return@withContext
 
-        return suspendCoroutine { continuation ->
+        suspendCoroutine { continuation ->
             performOperationsWithPlugin(plugin.pluginService) { pluginAdapter ->
                 continuation.resume(
                     pluginAdapter
@@ -137,8 +139,8 @@ class ExternalPluginsProviderImpl(
         input: String,
         pluginService: PluginService,
         onError: () -> Unit
-    ): List<OperationResult> {
-        return suspendCoroutine { continuation ->
+    ): List<OperationResult> = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
             performOperationsWithPlugin(
                 pluginService = pluginService,
                 onResult = { result ->
@@ -157,45 +159,49 @@ class ExternalPluginsProviderImpl(
         }
     }
 
-    override suspend fun getPluginSettings(externalPlugin: ExternalPlugin): List<PluginSetting> {
-        return suspendCoroutine { continuation ->
-            performOperationsWithPlugin(externalPlugin.pluginService) { pluginAdapter ->
-                continuation.resume(pluginAdapter.getPluginSettings())
+    override suspend fun getPluginSettings(externalPlugin: ExternalPlugin): List<PluginSetting> =
+        withContext(Dispatchers.IO) {
+            suspendCoroutine { continuation ->
+                performOperationsWithPlugin(externalPlugin.pluginService) { pluginAdapter ->
+                    continuation.resume(pluginAdapter.getPluginSettings())
+                }
             }
         }
-    }
 
-    override suspend fun setPluginSetting(externalPlugin: ExternalPlugin, settingUuid: UUID, newValue: String) {
-        performOperationsWithPlugin(externalPlugin.pluginService) { pluginAdapter ->
-            pluginAdapter.setSetting(settingUuid.toParcelUuid(), newValue)
+    override suspend fun setPluginSetting(externalPlugin: ExternalPlugin, settingUuid: UUID, newValue: String) =
+        withContext(Dispatchers.IO) {
+            performOperationsWithPlugin(externalPlugin.pluginService) { pluginAdapter ->
+                pluginAdapter.setSetting(settingUuid.toParcelUuid(), newValue)
+            }
         }
-    }
 
     private inner class PackageBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) = Unit
     }
 
-    private suspend fun getPluginCommandsIpc(pluginUuid: UUID, pluginService: PluginService): List<PluginCommand> {
-        return suspendCoroutine { continuation ->
-            performOperationsWithPlugin(pluginService) { adapter ->
-                val commands = adapter.getAllCommands()
-                    .map { it.toPluginCommand(pluginUuid) }
+    private suspend fun getPluginCommandsIpc(pluginUuid: UUID, pluginService: PluginService): List<PluginCommand> =
+        withContext(Dispatchers.IO) {
+            suspendCoroutine { continuation ->
+                performOperationsWithPlugin(pluginService) { adapter ->
+                    val commands = adapter.getAllCommands()
+                        .map { it.toPluginCommand(pluginUuid) }
 
-                continuation.resume(commands)
+                    continuation.resume(commands)
+                }
             }
         }
-    }
 
-    private suspend fun getPluginMetadataIpc(pluginService: PluginService): PluginMetadata {
-        return suspendCoroutine { continuation ->
-            performOperationsWithPlugin(pluginService) { adapter ->
-                continuation.resume(adapter.getPluginMetadata())
+    private suspend fun getPluginMetadataIpc(pluginService: PluginService): PluginMetadata =
+        withContext(Dispatchers.IO) {
+            suspendCoroutine { continuation ->
+                performOperationsWithPlugin(pluginService) { adapter ->
+                    continuation.resume(adapter.getPluginMetadata())
+                }
             }
         }
-    }
 
-    private suspend fun getPluginSummary(pluginService: PluginService): PluginSummary {
-        return suspendCoroutine { continuation ->
+    private suspend fun getPluginSummary(pluginService: PluginService): PluginSummary = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
             performOperationsWithPlugin(pluginService) { adapter ->
                 continuation.resume(adapter.getPluginSummary())
             }

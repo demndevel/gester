@@ -6,10 +6,7 @@ import com.demn.domain.settings.PluginAvailabilityRepository
 import com.demn.domain.models.Plugin
 import com.demn.plugincore.operationresult.CommandOperationResult
 import com.demn.plugincore.operationresult.OperationResult
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class ProcessInputQueryUseCase(
     private val pluginRepository: PluginRepository,
@@ -33,7 +30,7 @@ class ProcessInputQueryUseCase(
         availablePlugins: List<Plugin>,
         inputQuery: String,
         onError: () -> Unit
-    ): List<OperationResult> = withContext(Dispatchers.IO) {
+    ): List<OperationResult> = coroutineScope {
         val resultsByAnyInputDefers = availablePlugins
             .filter { it.metadata.consumeAnyInput }
             .map { plugin ->

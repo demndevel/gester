@@ -35,6 +35,8 @@ dependencies {
     implementation(project(":coreplugins:base"))
     implementation(project(":domain"))
 
+    api(libs.kotlinx.coroutines.core)
+
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

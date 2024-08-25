@@ -9,9 +9,7 @@ import com.demn.applications_core_plugin.database.ApplicationsDao
 import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
 import com.michaeltroger.latintocyrillic.Alphabet
 import com.michaeltroger.latintocyrillic.LatinCyrillicFactory
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 
 class ApplicationsRetriever(
     private val applicationsDao: ApplicationsDao,
@@ -19,8 +17,8 @@ class ApplicationsRetriever(
 ) {
     private val packageManager = context.packageManager
 
-    internal suspend fun retrieveApplications(): List<ApplicationInfo> {
-        return applicationsDao
+    internal suspend fun retrieveApplications(): List<ApplicationInfo> = withContext(Dispatchers.IO) {
+        applicationsDao
             .getAll()
             .mapNotNull {
                 ApplicationInfo(
@@ -69,28 +67,30 @@ class ApplicationsRetriever(
     }
 
     suspend fun cacheAllApplications() = coroutineScope {
-        val mainIntent = Intent(Intent.ACTION_MAIN)
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+        withContext(Dispatchers.IO) {
+            val mainIntent = Intent(Intent.ACTION_MAIN)
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
 
-        val resolveInfos = packageManager.queryIntentActivities(mainIntent, 0)
+            val resolveInfos = packageManager.queryIntentActivities(mainIntent, 0)
 
-        val defers = resolveInfos.mapNotNull { resolveInfo ->
-            async {
-                val packageName = resolveInfo.activityInfo.packageName
-                val label = resolveInfo.loadLabel(packageManager).toString()
-                val iconUri = buildAppIconResourceUri(packageName, resolveInfo.iconResource)
+            val defers = resolveInfos.mapNotNull { resolveInfo ->
+                async {
+                    val packageName = resolveInfo.activityInfo.packageName
+                    val label = resolveInfo.loadLabel(packageManager).toString()
+                    val iconUri = buildAppIconResourceUri(packageName, resolveInfo.iconResource)
 
-                applicationsDao.insert(
-                    ApplicationDbo(
-                        packageName = packageName,
-                        name = label,
-                        iconUri = iconUri,
+                    applicationsDao.insert(
+                        ApplicationDbo(
+                            packageName = packageName,
+                            name = label,
+                            iconUri = iconUri,
+                        )
                     )
-                )
+                }
             }
-        }
 
-        defers.awaitAll()
+            defers.awaitAll()
+        }
     }
 
     private fun getIntentForApp(packageName: String): Intent? {
