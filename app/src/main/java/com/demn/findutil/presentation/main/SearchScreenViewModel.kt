@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 @Immutable
-@Stable
 data class SearchScreenState(
     val searchResults: List<OperationResult> = emptyList(),
     val pluginList: List<Plugin> = emptyList(),
