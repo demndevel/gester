@@ -86,6 +86,8 @@ class SearchScreenViewModel(
                 commandUuid = id
             )
         }
+
+        updateSearchBarValue("")
     }
 
     fun updateSearchBarValue(newValue: String) {
