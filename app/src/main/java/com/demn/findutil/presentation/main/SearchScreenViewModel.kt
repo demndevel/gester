@@ -18,7 +18,7 @@ import com.demn.plugincore.operationresult.CommandOperationResult
 import com.demn.plugincore.operationresult.IconOperationResult
 import com.demn.plugincore.operationresult.OperationResult
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -31,7 +31,6 @@ data class SearchScreenState(
     val pluginErrors: List<PluginError> = emptyList()
 )
 
-@OptIn(FlowPreview::class)
 class SearchScreenViewModel(
     private val pluginRepository: PluginRepository,
     private val processQueryUseCase: ProcessInputQueryUseCase,
@@ -49,9 +48,10 @@ class SearchScreenViewModel(
     init {
         viewModelScope.launch {
             _searchQueryState
-                .debounce(50)
-                .collect { query ->
-                    if (query.isBlank()) return@collect
+                .collectLatest { query ->
+                    delay(50)
+
+                    if (query.isBlank()) return@collectLatest
 
                     val results = processQueryUseCase(
                         plugins = _state.value.pluginList,
