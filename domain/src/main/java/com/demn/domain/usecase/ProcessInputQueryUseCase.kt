@@ -14,11 +14,11 @@ class ProcessInputQueryUseCase(
     private val pluginAvailabilityRepository: PluginAvailabilityRepository,
     private val commandSearcherUseCase: CommandSearcherUseCase,
 ) {
-    suspend operator fun invoke(plugins: List<Plugin>, inputQuery: String, onError: () -> Unit): List<OperationResult> {
+    suspend operator fun invoke(plugins: List<Plugin>, inputQuery: String): List<OperationResult> {
         val availablePlugins = plugins
             .filter { pluginAvailabilityRepository.checkPluginEnabled(it.metadata.pluginUuid) }
 
-        val resultsByAnyInput = getResultsByAnyInput(availablePlugins, inputQuery, onError)
+        val resultsByAnyInput = getResultsByAnyInput(availablePlugins, inputQuery)
 
         val commandResults = commandSearcherUseCase(inputQuery)
             .map(PluginCommand::toOperationResult)
@@ -29,13 +29,12 @@ class ProcessInputQueryUseCase(
     private suspend fun getResultsByAnyInput(
         availablePlugins: List<Plugin>,
         inputQuery: String,
-        onError: () -> Unit
     ): List<OperationResult> = coroutineScope {
         val resultsByAnyInputDefers = availablePlugins
             .filter { it.metadata.consumeAnyInput }
             .map { plugin ->
                 async {
-                    pluginRepository.getAnyResults(inputQuery, plugin, onError)
+                    pluginRepository.getAnyResults(inputQuery, plugin)
                 }
             }
 

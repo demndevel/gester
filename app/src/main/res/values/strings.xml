@@ -15,4 +15,8 @@
     <string name="alias_result_type">Alias</string>
     <string name="weblink_result_type">Web link</string>
     <string name="information_result_type">Info</string>
+    <string name="plugin_loading_error">Plugin loading error</string>
+    <string name="plugin_uuid_error_description">Plugin UUID</string>
+    <string name="plugin_name_error_description">Plugin name</string>
+    <string name="unavailable">unavailable</string>
 </resources>

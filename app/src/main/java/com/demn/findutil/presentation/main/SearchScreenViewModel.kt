@@ -2,7 +2,6 @@ package com.demn.findutil.presentation.main
 
 import android.content.Intent
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,6 +12,7 @@ import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.pluginmanagement.PluginRepository
 import com.demn.domain.usecase.ProcessInputQueryUseCase
 import com.demn.domain.models.Plugin
+import com.demn.domain.models.PluginError
 import com.demn.plugincore.operationresult.BasicOperationResult
 import com.demn.plugincore.operationresult.CommandOperationResult
 import com.demn.plugincore.operationresult.IconOperationResult
@@ -27,7 +27,8 @@ import java.util.UUID
 data class SearchScreenState(
     val searchResults: List<OperationResult> = emptyList(),
     val pluginList: List<Plugin> = emptyList(),
-    val fallbackCommands: List<PluginFallbackCommand> = emptyList()
+    val fallbackCommands: List<PluginFallbackCommand> = emptyList(),
+    val pluginErrors: List<PluginError> = emptyList()
 )
 
 @OptIn(FlowPreview::class)
@@ -54,8 +55,7 @@ class SearchScreenViewModel(
 
                     val results = processQueryUseCase(
                         plugins = _state.value.pluginList,
-                        inputQuery = query,
-                        onError = {}
+                        inputQuery = query
                     )
 
                     _state.update {
@@ -67,11 +67,12 @@ class SearchScreenViewModel(
 
     fun loadPlugins() {
         viewModelScope.launch(Dispatchers.IO) {
-            val plugins = pluginRepository.getPluginList()
+            val getPluginsResult = pluginRepository.getPluginList()
             val fallbackCommands = pluginRepository.getAllFallbackCommands()
             _state.update {
                 it.copy(
-                    pluginList = plugins,
+                    pluginList = getPluginsResult.plugins,
+                    pluginErrors = getPluginsResult.pluginErrors,
                     fallbackCommands = fallbackCommands
                 )
             }
@@ -87,7 +88,7 @@ class SearchScreenViewModel(
         }
     }
 
-    fun updateSearchBarValue(newValue: String, onError: () -> Unit = {}) {
+    fun updateSearchBarValue(newValue: String) {
         if (newValue.isBlank()) {
             _state.update {
                 it.copy(searchResults = emptyList())

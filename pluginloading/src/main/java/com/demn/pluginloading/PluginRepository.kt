@@ -1,19 +1,15 @@
 package com.demn.pluginloading
 
-import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.models.*
 import com.demn.domain.pluginmanagement.PluginRepository
-import com.demn.domain.models.Plugin
 import com.demn.plugincore.operationresult.OperationResult
-import com.demn.domain.models.BuiltInPlugin
-import com.demn.domain.models.PluginCommand
-import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.pluginproviders.CorePluginsProvider
 import com.demn.domain.pluginproviders.ExternalPluginsProvider
 import java.util.UUID
 
 class MockPluginRepository : PluginRepository {
-    override suspend fun getPluginList(): List<Plugin> {
-        return emptyList()
+    override suspend fun getPluginList(): GetPluginListInvocationResult {
+        return GetPluginListInvocationResult(emptyList())
     }
 
     override suspend fun invokeFallbackCommand(input: String, commandUuid: UUID) = Unit
@@ -22,7 +18,7 @@ class MockPluginRepository : PluginRepository {
 
     override suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID) = Unit
 
-    override suspend fun getAnyResults(input: String, plugin: Plugin, onError: () -> Unit): List<OperationResult> {
+    override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
         return emptyList()
     }
 
@@ -33,13 +29,13 @@ class PluginRepositoryImpl(
     private val corePluginsProvider: CorePluginsProvider,
     private val externalPluginsProvider: ExternalPluginsProvider,
 ) : PluginRepository {
-    private suspend fun getExternalPlugins(): List<ExternalPlugin> {
+    private suspend fun getExternalPlugins(): GetExternalPluginListInvocationResult {
         return externalPluginsProvider.getPluginList()
     }
 
-    override suspend fun getAnyResults(input: String, plugin: Plugin, onError: () -> Unit): List<OperationResult> {
+    override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
         return when (plugin) {
-            is ExternalPlugin -> getAnyResultsWithExternalPlugin(plugin, input, onError = onError)
+            is ExternalPlugin -> getAnyResultsWithExternalPlugin(plugin, input)
 
             is BuiltInPlugin -> getAnyResultsWithBuiltInPlugin(input, plugin)
 
@@ -61,13 +57,11 @@ class PluginRepositoryImpl(
 
     private suspend fun getAnyResultsWithExternalPlugin(
         plugin: ExternalPlugin,
-        input: String,
-        onError: () -> Unit
+        input: String
     ): List<OperationResult> {
         return externalPluginsProvider.executeAnyInput(
             input = input,
             pluginService = plugin.pluginService,
-            onError = onError
         )
     }
 
@@ -85,7 +79,7 @@ class PluginRepositoryImpl(
             .find { it.uuid == commandUuid }
             ?.pluginUuid
 
-        val plugin = getPluginList()
+        val plugin = getPluginList().plugins
             .find {
                 it.metadata.pluginUuid == commandPluginUuid
             }
@@ -110,7 +104,7 @@ class PluginRepositoryImpl(
     }
 
     override suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID) {
-        val plugin = getPluginList()
+        val plugin = getPluginList().plugins
             .find { it.metadata.pluginUuid == pluginUuid }
 
         if (plugin == null) return
@@ -146,10 +140,13 @@ class PluginRepositoryImpl(
         )
     }
 
-    override suspend fun getPluginList(): List<Plugin> {
+    override suspend fun getPluginList(): GetPluginListInvocationResult {
         val externalPlugins = getExternalPlugins()
         val corePlugins = corePluginsProvider.getPlugins()
 
-        return externalPlugins + corePlugins
+        return GetPluginListInvocationResult(
+            plugins = externalPlugins.plugins + corePlugins,
+            pluginErrors = externalPlugins.pluginErrors
+        )
     }
 }

@@ -109,7 +109,7 @@ class SettingsScreenViewModel(
                 }
 
             val pluginAvailabilities = pluginRepository
-                .getPluginList()
+                .getPluginList().plugins
                 .filter { it.metadata.pluginUuid != FindUtilPluginUuid }
                 .map { plugin ->
                     PluginAvailability(

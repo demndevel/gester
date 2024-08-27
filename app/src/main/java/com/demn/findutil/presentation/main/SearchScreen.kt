@@ -35,16 +35,7 @@ fun SearchScreen(
         focusRequester = searchBarFocusRequester,
         onFallbackCommandClick = vm::invokeFallbackCommand,
         onSearchBarValueChange = {
-            vm.updateSearchBarValue(
-                newValue = it,
-                onError = {
-                    Toast(context)
-                        .apply {
-                            setText("some error with plugin N occured") // TODO
-                        }
-                        .show()
-                }
-            )
+            vm.updateSearchBarValue(newValue = it)
         },
         onEnterClick = {
             firstResult?.let {

@@ -20,7 +20,7 @@ class PluginCacheSyncUseCaseImpl(
     override suspend operator fun invoke() {
         val plugins = externalPluginsProvider.getPluginList()
         val pluginsCache = externalPluginCacheRepository.getAllPlugins()
-        removeUnusedPluginData(plugins, pluginsCache)
+        removeUnusedPluginData(plugins.plugins, pluginsCache)
     }
 
     private suspend fun removeUnusedPluginData(plugins: List<ExternalPlugin>, pluginsCache: List<PluginCache>) {

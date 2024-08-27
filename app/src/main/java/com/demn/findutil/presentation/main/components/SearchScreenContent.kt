@@ -41,6 +41,12 @@ fun SearchScreenContent(
                 .weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
+            if (searchBarState.isBlank() && state.pluginErrors.isNotEmpty()) {
+                item {
+                    PluginErrorList(state.pluginErrors)
+                }
+            }
+
             resultsList(
                 state,
                 onResultClick = onResultClick,
