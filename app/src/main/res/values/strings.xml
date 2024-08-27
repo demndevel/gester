@@ -19,4 +19,5 @@
     <string name="plugin_uuid_error_description">Plugin UUID</string>
     <string name="plugin_name_error_description">Plugin name</string>
     <string name="unavailable">unavailable</string>
+    <string name="copied">Copied!</string>
 </resources>
