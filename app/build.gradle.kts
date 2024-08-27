@@ -55,11 +55,13 @@ android {
 }
 
 dependencies {
-    implementation(project(":coreplugins:coreplugins-base"))
-    implementation(project(":coreplugins:applications-core-plugin"))
-    implementation(project(":coreplugins:unit-calc-core-plugin"))
+    implementation(project(":coreplugins:base"))
+    implementation(project(":coreplugins:appsearchplugin"))
+    implementation(project(":coreplugins:unitcalcplugin"))
     implementation(project(":plugincore"))
     implementation(project(":data"))
+    implementation(project(":pluginloading"))
+    implementation(project(":domain"))
 
     implementation(libs.koin.core)
     implementation(libs.koin.compose)
@@ -79,9 +81,6 @@ dependencies {
     implementation(platform(libs.firebaseBom))
     implementation(libs.firebaseAnalytics)
     implementation(libs.firebaseCrashlytics)
-
-    implementation(project(":pluginloading"))
-    implementation(project(":domain"))
 
     testImplementation(kotlin("test"))
 

@@ -10,8 +10,8 @@ import com.demn.plugincore.FindUtilPluginUuid
 import com.demn.plugincore.parcelables.PluginMetadata
 import com.demn.plugincore.parcelables.PluginSetting
 import com.demn.plugincore.parcelables.buildPluginMetadata
-import com.demn.plugincore.operation_result.OperationResult
-import com.demn.plugins.CorePlugin
+import com.demn.plugincore.operationresult.OperationResult
+import com.demn.coreplugins.base.CorePlugin
 import java.util.UUID
 
 private val openSettingsCommandUuid = UUID.fromString("0292e03b-ffa7-406c-a900-78b5f860bb81")

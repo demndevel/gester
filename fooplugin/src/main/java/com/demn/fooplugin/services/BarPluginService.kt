@@ -8,10 +8,9 @@ import android.os.IBinder
 import android.os.ParcelUuid
 import com.demn.aidl.PluginAdapter
 import com.demn.fooplugin.R
-import com.demn.plugincore.operation_result.TransitionOperationResult
+import com.demn.plugincore.operationresult.TransitionOperationResult
 import com.demn.plugincore.parcelables.*
 import java.net.URLEncoder
-import java.util.UUID
 
 class BarPluginService : Service() {
     override fun onBind(intent: Intent?): IBinder {

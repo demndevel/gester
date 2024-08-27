@@ -5,15 +5,18 @@ import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.os.DeadObjectException
 import android.os.IBinder
+import android.os.RemoteException
 import com.demn.aidl.PluginAdapter
 import com.demn.domain.data.ExternalPluginCacheRepository
 import com.demn.domain.data.PluginCache
 import com.demn.domain.models.*
-import com.demn.domain.plugin_providers.ExternalPluginsProvider
+import com.demn.domain.pluginproviders.ExternalPluginsProvider
 import com.demn.plugincore.*
-import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operationresult.OperationResult
 import com.demn.plugincore.parcelables.*
 import com.demn.plugincore.util.toParcelUuid
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -22,27 +25,39 @@ class ExternalPluginsProviderImpl(
     private val context: Context,
     private val externalPluginCacheRepository: ExternalPluginCacheRepository
 ) : ExternalPluginsProvider {
-    override suspend fun getPluginList(): List<ExternalPlugin> {
+    override suspend fun getPluginList(): GetExternalPluginListInvocationResult {
         val packageManager = context.packageManager
         val baseIntent = Intent(ACTION_PICK_PLUGIN).apply {
             flags = Intent.FLAG_DEBUG_LOG_RESOLUTION
         }
         val list =
             packageManager.queryIntentServices(baseIntent, PackageManager.GET_RESOLVED_FILTER)
+        val pluginErrors = mutableListOf<PluginError>()
 
-        return list.mapNotNull { resolveInfo ->
-            // TODO
+        val pluginList = list.mapNotNull { resolveInfo ->
+            val serviceInfo = resolveInfo.serviceInfo
+            val pluginService = PluginService(
+                packageName = serviceInfo.packageName,
+                serviceName = serviceInfo.name,
+                actions = getActions(resolveInfo),
+                categories = getCategories(resolveInfo)
+            )
+
             try {
-                val serviceInfo = resolveInfo.serviceInfo
+                val pluginSummaryResult = getPluginSummary(pluginService)
+                val pluginSummary = pluginSummaryResult.getOrElse { ex ->
+                    pluginErrors += PluginError(
+                        pluginUuid = null,
+                        pluginName = null,
+                        type = PluginErrorType.Unloaded,
+                        message = """
+                            exception: ${ex.message}
+                            plugin service: $pluginService
+                        """.trimIndent()
+                    )
+                    return@mapNotNull null
+                }
 
-                val pluginService = PluginService(
-                    packageName = serviceInfo.packageName,
-                    serviceName = serviceInfo.name,
-                    actions = getActions(resolveInfo),
-                    categories = getCategories(resolveInfo)
-                )
-
-                val pluginSummary = getPluginSummary(pluginService)
                 cacheIfRequired(pluginSummary, pluginService)
 
                 val pluginCache = externalPluginCacheRepository.getPluginCache(pluginSummary.pluginUuid)
@@ -52,10 +67,22 @@ class ExternalPluginsProviderImpl(
                     pluginService = pluginService,
                     metadata = metadata
                 )
-            } catch (ex: NullPointerException) {
+            } catch (ex: IllegalStateException) {
+                pluginErrors += PluginError(
+                    pluginUuid = null,
+                    pluginName = null,
+                    type = PluginErrorType.Unloaded,
+                    message = """
+                        plugin service: $pluginService
+                        exception: ${ex.message}
+                    """.trimIndent()
+                )
+
                 return@mapNotNull null
             }
         }
+
+        return GetExternalPluginListInvocationResult(pluginList, pluginErrors)
     }
 
     private suspend fun cacheIfRequired(pluginSummary: PluginSummary, pluginService: PluginService) {
@@ -75,8 +102,8 @@ class ExternalPluginsProviderImpl(
     private suspend fun getPluginFallbackCommandsIpc(
         pluginUuid: UUID,
         pluginService: PluginService
-    ): List<PluginFallbackCommand> {
-        return suspendCoroutine { continuation ->
+    ): List<PluginFallbackCommand> = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
             performOperationsWithPlugin(pluginService) { adapter ->
                 val fallbackCommands = adapter
                     .getAllFallbackCommands()
@@ -91,8 +118,8 @@ class ExternalPluginsProviderImpl(
         input: String,
         fallbackCommandUuid: UUID,
         pluginService: PluginService
-    ) {
-        return suspendCoroutine { continuation ->
+    ) = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
             performOperationsWithPlugin(pluginService) { adapter ->
                 continuation.resume(adapter.executeFallbackCommand(fallbackCommandUuid.toParcelUuid(), input))
             }
@@ -117,13 +144,13 @@ class ExternalPluginsProviderImpl(
             }
     }
 
-    override suspend fun executeCommand(uuid: UUID, pluginUuid: UUID) {
-        val plugin = getPluginList()
+    override suspend fun executeCommand(uuid: UUID, pluginUuid: UUID) = withContext(Dispatchers.IO) {
+        val plugin = getPluginList().plugins
             .find { it.metadata.pluginUuid == pluginUuid }
 
-        if (plugin == null) return
+        if (plugin == null) return@withContext
 
-        return suspendCoroutine { continuation ->
+        suspendCoroutine { continuation ->
             performOperationsWithPlugin(plugin.pluginService) { pluginAdapter ->
                 continuation.resume(
                     pluginAdapter
@@ -136,14 +163,12 @@ class ExternalPluginsProviderImpl(
     override suspend fun executeAnyInput(
         input: String,
         pluginService: PluginService,
-        onError: () -> Unit
-    ): List<OperationResult> {
-        return suspendCoroutine { continuation ->
+    ): List<OperationResult> = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
             performOperationsWithPlugin(
                 pluginService = pluginService,
                 onResult = { result ->
                     if (result is PluginInvocationResult.Failure) {
-                        onError()
                         continuation.resume(emptyList())
                     }
                 }
@@ -157,50 +182,59 @@ class ExternalPluginsProviderImpl(
         }
     }
 
-    override suspend fun getPluginSettings(externalPlugin: ExternalPlugin): List<PluginSetting> {
-        return suspendCoroutine { continuation ->
-            performOperationsWithPlugin(externalPlugin.pluginService) { pluginAdapter ->
-                continuation.resume(pluginAdapter.getPluginSettings())
+    override suspend fun getPluginSettings(externalPlugin: ExternalPlugin): List<PluginSetting> =
+        withContext(Dispatchers.IO) {
+            suspendCoroutine { continuation ->
+                performOperationsWithPlugin(externalPlugin.pluginService) { pluginAdapter ->
+                    continuation.resume(pluginAdapter.getPluginSettings())
+                }
             }
         }
-    }
 
-    override suspend fun setPluginSetting(externalPlugin: ExternalPlugin, settingUuid: UUID, newValue: String) {
-        performOperationsWithPlugin(externalPlugin.pluginService) { pluginAdapter ->
-            pluginAdapter.setSetting(settingUuid.toParcelUuid(), newValue)
+    override suspend fun setPluginSetting(externalPlugin: ExternalPlugin, settingUuid: UUID, newValue: String) =
+        withContext(Dispatchers.IO) {
+            performOperationsWithPlugin(externalPlugin.pluginService) { pluginAdapter ->
+                pluginAdapter.setSetting(settingUuid.toParcelUuid(), newValue)
+            }
         }
-    }
 
     private inner class PackageBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) = Unit
     }
 
-    private suspend fun getPluginCommandsIpc(pluginUuid: UUID, pluginService: PluginService): List<PluginCommand> {
-        return suspendCoroutine { continuation ->
-            performOperationsWithPlugin(pluginService) { adapter ->
-                val commands = adapter.getAllCommands()
-                    .map { it.toPluginCommand(pluginUuid) }
+    private suspend fun getPluginCommandsIpc(pluginUuid: UUID, pluginService: PluginService): List<PluginCommand> =
+        withContext(Dispatchers.IO) {
+            suspendCoroutine { continuation ->
+                performOperationsWithPlugin(pluginService) { adapter ->
+                    val commands = adapter.getAllCommands()
+                        .map { it.toPluginCommand(pluginUuid) }
 
-                continuation.resume(commands)
+                    continuation.resume(commands)
+                }
             }
         }
-    }
 
-    private suspend fun getPluginMetadataIpc(pluginService: PluginService): PluginMetadata {
-        return suspendCoroutine { continuation ->
-            performOperationsWithPlugin(pluginService) { adapter ->
-                continuation.resume(adapter.getPluginMetadata())
+    private suspend fun getPluginMetadataIpc(pluginService: PluginService): PluginMetadata =
+        withContext(Dispatchers.IO) {
+            suspendCoroutine { continuation ->
+                performOperationsWithPlugin(pluginService) { adapter ->
+                    continuation.resume(adapter.getPluginMetadata())
+                }
             }
         }
-    }
 
-    private suspend fun getPluginSummary(pluginService: PluginService): PluginSummary {
-        return suspendCoroutine { continuation ->
-            performOperationsWithPlugin(pluginService) { adapter ->
-                continuation.resume(adapter.getPluginSummary())
+    private suspend fun getPluginSummary(pluginService: PluginService): Result<PluginSummary> =
+        withContext(Dispatchers.IO) {
+            suspendCoroutine { continuation ->
+                performOperationsWithPlugin(pluginService) { adapter ->
+                    try {
+                        continuation.resume(Result.success(adapter.getPluginSummary()))
+                    } catch (ex: RemoteException) {
+                        continuation.resume(Result.failure(ex))
+                    }
+                }
             }
         }
-    }
 
     private fun performOperationsWithPlugin(
         pluginService: PluginService,
@@ -216,6 +250,8 @@ class ExternalPluginsProviderImpl(
 
                     onResult(PluginInvocationResult.Success)
                 } catch (ex: DeadObjectException) {
+                    onResult(PluginInvocationResult.Failure)
+                } catch (ex: RemoteException) {
                     onResult(PluginInvocationResult.Failure)
                 }
             }

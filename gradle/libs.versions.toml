@@ -26,6 +26,7 @@ calkt = "0.0.4"
 googleServicesPlugin = "4.4.2"
 firebaseBom = "33.2.0"
 firebaseCrashlyticsPlugin = "3.0.2"
+kotlinxCoroutinesCore = "1.9.0-RC.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -52,6 +53,8 @@ latin-to-cyrillic = { module = "com.michaeltroger:latin-to-cyrillic", version.re
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 junit-junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
+
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 
 calkt = { module = "me.y9san9.calkt:units", version.ref = "calkt" }
 

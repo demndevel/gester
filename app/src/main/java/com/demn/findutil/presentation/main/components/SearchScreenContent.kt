@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.findutil.R
 import com.demn.findutil.presentation.main.SearchScreenState
-import com.demn.plugincore.operation_result.OperationResult
+import com.demn.plugincore.operationresult.OperationResult
 import java.util.*
 
 @Composable
@@ -41,6 +41,12 @@ fun SearchScreenContent(
                 .weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
+            if (searchBarState.isBlank() && state.pluginErrors.isNotEmpty()) {
+                item {
+                    PluginErrorList(state.pluginErrors)
+                }
+            }
+
             resultsList(
                 state,
                 onResultClick = onResultClick,

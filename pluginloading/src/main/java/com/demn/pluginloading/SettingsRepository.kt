@@ -2,13 +2,14 @@ package com.demn.pluginloading
 
 import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.models.PluginSettingsInfo
-import com.demn.domain.plugin_management.PluginSettingsRepository
+import com.demn.domain.pluginmanagement.PluginSettingsRepository
 import com.demn.domain.models.Plugin
 import com.demn.plugincore.parcelables.PluginSetting
 import com.demn.plugincore.parcelables.PluginSettingType
 import com.demn.domain.models.BuiltInPlugin
-import com.demn.domain.plugin_providers.CorePluginsProvider
-import com.demn.domain.plugin_providers.ExternalPluginsProvider
+import com.demn.domain.pluginmanagement.PluginRepository
+import com.demn.domain.pluginproviders.CorePluginsProvider
+import com.demn.domain.pluginproviders.ExternalPluginsProvider
 import java.util.UUID
 
 class MockPluginSettingsRepository : PluginSettingsRepository {
@@ -56,7 +57,8 @@ class MockPluginSettingsRepository : PluginSettingsRepository {
 
 class PluginSettingsRepositoryImpl(
     private val corePluginsProvider: CorePluginsProvider,
-    private val externalPluginsProvider: ExternalPluginsProvider
+    private val externalPluginsProvider: ExternalPluginsProvider,
+    private val pluginRepository: PluginRepository
 ) : PluginSettingsRepository {
     override suspend fun getAll(): List<PluginSettingsInfo> {
         val corePlugins = corePluginsProvider.getPlugins()
@@ -70,7 +72,7 @@ class PluginSettingsRepositoryImpl(
                 )
             }
         val externalPluginsSettingsInfos =
-            externalPlugins.map {
+            externalPlugins.plugins.map {
                 PluginSettingsInfo(
                     it,
                     externalPluginsProvider.getPluginSettings(it)
@@ -105,8 +107,8 @@ class PluginSettingsRepositoryImpl(
     }
 
     private suspend fun findPlugin(pluginUuid: UUID): Plugin? {
-        val plugins = corePluginsProvider.getPlugins() + externalPluginsProvider.getPluginList()
+        val getPluginsResult = pluginRepository.getPluginList()
 
-        return plugins.find { it.metadata.pluginUuid == pluginUuid }
+        return getPluginsResult.plugins.find { it.metadata.pluginUuid == pluginUuid }
     }
 }

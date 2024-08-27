@@ -4,12 +4,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.ParcelUuid
 import android.os.Parcelable
-import com.demn.plugincore.operation_result.BasicOperationResult
-import com.demn.plugincore.operation_result.CommandOperationResult
-import com.demn.plugincore.operation_result.IconOperationResult
-import com.demn.plugincore.operation_result.OperationResult
-import com.demn.plugincore.operation_result.ResultType
-import com.demn.plugincore.operation_result.TransitionOperationResult
+import com.demn.plugincore.operationresult.BasicOperationResult
+import com.demn.plugincore.operationresult.CommandOperationResult
+import com.demn.plugincore.operationresult.IconOperationResult
+import com.demn.plugincore.operationresult.OperationResult
+import com.demn.plugincore.operationresult.ResultType
+import com.demn.plugincore.operationresult.TransitionOperationResult
 import com.demn.plugincore.util.toParcelUuid
 import kotlinx.parcelize.Parcelize
 

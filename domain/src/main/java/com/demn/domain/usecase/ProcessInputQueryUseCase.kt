@@ -1,15 +1,12 @@
 package com.demn.domain.usecase
 
 import com.demn.domain.models.PluginCommand
-import com.demn.domain.plugin_management.PluginRepository
+import com.demn.domain.pluginmanagement.PluginRepository
 import com.demn.domain.settings.PluginAvailabilityRepository
 import com.demn.domain.models.Plugin
-import com.demn.plugincore.operation_result.CommandOperationResult
-import com.demn.plugincore.operation_result.OperationResult
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import com.demn.plugincore.operationresult.CommandOperationResult
+import com.demn.plugincore.operationresult.OperationResult
+import kotlinx.coroutines.*
 
 class ProcessInputQueryUseCase(
     private val pluginRepository: PluginRepository,
@@ -17,11 +14,11 @@ class ProcessInputQueryUseCase(
     private val pluginAvailabilityRepository: PluginAvailabilityRepository,
     private val commandSearcherUseCase: CommandSearcherUseCase,
 ) {
-    suspend operator fun invoke(plugins: List<Plugin>, inputQuery: String, onError: () -> Unit): List<OperationResult> {
+    suspend operator fun invoke(plugins: List<Plugin>, inputQuery: String): List<OperationResult> {
         val availablePlugins = plugins
             .filter { pluginAvailabilityRepository.checkPluginEnabled(it.metadata.pluginUuid) }
 
-        val resultsByAnyInput = getResultsByAnyInput(availablePlugins, inputQuery, onError)
+        val resultsByAnyInput = getResultsByAnyInput(availablePlugins, inputQuery)
 
         val commandResults = commandSearcherUseCase(inputQuery)
             .map(PluginCommand::toOperationResult)
@@ -32,13 +29,12 @@ class ProcessInputQueryUseCase(
     private suspend fun getResultsByAnyInput(
         availablePlugins: List<Plugin>,
         inputQuery: String,
-        onError: () -> Unit
-    ): List<OperationResult> = withContext(Dispatchers.IO) {
+    ): List<OperationResult> = coroutineScope {
         val resultsByAnyInputDefers = availablePlugins
             .filter { it.metadata.consumeAnyInput }
             .map { plugin ->
                 async {
-                    pluginRepository.getAnyResults(inputQuery, plugin, onError)
+                    pluginRepository.getAnyResults(inputQuery, plugin)
                 }
             }
 

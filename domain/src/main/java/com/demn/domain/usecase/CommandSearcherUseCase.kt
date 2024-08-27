@@ -1,7 +1,7 @@
 package com.demn.domain.usecase
 
 import com.demn.domain.models.PluginCommand
-import com.demn.domain.plugin_management.PluginRepository
+import com.demn.domain.pluginmanagement.PluginRepository
 import com.demn.domain.settings.PluginAvailabilityRepository
 import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
 

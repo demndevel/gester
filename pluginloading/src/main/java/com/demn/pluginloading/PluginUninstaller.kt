@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.demn.domain.models.ExternalPlugin
-import com.demn.domain.plugin_management.PluginUninstaller
+import com.demn.domain.pluginmanagement.PluginUninstaller
 import com.demn.domain.models.Plugin
 
 class MockPluginUninstaller : PluginUninstaller {
