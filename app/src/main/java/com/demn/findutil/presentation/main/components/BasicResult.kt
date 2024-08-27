@@ -1,8 +1,9 @@
 package com.demn.findutil.presentation.main.components
 
 import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.demn.findutil.R
 import com.demn.plugincore.operationresult.ResultType
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BasicResult(
     text: String,
@@ -24,7 +26,8 @@ fun BasicResult(
     isFirst: Boolean,
     modifier: Modifier = Modifier,
     iconUri: Uri? = null,
-    resultType: ResultType = ResultType.Other
+    resultType: ResultType = ResultType.Other,
+    onResultLongClick: () -> Unit = {},
 ) {
     Card(
         elevation = CardDefaults.cardElevation(
@@ -41,7 +44,9 @@ fun BasicResult(
             }
         ),
         modifier = modifier
-            .clickable { onResultClick() },
+            .combinedClickable(
+                onClick = { onResultClick() },
+                onLongClick = onResultLongClick),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

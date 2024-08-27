@@ -27,6 +27,7 @@ fun SearchScreenContent(
     onFallbackCommandClick: (id: UUID) -> Unit,
     onSearchBarValueChange: (String) -> Unit,
     onEnterClick: () -> Unit,
+    onResultLongClick: (OperationResult) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -50,6 +51,7 @@ fun SearchScreenContent(
             resultsList(
                 state,
                 onResultClick = onResultClick,
+                onResultLongClick = onResultLongClick
             )
 
             item { Spacer(Modifier.height(4.dp)) }
@@ -78,13 +80,15 @@ fun SearchScreenContent(
 
 private fun LazyListScope.resultsList(
     state: SearchScreenState,
-    onResultClick: (OperationResult) -> Unit
+    onResultClick: (OperationResult) -> Unit,
+    onResultLongClick: (OperationResult) -> Unit,
 ) {
     itemsIndexed(state.searchResults) { index, item ->
         ResultItem(
             item,
             index,
             onResultClick = onResultClick,
+            onResultLongClick = onResultLongClick,
             Modifier
         )
     }

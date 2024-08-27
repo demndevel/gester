@@ -1,6 +1,7 @@
 package com.demn.findutil.presentation.main
 
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,11 +9,17 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import com.demn.domain.models.PluginFallbackCommand
+import com.demn.findutil.R
 import com.demn.findutil.presentation.main.components.SearchScreenContent
+import com.demn.findutil.presentation.main.components.getOperationResultClipboardText
 import com.demn.plugincore.operationresult.CommandOperationResult
+import com.demn.plugincore.operationresult.OperationResult
 import org.koin.androidx.compose.koinViewModel
 import java.util.*
 
@@ -25,6 +32,8 @@ fun SearchScreen(
     val state by vm.state.collectAsState()
     val searchBarFocusRequester = remember { FocusRequester() }
     val firstResult = state.searchResults.firstOrNull()
+    val clipboardManager = LocalClipboardManager.current
+    val copiedText = stringResource(R.string.copied)
 
     LaunchedEffect(Unit) {
         vm.loadPlugins()
@@ -33,6 +42,10 @@ fun SearchScreen(
     SearchScreenContent(
         state = state,
         focusRequester = searchBarFocusRequester,
+        onResultClick = {
+            vm.executeResult(it, context::startActivity)
+        },
+        searchBarState = vm.searchBarState,
         onFallbackCommandClick = vm::invokeFallbackCommand,
         onSearchBarValueChange = {
             vm.updateSearchBarValue(newValue = it)
@@ -42,10 +55,13 @@ fun SearchScreen(
                 vm.executeResult(firstResult, context::startActivity)
             }
         },
-        onResultClick = {
-            vm.executeResult(it, context::startActivity)
+        onResultLongClick = { result ->
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                Toast.makeText(context, copiedText, Toast.LENGTH_SHORT).show()
+            }
+
+            clipboardManager.setText(AnnotatedString(getOperationResultClipboardText(result)))
         },
-        searchBarState = vm.searchBarState,
         modifier = modifier
             .fillMaxSize()
             .imePadding(),
@@ -57,7 +73,6 @@ fun SearchScreen(
 private fun SearchScreenPreview() {
     Box(Modifier.fillMaxSize()) {
         SearchScreenContent(
-            modifier = Modifier.fillMaxSize(),
             state =  SearchScreenState(
                 searchResults = listOf(
                     CommandOperationResult(
@@ -82,6 +97,8 @@ private fun SearchScreenPreview() {
             onFallbackCommandClick = {},
             onSearchBarValueChange = {},
             onEnterClick = {},
+            onResultLongClick = {},
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

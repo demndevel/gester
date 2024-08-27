@@ -1,6 +1,8 @@
 package com.demn.findutil.presentation.main.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -17,17 +19,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ConversionResult(
     leftText: String,
     leftLabel: String,
     rightText: String,
     rightLabel: String,
-    modifier: Modifier = Modifier
+    onResultLongClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier
-            .height(IntrinsicSize.Min),
+            .height(IntrinsicSize.Min)
+            .combinedClickable(
+                onClick = {},
+                onLongClick = onResultLongClick,
+            ),
     ) {
         Row(
             Modifier

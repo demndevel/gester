@@ -10,6 +10,7 @@ fun ResultItem(
     result: OperationResult,
     index: Int,
     onResultClick: (OperationResult) -> Unit,
+    onResultLongClick: (OperationResult) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (result is BasicOperationResult) {
@@ -18,7 +19,8 @@ fun ResultItem(
             onResultClick = { onResultClick(result) },
             isFirst = index == 0,
             modifier = modifier.fillMaxWidth(),
-            resultType = result.type
+            resultType = result.type,
+            onResultLongClick = { onResultLongClick(result) }
         )
     }
 
@@ -29,7 +31,8 @@ fun ResultItem(
             isFirst = index == 0,
             onResultClick = { onResultClick(result) },
             modifier = modifier.fillMaxWidth(),
-            resultType = result.type
+            resultType = result.type,
+            onResultLongClick = { onResultLongClick(result) }
         )
     }
 
@@ -39,6 +42,7 @@ fun ResultItem(
             leftLabel = result.initialDescription ?: "",
             rightText = result.finalText,
             rightLabel = result.finalDescription ?: "",
+            onResultLongClick = { onResultLongClick(result) },
             modifier = modifier.fillMaxWidth()
         )
     }
@@ -50,7 +54,8 @@ fun ResultItem(
             onResultClick = { onResultClick(result) },
             isFirst = index == 0,
             modifier = modifier.fillMaxWidth(),
-            resultType = result.type
+            resultType = result.type,
+            onResultLongClick = { onResultLongClick(result) }
         )
     }
 }
