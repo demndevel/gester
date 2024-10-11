@@ -16,10 +16,11 @@ import kotlinx.coroutines.*
 import java.util.*
 import kotlin.coroutines.EmptyCoroutineContext
 
-val syncAppsCacheCommandUuid = UUID.fromString("0b8dd1b6-4534-46db-b0aa-e78b467c34be")
+val syncAppsCacheCommandUuid: UUID = UUID.fromString("0b8dd1b6-4534-46db-b0aa-e78b467c34be")
+val appSearchingPluginUuid: UUID = UUID.fromString("57198ae0-683a-4e2a-9db4-d229707b97ce")
 
 val appSearchingMetadata = buildPluginMetadata(
-    pluginUuid = UUID.fromString("57198ae0-683a-4e2a-9db4-d229707b97ce"),
+    pluginUuid = appSearchingPluginUuid,
     pluginName = "App Searching Plugin"
 ) {
     description = "built-in plugin for plugin searching"
@@ -32,7 +33,7 @@ class AppSearchingPlugin(
     private val applicationsRetriever: ApplicationsRetriever,
 ) : CorePlugin {
     override val metadata: PluginMetadata = appSearchingMetadata
-    val coroutineScope = CoroutineScope(EmptyCoroutineContext)
+    private val coroutineScope = CoroutineScope(EmptyCoroutineContext)
 
     private val appSearchingPluginCommands = listOf(
         PluginCommand(
@@ -51,23 +52,18 @@ class AppSearchingPlugin(
         .appendPath(context.resources.getResourceEntryName(resourceId))
         .build()
 
-    private var deferredApplications =
-        coroutineScope.async {
-            applicationsRetriever.retrieveApplications()
-        }
-
     init {
         coroutineScope.launch {
-            deferredApplications.await()
+            applicationsRetriever.retrieveApplications()
         }
     }
 
     override suspend fun invokeCommand(uuid: UUID) {
         if (uuid == syncAppsCacheCommandUuid) {
             withContext(Dispatchers.IO) {
-                applicationsRetriever.cacheAllApplications()
-                deferredApplications = async { applicationsRetriever.retrieveApplications() }
-                deferredApplications.await()
+                applicationsRetriever.syncApplicationsCache()
+
+                applicationsRetriever.retrieveApplications()
             }
         }
     }
@@ -83,7 +79,7 @@ class AppSearchingPlugin(
     override suspend fun invokeAnyInput(input: String): List<OperationResult> {
         return applicationsRetriever.searchApplications(
             input,
-            deferredApplications.await()
+            applicationsRetriever.applications.value
         )
     }
 
