@@ -17,7 +17,6 @@ import com.demn.plugincore.operationresult.BasicOperationResult
 import com.demn.plugincore.operationresult.CommandOperationResult
 import com.demn.plugincore.operationresult.IconOperationResult
 import com.demn.plugincore.operationresult.OperationResult
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -66,7 +65,7 @@ class SearchScreenViewModel(
     }
 
     fun loadPlugins() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val getPluginsResult = pluginRepository.getPluginList()
             val fallbackCommands = pluginRepository.getAllFallbackCommands()
             _state.update {

@@ -1,5 +1,6 @@
 package com.demn.applications_core_plugin
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,6 +11,9 @@ import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
 import com.michaeltroger.latintocyrillic.Alphabet
 import com.michaeltroger.latintocyrillic.LatinCyrillicFactory
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 class ApplicationsRetriever(
     private val applicationsDao: ApplicationsDao,
@@ -17,16 +21,21 @@ class ApplicationsRetriever(
 ) {
     private val packageManager = context.packageManager
 
-    internal suspend fun retrieveApplications(): List<ApplicationInfo> = withContext(Dispatchers.IO) {
-        applicationsDao
-            .getAll()
-            .mapNotNull {
-                ApplicationInfo(
-                    name = it.name,
-                    intent = getIntentForApp(it.packageName) ?: return@mapNotNull null,
-                    iconUri = Uri.parse(it.iconUri)
-                )
-            }
+    private val _applications = MutableStateFlow(listOf<ApplicationInfo>())
+    internal val applications: StateFlow<List<ApplicationInfo>> = _applications
+
+    internal suspend fun retrieveApplications() = withContext(Dispatchers.IO) {
+        _applications.update {
+            applicationsDao
+                .getAll()
+                .mapNotNull {
+                    ApplicationInfo(
+                        name = it.name,
+                        intent = getIntentForApp(it.packageName) ?: return@mapNotNull null,
+                        iconUri = Uri.parse(it.iconUri)
+                    )
+                }
+        }
     }
 
     internal suspend fun searchApplications(
@@ -66,31 +75,36 @@ class ApplicationsRetriever(
         return if (latinCyrillic.isCyrillic(input)) latinCyrillic.cyrillicToLatin(input) else input
     }
 
-    suspend fun cacheAllApplications() = coroutineScope {
-        withContext(Dispatchers.IO) {
-            val mainIntent = Intent(Intent.ACTION_MAIN)
-            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+    suspend fun syncApplicationsCache() = coroutineScope {
+        val cachedApplications = applicationsDao.getAll()
 
-            val resolveInfos = packageManager.queryIntentActivities(mainIntent, 0)
+        val mainIntent = Intent(Intent.ACTION_MAIN)
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
 
-            val defers = resolveInfos.mapNotNull { resolveInfo ->
-                async {
-                    val packageName = resolveInfo.activityInfo.packageName
-                    val label = resolveInfo.loadLabel(packageManager).toString()
-                    val iconUri = buildAppIconResourceUri(packageName, resolveInfo.iconResource)
+        val resolveInfos = packageManager.queryIntentActivities(mainIntent, 0)
 
-                    applicationsDao.insert(
-                        ApplicationDbo(
-                            packageName = packageName,
-                            name = label,
-                            iconUri = iconUri,
-                        )
+        val defers = resolveInfos.mapNotNull { resolveInfo ->
+            val alreadyCached =
+                cachedApplications.any { cachedApp -> cachedApp.packageName == resolveInfo.activityInfo.packageName }
+
+            if (alreadyCached) return@mapNotNull null
+
+            async {
+                val packageName = resolveInfo.activityInfo.packageName
+                val label = resolveInfo.loadLabel(packageManager).toString()
+                val iconUri = buildAppIconResourceUri(packageName, resolveInfo.iconResource)
+
+                applicationsDao.insert(
+                    ApplicationDbo(
+                        packageName = packageName,
+                        name = label,
+                        iconUri = iconUri,
                     )
-                }
+                )
             }
-
-            defers.awaitAll()
         }
+
+        defers.awaitAll()
     }
 
     private fun getIntentForApp(packageName: String): Intent? {
