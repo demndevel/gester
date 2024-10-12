@@ -55,6 +55,15 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                corePluginsProvider.invokePluginCommand(
+                    commandUuid = syncAppsCacheCommandUuid,
+                    pluginUuid = appSearchingPluginUuid
+                )
+            }
+        }
+
         setContent {
             FindUtilTheme {
                 val interactionSource = remember { MutableInteractionSource() }
