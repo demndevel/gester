@@ -19,7 +19,6 @@ import com.demn.findutil.R
 import com.demn.findutil.presentation.main.components.SearchScreenContent
 import com.demn.findutil.presentation.main.components.getOperationResultClipboardText
 import com.demn.plugincore.operationresult.CommandOperationResult
-import com.demn.plugincore.operationresult.OperationResult
 import org.koin.androidx.compose.koinViewModel
 import java.util.*
 
@@ -29,7 +28,7 @@ fun SearchScreen(
     vm: SearchScreenViewModel = koinViewModel<SearchScreenViewModel>(),
 ) {
     val context = LocalContext.current
-    val state by vm.state.collectAsState()
+    val state by vm.state
     val searchBarFocusRequester = remember { FocusRequester() }
     val firstResult = state.searchResults.firstOrNull()
     val clipboardManager = LocalClipboardManager.current

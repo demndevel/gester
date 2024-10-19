@@ -35,9 +35,8 @@ class SearchScreenViewModel(
     private val processQueryUseCase: ProcessInputQueryUseCase,
     private val resultFrecencyRepository: ResultFrecencyRepository
 ) : ViewModel() {
-    private val _state = MutableStateFlow(SearchScreenState())
-
-    val state = _state.asStateFlow()
+    var state = mutableStateOf(SearchScreenState())
+        private set
 
     var searchBarState by mutableStateOf("")
         private set
@@ -53,13 +52,11 @@ class SearchScreenViewModel(
                     if (query.isBlank()) return@collectLatest
 
                     val results = processQueryUseCase(
-                        plugins = _state.value.pluginList,
+                        plugins = state.value.pluginList,
                         inputQuery = query
                     )
 
-                    _state.update {
-                        it.copy(searchResults = results)
-                    }
+                    state.value = state.value.copy(searchResults = results)
                 }
         }
     }
@@ -68,13 +65,11 @@ class SearchScreenViewModel(
         viewModelScope.launch {
             val getPluginsResult = pluginRepository.getPluginList()
             val fallbackCommands = pluginRepository.getAllFallbackCommands()
-            _state.update {
-                it.copy(
-                    pluginList = getPluginsResult.plugins,
-                    pluginErrors = getPluginsResult.pluginErrors,
-                    fallbackCommands = fallbackCommands
-                )
-            }
+            state.value = state.value.copy(
+                pluginList = getPluginsResult.plugins,
+                pluginErrors = getPluginsResult.pluginErrors,
+                fallbackCommands = fallbackCommands
+            )
         }
     }
 
@@ -91,9 +86,7 @@ class SearchScreenViewModel(
 
     fun updateSearchBarValue(newValue: String) {
         if (newValue.isBlank()) {
-            _state.update {
-                it.copy(searchResults = emptyList())
-            }
+            state.value = state.value.copy(searchResults = emptyList())
         }
 
         searchBarState = newValue
