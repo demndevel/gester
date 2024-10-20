@@ -3,6 +3,8 @@ package com.demn.findutil.presentation.settings
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.demn.domain.models.AppSettingMetadata
+import com.demn.domain.models.AppSettingType
 import com.demn.plugincore.*
 import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.models.Plugin
@@ -27,7 +29,7 @@ import kotlinx.coroutines.flow.update
 private data class SettingsScreenVmState(
     val isLoading: Boolean = false,
     val pluginSettingsSections: List<PluginSettingsSection>? = null,
-    val appSettings: List<SettingField<com.demn.domain.models.AppSettingMetadata>>? = null,
+    val appSettings: List<SettingField<AppSettingMetadata>>? = null,
     val pluginAvailabilities: List<PluginAvailability>? = null,
     val saveButtonVisible: Boolean = false
 ) {
@@ -86,19 +88,17 @@ class SettingsScreenViewModel(
                 .getAllSettingsMetadata()
                 .map { appSetting ->
                     val settingValue = when (appSetting.settingType) {
-                        com.demn.domain.models.AppSettingType.String -> appSettingsRepository.getStringSetting(
+                        AppSettingType.String -> appSettingsRepository.getStringSetting(
                             appSetting.key
                         )
 
-                        com.demn.domain.models.AppSettingType.Numerous -> appSettingsRepository.getNumerousSetting(
+                        AppSettingType.Numerous -> appSettingsRepository.getNumerousSetting(
                             appSetting.key
-                        )
-                            .toString()
+                        ).toString()
 
-                        com.demn.domain.models.AppSettingType.Boolean -> appSettingsRepository.getBooleanSetting(
+                        AppSettingType.Boolean -> appSettingsRepository.getBooleanSetting(
                             appSetting.key
-                        )
-                            .toString()
+                        ).toString()
                     }
 
                     SettingField(
@@ -167,7 +167,7 @@ class SettingsScreenViewModel(
     }
 
     fun setAppSetting(
-        appSettingMetadata: com.demn.domain.models.AppSettingMetadata,
+        appSettingMetadata: AppSettingMetadata,
         newValue: String
     ) {
         val validatedSetting = validateAppSetting(appSettingMetadata, newValue)
@@ -181,7 +181,7 @@ class SettingsScreenViewModel(
     }
 
     fun setBooleanAppSetting(
-        appSettingMetadata: com.demn.domain.models.AppSettingMetadata,
+        appSettingMetadata: AppSettingMetadata,
         newValue: Boolean
     ) {
         val validatedSetting = ValidatedField.Valid(newValue.toString())
@@ -224,26 +224,26 @@ class SettingsScreenViewModel(
         }
     }
 
-    private fun saveAllAppSettings(appSettingsFields: List<SettingField<com.demn.domain.models.AppSettingMetadata>>) {
+    private fun saveAllAppSettings(appSettingsFields: List<SettingField<AppSettingMetadata>>) {
         for (field in appSettingsFields) {
             val appSettingMetadata = field.settingMetadata
 
             when (appSettingMetadata.settingType) {
-                com.demn.domain.models.AppSettingType.String -> {
+                AppSettingType.String -> {
                     appSettingsRepository.setStringSetting(
                         key = appSettingMetadata.key,
                         value = field.validatedField.field
                     )
                 }
 
-                com.demn.domain.models.AppSettingType.Boolean -> {
+                AppSettingType.Boolean -> {
                     appSettingsRepository.setBooleanSetting(
                         key = appSettingMetadata.key,
                         value = field.validatedField.field.toBoolean()
                     )
                 }
 
-                com.demn.domain.models.AppSettingType.Numerous -> {
+                AppSettingType.Numerous -> {
                     appSettingsRepository.setNumerousSetting(
                         key = appSettingMetadata.key,
                         value = field.validatedField.field.toInt()
@@ -259,11 +259,11 @@ class SettingsScreenViewModel(
             .flatten()
             .filter { it.isEdited }
 
-    private fun selectEditedAppSettings(appSettingsSections: List<SettingField<com.demn.domain.models.AppSettingMetadata>>) =
+    private fun selectEditedAppSettings(appSettingsSections: List<SettingField<AppSettingMetadata>>) =
         appSettingsSections
             .filter { it.isEdited }
 
-    private fun hasInvalidAppSettings(appSettings: List<SettingField<com.demn.domain.models.AppSettingMetadata>>) =
+    private fun hasInvalidAppSettings(appSettings: List<SettingField<AppSettingMetadata>>) =
         appSettings.any { it.validatedField is ValidatedField.Invalid }
 
     private fun hasInvalidPluginSettings(pluginSettings: List<SettingField<PluginSetting>>) =
@@ -314,7 +314,7 @@ class SettingsScreenViewModel(
     }
 
     private fun updateValidatedAppSetting(
-        appSettingMetadata: com.demn.domain.models.AppSettingMetadata,
+        appSettingMetadata: AppSettingMetadata,
         newValidatedValue: ValidatedStringField
     ) {
         val appSettings = _state.value.appSettings ?: return
@@ -337,10 +337,10 @@ class SettingsScreenViewModel(
     }
 
     private fun validateAppSetting(
-        metadata: com.demn.domain.models.AppSettingMetadata,
+        metadata: AppSettingMetadata,
         newValue: String
     ): ValidatedField<String> {
-        if (metadata.settingType == com.demn.domain.models.AppSettingType.String) {
+        if (metadata.settingType == AppSettingType.String) {
             if (newValue.isBlank()) {
                 return ValidatedField.Invalid(
                     field = newValue,
@@ -349,7 +349,7 @@ class SettingsScreenViewModel(
             }
         }
 
-        if (metadata.settingType == com.demn.domain.models.AppSettingType.Numerous) {
+        if (metadata.settingType == AppSettingType.Numerous) {
             if (newValue.toIntOrNull() == null) {
                 return ValidatedField.Invalid(
                     field = newValue,
