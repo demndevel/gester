@@ -26,7 +26,7 @@ fun BasicResult(
     isFirst: Boolean,
     modifier: Modifier = Modifier,
     iconUri: Uri? = null,
-    resultType: ResultType = ResultType.Other,
+    resultType: String,
     onResultLongClick: () -> Unit = {},
 ) {
     Card(
@@ -75,7 +75,7 @@ fun BasicResult(
             Spacer(Modifier.width(8.dp))
 
             Text(
-                text = getResultTypeText(resultType),
+                text = resultType,
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier
                     .border(
@@ -89,25 +89,6 @@ fun BasicResult(
     }
 }
 
-@Composable
-private fun getResultTypeText(type: ResultType): String {
-    return when (type) {
-        ResultType.Command -> stringResource(R.string.command_result_type)
-
-        ResultType.Alias -> stringResource(R.string.alias_result_type)
-
-        ResultType.WebLink -> stringResource(R.string.weblink_result_type)
-
-        ResultType.Information -> stringResource(R.string.information_result_type)
-
-        ResultType.Application -> stringResource(R.string.application_result_type)
-
-        ResultType.Other -> stringResource(R.string.other_result_type)
-
-        else -> type.name
-    }
-}
-
 @Preview
 @Composable
 private fun BasicResultNotFirstPreview() {
@@ -116,6 +97,7 @@ private fun BasicResultNotFirstPreview() {
         onResultClick = {},
         false,
         iconUri = null,
+        resultType = "Something"
     )
 }
 
@@ -127,5 +109,6 @@ private fun BasicResultFirstPreview() {
         onResultClick = {},
         true,
         iconUri = null,
+        resultType = "Something"
     )
 }

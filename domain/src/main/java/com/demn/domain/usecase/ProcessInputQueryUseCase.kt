@@ -80,6 +80,6 @@ private fun PluginCommand.toOperationResult(): OperationResult {
         uuid = uuid,
         pluginUuid = pluginUuid,
         iconUri = iconUri,
-        name = name
+        name = name,
     )
 }

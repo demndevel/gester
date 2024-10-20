@@ -8,10 +8,11 @@ class IconOperationResult(
     val text: String,
     val intent: Intent? = null,
     val iconUri: Uri,
-    override val type: ResultType = ResultType.Other
+    override val label: String,
+    override val pinToTop: Boolean = false
 ) : OperationResult {
     override fun hashCode(): Int {
-        return Objects.hash(text, type.ordinal)
+        return Objects.hash(text, label)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -22,7 +23,8 @@ class IconOperationResult(
 
         if (text != other.text) return false
         if (intent != other.intent) return false
-        if (type != other.type) return false
+        if (label != other.label) return false
+        if (pinToTop != other.pinToTop) return false
 
         return true
     }

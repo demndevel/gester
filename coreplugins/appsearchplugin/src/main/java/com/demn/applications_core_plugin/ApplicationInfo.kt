@@ -10,13 +10,14 @@ internal data class ApplicationInfo(
     val name: String,
     val intent: Intent,
     val iconUri: Uri
-    ) {
-        fun toOperationResult(): OperationResult {
-            return IconOperationResult(
-                text = name,
-                iconUri = iconUri,
-                intent = intent,
-                type = ResultType.Application
-            )
-        }
+) {
+    fun toOperationResult(): OperationResult {
+        return IconOperationResult(
+            text = name,
+            iconUri = iconUri,
+            intent = intent,
+            label = "Application",
+            pinToTop = false
+        )
     }
+}

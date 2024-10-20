@@ -63,21 +63,6 @@ class OperationResultSorterUseCaseImpl(
         return fuzzySorted
     }
 
-    private class OperationResultTypeComparator : Comparator<ResultType> {
-        override fun compare(o1: ResultType?, o2: ResultType?): Int {
-            if (o1 == null && o2 == null) return 0
-            if (o1 == null) return -1
-            if (o2 == null) return 1
-
-            if (o1 == ResultType.Information && o2 == ResultType.Information) return 0
-
-            if (o1 == ResultType.Information) return 1
-            if (o2 == ResultType.Information) return -1
-
-            return 0
-        }
-    }
-
     private suspend fun sortByFrecency(
         input: String,
         fuzzySorted: List<OperationResult>
@@ -95,7 +80,7 @@ class OperationResultSorterUseCaseImpl(
             .sortedWith(
                 compareByDescending<Pair<OperationResult, ResultFrecency?>> { it.second?.usages }
                     .thenByDescending { it.second?.recency }
-                    .thenByDescending(OperationResultTypeComparator()) { it.first.type }
+                    .thenByDescending { it.first.pinToTop }
             )
 
 

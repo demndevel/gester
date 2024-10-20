@@ -19,7 +19,7 @@ fun ResultItem(
             onResultClick = { onResultClick(result) },
             isFirst = index == 0,
             modifier = modifier.fillMaxWidth(),
-            resultType = result.type,
+            resultType = result.label,
             onResultLongClick = { onResultLongClick(result) }
         )
     }
@@ -31,7 +31,7 @@ fun ResultItem(
             isFirst = index == 0,
             onResultClick = { onResultClick(result) },
             modifier = modifier.fillMaxWidth(),
-            resultType = result.type,
+            resultType = result.label,
             onResultLongClick = { onResultLongClick(result) }
         )
     }
@@ -54,7 +54,7 @@ fun ResultItem(
             onResultClick = { onResultClick(result) },
             isFirst = index == 0,
             modifier = modifier.fillMaxWidth(),
-            resultType = result.type,
+            resultType = result.label,
             onResultLongClick = { onResultLongClick(result) }
         )
     }

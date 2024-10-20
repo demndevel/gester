@@ -8,15 +8,16 @@ import java.util.Objects
  *
  * @param[text] primary text that will be displayed in the results of the processed input query
  * @param[intent] optional intent that will be launched on
- * @param[type] type of this result for results order. By default, set to the Other
+ * @param[label] label that displays type of this result for results order. By default, set to the Other
  */
 data class BasicOperationResult(
     val text: String,
     val intent: Intent? = null,
-    override val type: ResultType = ResultType.Other
+    override val label: String,
+    override val pinToTop: Boolean
 ) : OperationResult {
     override fun hashCode(): Int {
-        return Objects.hash(text, type.ordinal)
+        return Objects.hash(text, label)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -27,7 +28,7 @@ data class BasicOperationResult(
 
         if (text != other.text) return false
         if (intent != other.intent) return false
-        if (type != other.type) return false
+        if (label != other.label) return false
 
         return true
     }
