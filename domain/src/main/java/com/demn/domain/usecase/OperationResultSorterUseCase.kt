@@ -12,6 +12,11 @@ import com.frosch2010.fuzzywuzzy_kotlin.ToStringFunction
 import com.michaeltroger.latintocyrillic.Alphabet
 import com.michaeltroger.latintocyrillic.LatinCyrillicFactory
 import kotlinx.coroutines.runBlocking
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 interface OperationResultSorterUseCase {
     suspend operator fun invoke(
@@ -86,13 +91,45 @@ class OperationResultSorterUseCaseImpl(
         }
 
         val sortedResults = combinedResults
+            .map(::calculateFrecencyPoints)
             .sortedWith(
-                compareByDescending<Pair<OperationResult, ResultFrecency?>> { it.second?.usages }
-                    .thenByDescending { it.second?.recency }
+                compareByDescending<Pair<OperationResult, Int>> { it.second }
                     .thenByDescending { it.first.pinToTop }
             )
 
 
         return sortedResults.map { it.first }
+    }
+
+    private fun calculateFrecencyPoints(
+        pair: Pair<OperationResult, ResultFrecency?>
+    ): Pair<OperationResult, Int> {
+        pair.second?.let { frecency ->
+            val recency = LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(frecency.recency),
+                ZoneId.systemDefault()
+            )
+            val nowLocalDateTime = LocalDateTime.now()
+
+            val recencyPoints = when (recency) {
+                in nowLocalDateTime.minusDays(4)..nowLocalDateTime -> 100
+
+                in nowLocalDateTime.minusDays(14)..nowLocalDateTime.minusDays(4) -> 70
+
+                in nowLocalDateTime.minusDays(31)..nowLocalDateTime.minusDays(14) -> 50
+
+                in nowLocalDateTime.minusDays(90)..nowLocalDateTime.minusDays(31) -> 30
+
+                else -> 20
+            }
+
+            val frequencyPoints = frecency.usages * 20
+
+            val totalPoints = recencyPoints + frequencyPoints
+
+            return Pair(pair.first, totalPoints)
+        }
+
+        return Pair(pair.first, 0)
     }
 }
