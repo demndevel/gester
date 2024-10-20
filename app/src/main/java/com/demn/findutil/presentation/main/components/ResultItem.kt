@@ -38,10 +38,10 @@ fun ResultItem(
 
     if (result is TransitionOperationResult) {
         ConversionResult(
-            leftText = result.initialText,
-            leftLabel = result.initialDescription ?: "",
-            rightText = result.finalText,
-            rightLabel = result.finalDescription ?: "",
+            startText = result.initialText,
+            startLabel = result.initialDescription ?: "",
+            finalText = result.finalText,
+            finalLabel = result.finalDescription ?: "",
             onResultLongClick = { onResultLongClick(result) },
             modifier = modifier.fillMaxWidth()
         )

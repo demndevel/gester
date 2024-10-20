@@ -17,7 +17,6 @@ import com.demn.plugincore.operationresult.BasicOperationResult
 import com.demn.plugincore.operationresult.CommandOperationResult
 import com.demn.plugincore.operationresult.IconOperationResult
 import com.demn.plugincore.operationresult.OperationResult
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -35,9 +34,8 @@ class SearchScreenViewModel(
     private val processQueryUseCase: ProcessInputQueryUseCase,
     private val resultFrecencyRepository: ResultFrecencyRepository
 ) : ViewModel() {
-    private val _state = MutableStateFlow(SearchScreenState())
-
-    val state = _state.asStateFlow()
+    var state = mutableStateOf(SearchScreenState())
+        private set
 
     var searchBarState by mutableStateOf("")
         private set
@@ -48,17 +46,17 @@ class SearchScreenViewModel(
         viewModelScope.launch {
             _searchQueryState
                 .collectLatest { query ->
-                    delay(50)
-
                     if (query.isBlank()) return@collectLatest
 
-                    val results = processQueryUseCase(
-                        plugins = _state.value.pluginList,
+                    val resultsFlow = processQueryUseCase(
+                        plugins = state.value.pluginList,
                         inputQuery = query
                     )
 
-                    _state.update {
-                        it.copy(searchResults = results)
+                    resultsFlow.collectLatest { newResults ->
+                        state.value = state.value.copy(
+                            searchResults = newResults
+                        )
                     }
                 }
         }
@@ -68,13 +66,11 @@ class SearchScreenViewModel(
         viewModelScope.launch {
             val getPluginsResult = pluginRepository.getPluginList()
             val fallbackCommands = pluginRepository.getAllFallbackCommands()
-            _state.update {
-                it.copy(
-                    pluginList = getPluginsResult.plugins,
-                    pluginErrors = getPluginsResult.pluginErrors,
-                    fallbackCommands = fallbackCommands
-                )
-            }
+            state.value = state.value.copy(
+                pluginList = getPluginsResult.plugins,
+                pluginErrors = getPluginsResult.pluginErrors,
+                fallbackCommands = fallbackCommands
+            )
         }
     }
 
@@ -91,9 +87,7 @@ class SearchScreenViewModel(
 
     fun updateSearchBarValue(newValue: String) {
         if (newValue.isBlank()) {
-            _state.update {
-                it.copy(searchResults = emptyList())
-            }
+            state.value = state.value.copy(searchResults = emptyList())
         }
 
         searchBarState = newValue

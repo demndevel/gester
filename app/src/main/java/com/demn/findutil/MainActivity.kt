@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.demn.applications_core_plugin.ApplicationsRetriever
 import com.demn.applications_core_plugin.appSearchingPluginUuid
 import com.demn.applications_core_plugin.syncAppsCacheCommandUuid
 import com.demn.domain.pluginproviders.CorePluginsProvider
@@ -55,6 +54,15 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                corePluginsProvider.invokePluginCommand(
+                    commandUuid = syncAppsCacheCommandUuid,
+                    pluginUuid = appSearchingPluginUuid
+                )
+            }
+        }
+
         setContent {
             FindUtilTheme {
                 val interactionSource = remember { MutableInteractionSource() }
@@ -78,18 +86,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                corePluginsProvider.invokePluginCommand(
-                    commandUuid = syncAppsCacheCommandUuid,
-                    pluginUuid = appSearchingPluginUuid
-                )
-            }
-        }
-
-        super.onResume()
     }
 }
