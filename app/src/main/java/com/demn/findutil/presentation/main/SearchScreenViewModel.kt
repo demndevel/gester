@@ -17,7 +17,6 @@ import com.demn.plugincore.operationresult.BasicOperationResult
 import com.demn.plugincore.operationresult.CommandOperationResult
 import com.demn.plugincore.operationresult.IconOperationResult
 import com.demn.plugincore.operationresult.OperationResult
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -47,16 +46,18 @@ class SearchScreenViewModel(
         viewModelScope.launch {
             _searchQueryState
                 .collectLatest { query ->
-                    delay(50)
-
                     if (query.isBlank()) return@collectLatest
 
-                    val results = processQueryUseCase(
+                    val resultsFlow = processQueryUseCase(
                         plugins = state.value.pluginList,
                         inputQuery = query
                     )
 
-                    state.value = state.value.copy(searchResults = results)
+                    resultsFlow.collectLatest { newResults ->
+                        state.value = state.value.copy(
+                            searchResults = newResults
+                        )
+                    }
                 }
         }
     }
