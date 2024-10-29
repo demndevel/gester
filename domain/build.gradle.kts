@@ -43,6 +43,7 @@ dependencies {
     implementation(project(":plugincore"))
 
     implementation(libs.fuzzywuzzy.kotlin)
+    implementation(libs.latin.to.cyrillic)
 
     implementation(libs.androidx.activity.compose)
 }

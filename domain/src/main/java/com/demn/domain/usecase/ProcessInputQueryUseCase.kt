@@ -29,7 +29,7 @@ class ProcessInputQueryUseCase(
                 val accumulator = mutableListOf<OperationResult>()
                 var timeExpired = false
 
-                commandSearcherUseCase(inputQuery)
+                accumulator += commandSearcherUseCase(inputQuery)
                     .map(PluginCommand::toOperationResult)
 
                 val timerDeferrer = async {
@@ -80,6 +80,6 @@ private fun PluginCommand.toOperationResult(): OperationResult {
         uuid = uuid,
         pluginUuid = pluginUuid,
         iconUri = iconUri,
-        name = name
+        name = name,
     )
 }

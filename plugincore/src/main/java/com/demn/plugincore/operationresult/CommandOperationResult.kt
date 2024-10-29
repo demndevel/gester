@@ -9,5 +9,6 @@ data class CommandOperationResult(
     val iconUri: Uri,
     val name: String,
 ) : OperationResult {
-    override val type: ResultType = ResultType.Command
+    override val label: String = "Command"
+    override val pinToTop: Boolean = false
 }

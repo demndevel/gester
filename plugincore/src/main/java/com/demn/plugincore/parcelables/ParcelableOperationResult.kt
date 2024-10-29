@@ -20,7 +20,8 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 class ParcelableOperationResult private constructor(
-    val resultType: ResultType,
+    val label: String,
+    val pinToTop: Boolean,
     val text: String? = null,
     val description: String? = null,
     val iconUri: Uri? = null,
@@ -43,7 +44,8 @@ class ParcelableOperationResult private constructor(
                 is BasicOperationResult -> ParcelableOperationResult(
                     text = operationResult.text,
                     intent = operationResult.intent,
-                    resultType = operationResult.type
+                    label = operationResult.label,
+                    pinToTop = operationResult.pinToTop
                 )
 
                 is TransitionOperationResult -> ParcelableOperationResult(
@@ -51,21 +53,24 @@ class ParcelableOperationResult private constructor(
                     initialDescription = operationResult.initialDescription,
                     finalText = operationResult.finalText,
                     finalDescription = operationResult.finalDescription,
-                    resultType = operationResult.type
+                    label = operationResult.label,
+                    pinToTop = operationResult.pinToTop
                 )
 
                 is CommandOperationResult -> ParcelableOperationResult(
                     commandUuid = operationResult.uuid.toParcelUuid(),
                     commandName = operationResult.name,
                     commandPluginUuid = operationResult.pluginUuid.toParcelUuid(),
-                    resultType = operationResult.type
+                    label = operationResult.label,
+                    pinToTop = operationResult.pinToTop
                 )
 
                 is IconOperationResult -> ParcelableOperationResult(
                     text = operationResult.text,
                     intent = operationResult.intent,
                     iconUri = operationResult.iconUri,
-                    resultType = operationResult.type
+                    label = operationResult.label,
+                    pinToTop = operationResult.pinToTop
                 )
             }
         }
@@ -85,7 +90,8 @@ fun ParcelableOperationResult.toOperationResult(): OperationResult {
             text = text,
             intent = intent,
             iconUri = iconUri,
-            resultType
+            label = label,
+            pinToTop = pinToTop
         )
     }
 
@@ -93,7 +99,8 @@ fun ParcelableOperationResult.toOperationResult(): OperationResult {
         return BasicOperationResult(
             text,
             intent,
-            resultType
+            label = label,
+            pinToTop = pinToTop
         )
     }
 
@@ -102,7 +109,8 @@ fun ParcelableOperationResult.toOperationResult(): OperationResult {
             initialText,
             initialDescription,
             finalText,
-            finalDescription
+            finalDescription,
+            pinToTop = pinToTop
         )
     }
 
@@ -111,7 +119,7 @@ fun ParcelableOperationResult.toOperationResult(): OperationResult {
             uuid = commandUuid.uuid,
             pluginUuid = commandPluginUuid.uuid,
             name = commandName,
-            iconUri = commandIconUri
+            iconUri = commandIconUri,
         )
     }
 
