@@ -87,7 +87,8 @@ class FooPluginService : Service() {
                         BasicOperationResult(
                             text = "github.com",
                             intent = getLaunchWebPageIntent("https://github.com"),
-                            type = ResultType.WebLink
+                            label = "Weblink",
+                            pinToTop = false
                         )
                     ),
                     buildParcelableOperationResult(
@@ -95,6 +96,8 @@ class FooPluginService : Service() {
                             text = "Some icon result",
                             intent = null,
                             iconUri = drawableUri,
+                            label = "Other",
+                            pinToTop = false
                         )
                     )
                 )

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FindUtil</string>
+    <string name="app_name">Gester</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="other_setting_error">This field is invalid</string>
     <string name="should_contain_only_numbers_setting_error">This field should contain only numbers</string>
