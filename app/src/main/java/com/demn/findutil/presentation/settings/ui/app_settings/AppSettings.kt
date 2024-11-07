@@ -54,7 +54,7 @@ fun AppSettings(
             onClick = onPluginCacheSync,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(R.string.manual_external_plugin_cache_sync))
+            Text(text = stringResource(R.string.manual_plugin_cache_sync))
         }
     }
 }

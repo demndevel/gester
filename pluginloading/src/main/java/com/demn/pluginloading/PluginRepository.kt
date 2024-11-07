@@ -3,7 +3,7 @@ package com.demn.pluginloading
 import com.demn.domain.models.*
 import com.demn.domain.pluginmanagement.PluginRepository
 import com.demn.plugincore.operationresult.OperationResult
-import com.demn.domain.pluginproviders.ExternalPluginsProvider
+import com.demn.domain.pluginproviders.BoundServicePluginsProvider
 import java.util.UUID
 
 class MockPluginRepository : PluginRepository {
@@ -25,36 +25,17 @@ class MockPluginRepository : PluginRepository {
 }
 
 class PluginRepositoryImpl(
-    private val externalPluginsProvider: ExternalPluginsProvider,
+    private val boundServicePluginsProvider: BoundServicePluginsProvider,
 ) : PluginRepository {
-    private suspend fun getExternalPlugins(): GetExternalPluginListInvocationResult {
-        return externalPluginsProvider.getPluginList()
-    }
-
     override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
-        return when (plugin) {
-            is Plugin -> getAnyResultsWithExternalPlugin(plugin, input)
-
-            else -> emptyList()
-        }
-    }
-
-    override suspend fun getAllFallbackCommands(): List<PluginFallbackCommand> {
-        return getAllExternalFallbackCommands()
-    }
-
-    private suspend fun getAllExternalFallbackCommands(): List<PluginFallbackCommand> {
-        return externalPluginsProvider.getAllPluginFallbackCommands()
-    }
-
-    private suspend fun getAnyResultsWithExternalPlugin(
-        plugin: Plugin,
-        input: String
-    ): List<OperationResult> {
-        return externalPluginsProvider.executeAnyInput(
+        return boundServicePluginsProvider.executeAnyInput(
             input = input,
             pluginService = plugin.pluginService,
         )
+    }
+
+    override suspend fun getAllFallbackCommands(): List<PluginFallbackCommand> {
+        return boundServicePluginsProvider.getAllPluginFallbackCommands()
     }
 
     override suspend fun invokeFallbackCommand(input: String, commandUuid: UUID) {
@@ -71,15 +52,15 @@ class PluginRepositoryImpl(
             return
         }
 
-        when (plugin) {
-            is Plugin -> {
-                invokeExternalPluginFallbackCommand(input, commandUuid, plugin)
-            }
-        }
+        boundServicePluginsProvider.executeFallbackCommand(
+            input = input,
+            fallbackCommandUuid = commandUuid,
+            pluginService = plugin.pluginService
+        )
     }
 
     override suspend fun getAllCommands(): List<PluginCommand> {
-        return externalPluginsProvider.getAllPluginCommands()
+        return boundServicePluginsProvider.getAllPluginCommands()
     }
 
     override suspend fun invokeCommand(commandUuid: UUID, pluginId: String) {
@@ -88,29 +69,15 @@ class PluginRepositoryImpl(
 
         if (plugin == null) return
 
-        when (plugin) {
-            is Plugin -> externalPluginsProvider.executeCommand(commandUuid, pluginId)
-        }
-    }
-
-    private suspend fun invokeExternalPluginFallbackCommand(
-        input: String,
-        commandUuid: UUID,
-        plugin: Plugin
-    ) {
-        externalPluginsProvider.executeFallbackCommand(
-            input = input,
-            fallbackCommandUuid = commandUuid,
-            pluginService = plugin.pluginService
-        )
+        boundServicePluginsProvider.executeCommand(commandUuid, pluginId)
     }
 
     override suspend fun getPluginList(): GetPluginListInvocationResult {
-        val externalPlugins = getExternalPlugins()
+        val getAllPluginsInvocationResult = boundServicePluginsProvider.getPluginList()
 
         return GetPluginListInvocationResult(
-            plugins = externalPlugins.plugins,
-            pluginErrors = externalPlugins.pluginErrors
+            plugins = getAllPluginsInvocationResult.plugins,
+            pluginErrors = getAllPluginsInvocationResult.pluginErrors
         )
     }
 }

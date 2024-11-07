@@ -5,9 +5,9 @@ import com.demn.data.entities.PluginWithCommandsDbo
 import com.demn.data.toPluginCache
 import com.demn.data.toPluginWithCommandsDbo
 import com.demn.domain.data.PluginCache
-import com.demn.domain.data.ExternalPluginCacheRepository
+import com.demn.domain.data.PluginCacheRepository
 
-class MockExternalPluginCacheRepository() : ExternalPluginCacheRepository {
+class MockPluginCacheRepository() : PluginCacheRepository {
     override suspend fun getAllPlugins(): List<PluginCache> = emptyList()
 
     override suspend fun getPluginCache(id: String): PluginCache? = null
@@ -17,9 +17,9 @@ class MockExternalPluginCacheRepository() : ExternalPluginCacheRepository {
     override suspend fun removePluginCache(id: String) = Unit
 }
 
-class ExternalPluginCacheRepositoryImpl(
+class PluginCacheRepositoryImpl(
     private val pluginCacheDao: PluginCacheDao
-) : ExternalPluginCacheRepository {
+) : PluginCacheRepository {
     override suspend fun getAllPlugins(): List<PluginCache> {
         return pluginCacheDao
             .getPluginsWithCommands()

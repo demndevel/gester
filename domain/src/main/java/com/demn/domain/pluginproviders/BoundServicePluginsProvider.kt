@@ -5,11 +5,11 @@ import com.demn.plugincore.parcelables.PluginSetting
 import com.demn.plugincore.operationresult.OperationResult
 import java.util.UUID
 
-interface ExternalPluginsProvider {
+interface BoundServicePluginsProvider {
     /**
      * Caches new or updated plugins & returns plugins from cache
      */
-    suspend fun getPluginList(): GetExternalPluginListInvocationResult
+    suspend fun getPluginList(): GetBoundServicePluginListInvocationResult
 
     /**
      * Gets plugin settings list via IPC

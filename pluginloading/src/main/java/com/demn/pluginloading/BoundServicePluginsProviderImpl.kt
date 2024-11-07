@@ -7,10 +7,10 @@ import android.os.DeadObjectException
 import android.os.IBinder
 import android.os.RemoteException
 import com.demn.aidl.PluginAdapter
-import com.demn.domain.data.ExternalPluginCacheRepository
+import com.demn.domain.data.PluginCacheRepository
 import com.demn.domain.data.PluginCache
 import com.demn.domain.models.*
-import com.demn.domain.pluginproviders.ExternalPluginsProvider
+import com.demn.domain.pluginproviders.BoundServicePluginsProvider
 import com.demn.plugincore.*
 import com.demn.plugincore.operationresult.OperationResult
 import com.demn.plugincore.parcelables.*
@@ -21,11 +21,11 @@ import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class ExternalPluginsProviderImpl(
+class BoundServicePluginsProviderImpl(
     private val context: Context,
-    private val externalPluginCacheRepository: ExternalPluginCacheRepository
-) : ExternalPluginsProvider {
-    override suspend fun getPluginList(): GetExternalPluginListInvocationResult {
+    private val pluginCacheRepository: PluginCacheRepository
+) : BoundServicePluginsProvider {
+    override suspend fun getPluginList(): GetBoundServicePluginListInvocationResult {
         val packageManager = context.packageManager
         val baseIntent = Intent(ACTION_PICK_PLUGIN).apply {
             flags = Intent.FLAG_DEBUG_LOG_RESOLUTION
@@ -60,7 +60,7 @@ class ExternalPluginsProviderImpl(
 
                 cacheIfRequired(pluginSummary, pluginService)
 
-                val pluginCache = externalPluginCacheRepository.getPluginCache(pluginSummary.pluginId)
+                val pluginCache = pluginCacheRepository.getPluginCache(pluginSummary.pluginId)
                 val metadata = pluginCache?.pluginMetadata ?: return@mapNotNull null
 
                 Plugin(
@@ -82,15 +82,15 @@ class ExternalPluginsProviderImpl(
             }
         }
 
-        return GetExternalPluginListInvocationResult(pluginList, pluginErrors)
+        return GetBoundServicePluginListInvocationResult(pluginList, pluginErrors)
     }
 
     private suspend fun cacheIfRequired(pluginSummary: PluginSummary, pluginService: PluginService) {
-        val cache = externalPluginCacheRepository.getPluginCache(pluginSummary.pluginId)
+        val cache = pluginCacheRepository.getPluginCache(pluginSummary.pluginId)
 
         if (cache?.pluginMetadata?.version == pluginSummary.pluginVersion) return
 
-        externalPluginCacheRepository.updatePluginCache(
+        pluginCacheRepository.updatePluginCache(
             PluginCache(
                 getPluginMetadataIpc(pluginService),
                 getPluginCommandsIpc(pluginSummary.pluginId, pluginService),
@@ -127,7 +127,7 @@ class ExternalPluginsProviderImpl(
     }
 
     override suspend fun getAllPluginCommands(): List<PluginCommand> {
-        val plugins = externalPluginCacheRepository.getAllPlugins()
+        val plugins = pluginCacheRepository.getAllPlugins()
 
         return plugins
             .flatMap {
@@ -136,7 +136,7 @@ class ExternalPluginsProviderImpl(
     }
 
     override suspend fun getAllPluginFallbackCommands(): List<PluginFallbackCommand> {
-        val plugins = externalPluginCacheRepository.getAllPlugins()
+        val plugins = pluginCacheRepository.getAllPlugins()
 
         return plugins
             .flatMap {

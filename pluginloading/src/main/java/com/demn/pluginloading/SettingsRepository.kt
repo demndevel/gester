@@ -6,7 +6,7 @@ import com.demn.domain.pluginmanagement.PluginSettingsRepository
 import com.demn.plugincore.parcelables.PluginSetting
 import com.demn.plugincore.parcelables.PluginSettingType
 import com.demn.domain.pluginmanagement.PluginRepository
-import com.demn.domain.pluginproviders.ExternalPluginsProvider
+import com.demn.domain.pluginproviders.BoundServicePluginsProvider
 import java.util.UUID
 
 class MockPluginSettingsRepository : PluginSettingsRepository {
@@ -53,17 +53,17 @@ class MockPluginSettingsRepository : PluginSettingsRepository {
 }
 
 class PluginSettingsRepositoryImpl(
-    private val externalPluginsProvider: ExternalPluginsProvider,
+    private val boundServicePluginsProvider: BoundServicePluginsProvider,
     private val pluginRepository: PluginRepository
 ) : PluginSettingsRepository {
     override suspend fun getAll(): List<PluginSettingsInfo> {
-        val externalPlugins = externalPluginsProvider.getPluginList()
+        val externalPlugins = boundServicePluginsProvider.getPluginList()
 
         val externalPluginsSettingsInfos =
             externalPlugins.plugins.map {
                 PluginSettingsInfo(
                     it,
-                    externalPluginsProvider.getPluginSettings(it)
+                    boundServicePluginsProvider.getPluginSettings(it)
                 )
             }
 
@@ -74,7 +74,7 @@ class PluginSettingsRepositoryImpl(
         val plugin = findPlugin(pluginId)
 
         plugin?.let {
-            externalPluginsProvider.setPluginSetting(
+            boundServicePluginsProvider.setPluginSetting(
                 plugin = it,
                 settingUuid = settingUuid,
                 newValue = value

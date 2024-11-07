@@ -4,7 +4,7 @@ import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.plugincore.parcelables.PluginMetadata
 
-interface ExternalPluginCacheRepository {
+interface PluginCacheRepository {
     suspend fun getAllPlugins(): List<PluginCache>
 
     suspend fun getPluginCache(id: String): PluginCache?
