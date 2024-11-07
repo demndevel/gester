@@ -33,7 +33,6 @@ android {
 dependencies {
     implementation(project(":plugincore"))
     implementation(project(":domain"))
-    implementation(project(":coreplugins:base"))
 
     api(libs.room.runtime)
     implementation(libs.room.ktx)

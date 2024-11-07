@@ -1,9 +1,9 @@
 package com.demn.findutil.di.coreplugins
 
 import androidx.room.Room
-import com.demn.applications_core_plugin.ApplicationsRetriever
-import com.demn.applications_core_plugin.database.ApplicationsDao
-import com.demn.applications_core_plugin.database.ApplicationsDatabase
+import com.demn.appsearchplugin.ApplicationsRetriever
+import com.demn.appsearchplugin.database.ApplicationsDao
+import com.demn.appsearchplugin.database.ApplicationsDatabase
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 

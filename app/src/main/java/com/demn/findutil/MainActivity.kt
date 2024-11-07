@@ -15,8 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.demn.applications_core_plugin.appSearchingMetadata
-import com.demn.applications_core_plugin.syncAppsCacheCommandUuid
 import com.demn.findutil.di.appModule
 import com.demn.findutil.di.coreplugins.appSearchingPluginModule
 import com.demn.findutil.di.dataModule
@@ -25,7 +23,6 @@ import com.demn.findutil.di.pluginManagementModule
 import com.demn.findutil.presentation.main.SearchScreen
 import com.demn.findutil.ui.theme.FindUtilTheme
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin

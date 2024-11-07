@@ -31,7 +31,6 @@ dependencyResolutionManagement {
 rootProject.name = "FindUtil"
 include(":app")
 include(":coreplugins:appsearchplugin")
-include(":coreplugins:base")
 include(":coreplugins:unitcalcplugin")
 include(":plugincore")
 
