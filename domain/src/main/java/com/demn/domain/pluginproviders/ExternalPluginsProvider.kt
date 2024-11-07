@@ -34,7 +34,7 @@ interface ExternalPluginsProvider {
 
     suspend fun executeCommand(
         uuid: UUID,
-        pluginUuid: UUID
+        pluginId: String
     )
 
     suspend fun executeAnyInput(

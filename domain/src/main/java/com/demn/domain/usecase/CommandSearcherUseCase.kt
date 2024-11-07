@@ -21,7 +21,7 @@ class CommandSearcherUseCaseImpl(
         val commands = pluginRepository
             .getAllCommands()
             .filter {
-                pluginAvailabilityRepository.checkPluginEnabled(it.pluginUuid)
+                pluginAvailabilityRepository.checkPluginEnabled(it.pluginId)
             }
 
         return commands.filter { command ->

@@ -2,7 +2,6 @@ package com.demn.plugincore.parcelables
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import java.util.UUID
 
 /**
  * Parcelable plugin metadata
@@ -14,7 +13,7 @@ import java.util.UUID
  */
 @Parcelize
 data class PluginMetadata internal constructor(
-    val pluginUuid: UUID,
+    val pluginId: String,
     val pluginName: String,
     val description: String? = null,
     val version: PluginVersion,
@@ -22,18 +21,18 @@ data class PluginMetadata internal constructor(
 ) : Parcelable
 
 fun buildPluginMetadata(
-    pluginUuid: UUID,
+    pluginId: String,
     pluginName: String,
     block: PluginMetadataBuilder.() -> Unit = {}
-) = PluginMetadataBuilder().apply(block).build(pluginUuid, pluginName)
+) = PluginMetadataBuilder().apply(block).build(pluginId, pluginName)
 
 class PluginMetadataBuilder {
     var version: PluginVersion = PluginVersion(0, 0)
     var description: String? = null
     var consumeAnyInput: Boolean = false
 
-    fun build(pluginUuid: UUID, pluginName: String) = PluginMetadata(
-        pluginUuid = pluginUuid,
+    fun build(pluginId: String, pluginName: String) = PluginMetadata(
+        pluginId = pluginId,
         pluginName = pluginName,
         version = version,
         consumeAnyInput = consumeAnyInput,

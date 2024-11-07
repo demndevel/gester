@@ -14,6 +14,7 @@ import com.demn.domain.pluginmanagement.PluginUninstaller
 import com.demn.domain.settings.AppSettingsRepository
 import com.demn.domain.settings.PluginAvailabilityRepository
 import com.demn.domain.usecase.PluginCacheSyncUseCase
+import com.demn.findutil.gesterPluginId
 import com.demn.plugincore.parcelables.PluginMetadata
 import com.demn.plugincore.parcelables.PluginSetting
 import com.demn.plugincore.parcelables.PluginSettingType
@@ -110,11 +111,11 @@ class SettingsScreenViewModel(
 
             val pluginAvailabilities = pluginRepository
                 .getPluginList().plugins
-                .filter { it.metadata.pluginUuid != FindUtilPluginUuid }
+                .filter { it.metadata.pluginId != gesterPluginId }
                 .map { plugin ->
                     PluginAvailability(
                         pluginMetadata = plugin.metadata,
-                        available = pluginAvailabilityRepository.checkPluginEnabled(plugin.metadata.pluginUuid)
+                        available = pluginAvailabilityRepository.checkPluginEnabled(plugin.metadata.pluginId)
                     )
                 }
 
@@ -131,15 +132,15 @@ class SettingsScreenViewModel(
 
     fun setPluginAvailability(metadata: PluginMetadata, available: Boolean) {
         when (available) {
-            true -> pluginAvailabilityRepository.enablePlugin(metadata.pluginUuid)
-            false -> pluginAvailabilityRepository.disablePlugin(metadata.pluginUuid)
+            true -> pluginAvailabilityRepository.enablePlugin(metadata.pluginId)
+            false -> pluginAvailabilityRepository.disablePlugin(metadata.pluginId)
         }
 
         _state.update {
             val mutableAvailabilities =
                 (it.pluginAvailabilities ?: return@update it).toMutableList()
             val index = mutableAvailabilities
-                .indexOfFirst { availability -> availability.pluginMetadata.pluginUuid == metadata.pluginUuid }
+                .indexOfFirst { availability -> availability.pluginMetadata.pluginId == metadata.pluginId }
 
             mutableAvailabilities.set(
                 index = index,
@@ -277,7 +278,7 @@ class SettingsScreenViewModel(
                         val value = settingField.validatedField.field
 
                         pluginSettingsRepository.set(
-                            settingField.settingMetadata.pluginUuid,
+                            settingField.settingMetadata.pluginId,
                             settingField.settingMetadata.pluginSettingUuid,
                             value
                         )

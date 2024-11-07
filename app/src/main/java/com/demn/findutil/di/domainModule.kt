@@ -9,7 +9,7 @@ import com.demn.domain.usecase.ProcessInputQueryUseCaseConfig
 import org.koin.dsl.module
 
 val domainModule = module {
-    single<ProcessInputQueryUseCaseConfig> { ProcessInputQueryUseCaseConfig(100L) }
+    single<ProcessInputQueryUseCaseConfig> { ProcessInputQueryUseCaseConfig(50L) }
 
     single<ProcessInputQueryUseCase> { ProcessInputQueryUseCase(get(), get(), get(), get(), get()) }
     single<CommandSearcherUseCase> { CommandSearcherUseCaseImpl(get(), get()) }

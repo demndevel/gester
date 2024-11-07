@@ -17,9 +17,9 @@ class CorePluginsProviderImpl(
             .map { BuiltInPlugin(it.metadata) }
     }
 
-    override suspend fun invokeAnyInput(input: String, uuid: UUID): List<OperationResult> {
+    override suspend fun invokeAnyInput(input: String, pluginId: String): List<OperationResult> {
         val plugin = plugins
-            .find { it.metadata.pluginUuid == uuid }
+            .find { it.metadata.pluginId == pluginId }
 
         if (plugin == null) return emptyList()
 
@@ -28,7 +28,7 @@ class CorePluginsProviderImpl(
 
     override suspend fun getPluginCommands(plugin: BuiltInPlugin): List<PluginCommand> {
         plugins
-            .find { it.metadata.pluginUuid == plugin.metadata.pluginUuid }
+            .find { it.metadata.pluginId == plugin.metadata.pluginId }
             ?.let {
                 return it.getPluginCommands()
             }
@@ -44,28 +44,28 @@ class CorePluginsProviderImpl(
         return plugins.flatMap { it.getPluginFallbackCommands() }
     }
 
-    override suspend fun invokePluginCommand(commandUuid: UUID, pluginUuid: UUID) {
+    override suspend fun invokePluginCommand(commandUuid: UUID, pluginId: String) {
         plugins
-            .find { it.metadata.pluginUuid == pluginUuid }
+            .find { it.metadata.pluginId == pluginId }
             ?.invokeCommand(commandUuid)
     }
 
     override suspend fun invokePluginFallbackCommand(
         input: String,
         pluginFallbackCommandId: UUID,
-        pluginUuid: UUID
+        pluginId: String
     ) {
         val plugin = plugins
-            .find { it.metadata.pluginUuid == pluginUuid }
+            .find { it.metadata.pluginId == pluginId }
 
         if (plugin == null) return
 
         plugin.invokePluginFallbackCommand(input, pluginFallbackCommandId)
     }
 
-    override suspend fun getPluginSettings(pluginUuid: UUID): List<PluginSetting> {
+    override suspend fun getPluginSettings(pluginUuid: String): List<PluginSetting> {
         val settings = plugins
-            .find { it.metadata.pluginUuid == pluginUuid }
+            .find { it.metadata.pluginId == pluginUuid }
             ?.getPluginSettings()
 
         return settings ?: emptyList()

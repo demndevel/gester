@@ -112,7 +112,7 @@ class SearchScreenViewModel(
             }
 
             if (operationResult is CommandOperationResult) {
-                pluginRepository.invokeCommand(operationResult.uuid, operationResult.pluginUuid)
+                pluginRepository.invokeCommand(operationResult.uuid, operationResult.pluginId)
             }
 
             if (operationResult is CommandOperationResult || operationResult is BasicOperationResult || operationResult is IconOperationResult) {

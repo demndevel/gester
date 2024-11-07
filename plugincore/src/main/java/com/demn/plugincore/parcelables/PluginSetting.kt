@@ -12,7 +12,7 @@ enum class PluginSettingType {
 
 @Parcelize
 data class PluginSetting(
-    val pluginUuid: UUID,
+    val pluginId: String,
     val pluginSettingUuid: UUID,
     val settingName: String,
     val settingDescription: String,

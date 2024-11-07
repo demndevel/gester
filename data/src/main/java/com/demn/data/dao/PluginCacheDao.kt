@@ -14,8 +14,8 @@ interface PluginCacheDao {
     suspend fun getPluginsWithCommands(): List<PluginWithCommandsDbo>
 
     @Transaction
-    @Query("SELECT * FROM PluginCacheDbo WHERE pluginUuid = :uuid")
-    suspend fun getPluginWithCommands(uuid: UUID): PluginWithCommandsDbo?
+    @Query("SELECT * FROM PluginCacheDbo WHERE pluginId = :id")
+    suspend fun getPluginWithCommands(id: String): PluginWithCommandsDbo?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPluginCache(pluginCacheDbo: PluginCacheDbo)
@@ -36,19 +36,19 @@ interface PluginCacheDao {
         insertPluginFallbackCommands(pluginWithCommandsDbo.fallbackCommands)
     }
 
-    @Query("DELETE FROM PluginCacheDbo WHERE pluginUuid = :pluginUuid")
-    suspend fun deletePluginCache(pluginUuid: UUID)
+    @Query("DELETE FROM PluginCacheDbo WHERE pluginId = :pluginId")
+    suspend fun deletePluginCache(pluginId: String)
 
-    @Query("DELETE FROM PluginCommandCacheDbo WHERE pluginUuid = :pluginUuid")
-    suspend fun deletePluginCommands(pluginUuid: UUID)
+    @Query("DELETE FROM PluginCommandCacheDbo WHERE pluginId = :pluginId")
+    suspend fun deletePluginCommands(pluginId: String)
 
-    @Query("DELETE FROM PluginFallbackCommandCacheDbo WHERE pluginUuid = :pluginUuid")
-    suspend fun deletePluginFallbackCommands(pluginUuid: UUID)
+    @Query("DELETE FROM PluginFallbackCommandCacheDbo WHERE pluginId = :pluginId")
+    suspend fun deletePluginFallbackCommands(pluginId: String)
 
     @Transaction
-    suspend fun deletePluginWithCorrespondingData(pluginUuid: UUID) {
-        deletePluginFallbackCommands(pluginUuid)
-        deletePluginCommands(pluginUuid)
-        deletePluginCache(pluginUuid)
+    suspend fun deletePluginWithCorrespondingData(pluginId: String) {
+        deletePluginFallbackCommands(pluginId)
+        deletePluginCommands(pluginId)
+        deletePluginCache(pluginId)
     }
 }

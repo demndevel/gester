@@ -76,7 +76,7 @@ private fun SearchScreenPreview() {
                 searchResults = listOf(
                     CommandOperationResult(
                         uuid = UUID.randomUUID(),
-                        pluginUuid = UUID.randomUUID(),
+                        pluginId = "someid",
                         iconUri = Uri.EMPTY,
                         name = "Test command"
                     )
@@ -84,7 +84,7 @@ private fun SearchScreenPreview() {
                 fallbackCommands = listOf(
                     PluginFallbackCommand(
                         uuid = UUID.randomUUID(),
-                        pluginUuid = UUID.randomUUID(),
+                        pluginId = "someid",
                         name = "Test fallback command",
                         iconUri = Uri.EMPTY,
                     )

@@ -2,14 +2,13 @@ package com.demn.findutil.app_settings
 
 import android.content.Context
 import com.demn.domain.settings.PluginAvailabilityRepository
-import java.util.UUID
 
 class MockPluginAvailabilityRepository : PluginAvailabilityRepository {
-    override fun enablePlugin(pluginUuid: UUID) = Unit
+    override fun enablePlugin(pluginId: String) = Unit
 
-    override fun disablePlugin(pluginUuid: UUID) = Unit
+    override fun disablePlugin(pluginId: String) = Unit
 
-    override fun checkPluginEnabled(pluginUuid: UUID): Boolean = true
+    override fun checkPluginEnabled(pluginId: String): Boolean = true
 }
 
 class PluginAvailabilityRepositoryImpl(context: Context) : PluginAvailabilityRepository {
@@ -22,21 +21,21 @@ class PluginAvailabilityRepositoryImpl(context: Context) : PluginAvailabilityRep
         Context.MODE_PRIVATE
     )
 
-    override fun enablePlugin(pluginUuid: UUID) {
+    override fun enablePlugin(pluginId: String) {
         sharedPreferences.edit().apply {
-            putBoolean(pluginUuid.toString(), true)
+            putBoolean(pluginId, true)
             commit()
         }
     }
 
-    override fun disablePlugin(pluginUuid: UUID) {
+    override fun disablePlugin(pluginId: String) {
         sharedPreferences.edit().apply {
-            putBoolean(pluginUuid.toString(), false)
+            putBoolean(pluginId, false)
             commit()
         }
     }
 
-    override fun checkPluginEnabled(pluginUuid: UUID): Boolean {
-        return sharedPreferences.getBoolean(pluginUuid.toString(), true)
+    override fun checkPluginEnabled(pluginId: String): Boolean {
+        return sharedPreferences.getBoolean(pluginId, true)
     }
 }

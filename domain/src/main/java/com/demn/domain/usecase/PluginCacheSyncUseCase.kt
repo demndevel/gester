@@ -25,8 +25,8 @@ class PluginCacheSyncUseCaseImpl(
 
     private suspend fun removeUnusedPluginData(plugins: List<ExternalPlugin>, pluginsCache: List<PluginCache>) {
         pluginsCache.forEach { pluginCache ->
-            if (!plugins.any { it.metadata.pluginUuid == pluginCache.pluginMetadata.pluginUuid }) {
-                externalPluginCacheRepository.removePluginCache(pluginCache.pluginMetadata.pluginUuid)
+            if (!plugins.any { it.metadata.pluginId == pluginCache.pluginMetadata.pluginId }) {
+                externalPluginCacheRepository.removePluginCache(pluginCache.pluginMetadata.pluginId)
             }
         }
     }

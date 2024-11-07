@@ -6,16 +6,15 @@ import com.demn.data.toPluginCache
 import com.demn.data.toPluginWithCommandsDbo
 import com.demn.domain.data.PluginCache
 import com.demn.domain.data.ExternalPluginCacheRepository
-import java.util.*
 
 class MockExternalPluginCacheRepository() : ExternalPluginCacheRepository {
     override suspend fun getAllPlugins(): List<PluginCache> = emptyList()
 
-    override suspend fun getPluginCache(uuid: UUID): PluginCache? = null
+    override suspend fun getPluginCache(id: String): PluginCache? = null
 
     override suspend fun updatePluginCache(pluginCache: PluginCache) = Unit
 
-    override suspend fun removePluginCache(uuid: UUID) = Unit
+    override suspend fun removePluginCache(id: String) = Unit
 }
 
 class ExternalPluginCacheRepositoryImpl(
@@ -27,9 +26,9 @@ class ExternalPluginCacheRepositoryImpl(
             .map(PluginWithCommandsDbo::toPluginCache)
     }
 
-    override suspend fun getPluginCache(uuid: UUID): PluginCache? {
+    override suspend fun getPluginCache(id: String): PluginCache? {
         return pluginCacheDao
-            .getPluginWithCommands(uuid)
+            .getPluginWithCommands(id)
             ?.toPluginCache()
     }
 
@@ -37,7 +36,7 @@ class ExternalPluginCacheRepositoryImpl(
         pluginCacheDao.insertPluginWithCommands(pluginCache.toPluginWithCommandsDbo())
     }
 
-    override suspend fun removePluginCache(uuid: UUID) {
-        pluginCacheDao.deletePluginWithCorrespondingData(uuid)
+    override suspend fun removePluginCache(id: String) {
+        pluginCacheDao.deletePluginWithCorrespondingData(id)
     }
 }

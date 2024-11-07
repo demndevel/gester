@@ -8,7 +8,6 @@ import com.demn.plugincore.operationresult.BasicOperationResult
 import com.demn.plugincore.operationresult.CommandOperationResult
 import com.demn.plugincore.operationresult.IconOperationResult
 import com.demn.plugincore.operationresult.OperationResult
-import com.demn.plugincore.operationresult.ResultType
 import com.demn.plugincore.operationresult.TransitionOperationResult
 import com.demn.plugincore.util.toParcelUuid
 import kotlinx.parcelize.Parcelize
@@ -33,7 +32,7 @@ class ParcelableOperationResult private constructor(
     val commandName: String? = null,
     val commandIconUri: Uri? = null,
     val commandUuid: ParcelUuid? = null,
-    val commandPluginUuid: ParcelUuid? = null,
+    val commandPluginId: String? = null,
 ) : Parcelable {
     companion object {
         /**
@@ -60,7 +59,7 @@ class ParcelableOperationResult private constructor(
                 is CommandOperationResult -> ParcelableOperationResult(
                     commandUuid = operationResult.uuid.toParcelUuid(),
                     commandName = operationResult.name,
-                    commandPluginUuid = operationResult.pluginUuid.toParcelUuid(),
+                    commandPluginId = operationResult.pluginId,
                     label = operationResult.label,
                     pinToTop = operationResult.pinToTop
                 )
@@ -114,10 +113,10 @@ fun ParcelableOperationResult.toOperationResult(): OperationResult {
         )
     }
 
-    if (commandUuid != null && commandName != null && commandPluginUuid != null && commandIconUri != null) { // TODO: write tests for this case
+    if (commandUuid != null && commandName != null && commandPluginId != null && commandIconUri != null) { // TODO: write tests for this case
         return CommandOperationResult(
             uuid = commandUuid.uuid,
-            pluginUuid = commandPluginUuid.uuid,
+            pluginId = commandPluginId,
             name = commandName,
             iconUri = commandIconUri,
         )

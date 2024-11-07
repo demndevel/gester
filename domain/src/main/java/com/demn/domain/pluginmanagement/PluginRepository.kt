@@ -17,7 +17,7 @@ interface PluginRepository {
 
     suspend fun getAllCommands(): List<PluginCommand>
 
-    suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID)
+    suspend fun invokeCommand(commandUuid: UUID, pluginId: String)
 
     suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult>
 

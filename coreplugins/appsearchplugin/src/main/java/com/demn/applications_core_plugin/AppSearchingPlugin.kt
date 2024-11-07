@@ -17,10 +17,9 @@ import java.util.*
 import kotlin.coroutines.EmptyCoroutineContext
 
 val syncAppsCacheCommandUuid: UUID = UUID.fromString("0b8dd1b6-4534-46db-b0aa-e78b467c34be")
-val appSearchingPluginUuid: UUID = UUID.fromString("57198ae0-683a-4e2a-9db4-d229707b97ce")
 
 val appSearchingMetadata = buildPluginMetadata(
-    pluginUuid = appSearchingPluginUuid,
+    pluginId = "com.demn.appsearch",
     pluginName = "App Searching Plugin"
 ) {
     description = "built-in plugin for plugin searching"
@@ -38,7 +37,7 @@ class AppSearchingPlugin(
     private val appSearchingPluginCommands = listOf(
         PluginCommand(
             uuid = syncAppsCacheCommandUuid,
-            pluginUuid = appSearchingMetadata.pluginUuid,
+            pluginId = appSearchingMetadata.pluginId,
             name = "Sync applications cache",
             iconUri = buildDrawableUri(R.drawable.sync_icon),
             description = null

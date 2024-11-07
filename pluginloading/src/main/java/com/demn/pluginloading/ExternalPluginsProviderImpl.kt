@@ -47,7 +47,7 @@ class ExternalPluginsProviderImpl(
                 val pluginSummaryResult = getPluginSummary(pluginService)
                 val pluginSummary = pluginSummaryResult.getOrElse { ex ->
                     pluginErrors += PluginError(
-                        pluginUuid = null,
+                        pluginId = null,
                         pluginName = null,
                         type = PluginErrorType.Unloaded,
                         message = """
@@ -60,7 +60,7 @@ class ExternalPluginsProviderImpl(
 
                 cacheIfRequired(pluginSummary, pluginService)
 
-                val pluginCache = externalPluginCacheRepository.getPluginCache(pluginSummary.pluginUuid)
+                val pluginCache = externalPluginCacheRepository.getPluginCache(pluginSummary.pluginId)
                 val metadata = pluginCache?.pluginMetadata ?: return@mapNotNull null
 
                 ExternalPlugin(
@@ -69,7 +69,7 @@ class ExternalPluginsProviderImpl(
                 )
             } catch (ex: IllegalStateException) {
                 pluginErrors += PluginError(
-                    pluginUuid = null,
+                    pluginId = null,
                     pluginName = null,
                     type = PluginErrorType.Unloaded,
                     message = """
@@ -86,28 +86,28 @@ class ExternalPluginsProviderImpl(
     }
 
     private suspend fun cacheIfRequired(pluginSummary: PluginSummary, pluginService: PluginService) {
-        val cache = externalPluginCacheRepository.getPluginCache(pluginSummary.pluginUuid)
+        val cache = externalPluginCacheRepository.getPluginCache(pluginSummary.pluginId)
 
         if (cache?.pluginMetadata?.version == pluginSummary.pluginVersion) return
 
         externalPluginCacheRepository.updatePluginCache(
             PluginCache(
                 getPluginMetadataIpc(pluginService),
-                getPluginCommandsIpc(pluginSummary.pluginUuid, pluginService),
-                getPluginFallbackCommandsIpc(pluginSummary.pluginUuid, pluginService),
+                getPluginCommandsIpc(pluginSummary.pluginId, pluginService),
+                getPluginFallbackCommandsIpc(pluginSummary.pluginId, pluginService),
             )
         )
     }
 
     private suspend fun getPluginFallbackCommandsIpc(
-        pluginUuid: UUID,
+        pluginId: String,
         pluginService: PluginService
     ): List<PluginFallbackCommand> = withContext(Dispatchers.IO) {
         suspendCoroutine { continuation ->
             performOperationsWithPlugin(pluginService) { adapter ->
                 val fallbackCommands = adapter
                     .getAllFallbackCommands()
-                    .map { it.toPluginFallbackCommand(pluginUuid) }
+                    .map { it.toPluginFallbackCommand(pluginId) }
 
                 continuation.resume(fallbackCommands)
             }
@@ -144,9 +144,9 @@ class ExternalPluginsProviderImpl(
             }
     }
 
-    override suspend fun executeCommand(uuid: UUID, pluginUuid: UUID) = withContext(Dispatchers.IO) {
+    override suspend fun executeCommand(uuid: UUID, pluginId: String) = withContext(Dispatchers.IO) {
         val plugin = getPluginList().plugins
-            .find { it.metadata.pluginUuid == pluginUuid }
+            .find { it.metadata.pluginId == pluginId }
 
         if (plugin == null) return@withContext
 
@@ -202,12 +202,12 @@ class ExternalPluginsProviderImpl(
         override fun onReceive(context: Context?, intent: Intent?) = Unit
     }
 
-    private suspend fun getPluginCommandsIpc(pluginUuid: UUID, pluginService: PluginService): List<PluginCommand> =
+    private suspend fun getPluginCommandsIpc(pluginId: String, pluginService: PluginService): List<PluginCommand> =
         withContext(Dispatchers.IO) {
             suspendCoroutine { continuation ->
                 performOperationsWithPlugin(pluginService) { adapter ->
                     val commands = adapter.getAllCommands()
-                        .map { it.toPluginCommand(pluginUuid) }
+                        .map { it.toPluginCommand(pluginId) }
 
                     continuation.resume(commands)
                 }

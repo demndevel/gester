@@ -14,14 +14,13 @@ import com.demn.plugincore.*
 import com.demn.plugincore.parcelables.ParcelableOperationResult.Companion.buildParcelableOperationResult
 import com.demn.plugincore.operationresult.BasicOperationResult
 import com.demn.plugincore.operationresult.IconOperationResult
-import com.demn.plugincore.operationresult.ResultType
 import com.demn.plugincore.parcelables.*
 import java.util.UUID
 
 class FooPluginService : Service() {
     private val settings = mutableListOf(
         PluginSetting(
-            fooPluginMetadata.pluginUuid,
+            fooPluginMetadata.pluginId,
             UUID.fromString("e1c62eac-c1eb-415a-9e95-a3930b082cd1"),
             settingName = "Some setting",
             settingDescription = "This is a description for this example setting :)",
@@ -29,7 +28,7 @@ class FooPluginService : Service() {
             settingType = PluginSettingType.String
         ),
         PluginSetting(
-            fooPluginMetadata.pluginUuid,
+            fooPluginMetadata.pluginId,
             UUID.fromString("8e9c8c17-2a87-42fd-89ee-bbab755a264a"),
             settingName = "Second setting",
             settingDescription = "This is a description for this second example setting",
@@ -37,7 +36,7 @@ class FooPluginService : Service() {
             settingType = PluginSettingType.Number
         ),
         PluginSetting(
-            fooPluginMetadata.pluginUuid,
+            fooPluginMetadata.pluginId,
             UUID.fromString("c480c1a7-f8e0-4038-818c-aea84dff8845"),
             settingName = "Bool setting",
             settingDescription = "This is a description for this boolean example setting",

@@ -6,5 +6,5 @@ import java.util.UUID
 interface PluginSettingsRepository {
     suspend fun getAll(): List<PluginSettingsInfo>
 
-    suspend fun set(pluginUuid: UUID, settingUuid: UUID, value: String)
+    suspend fun set(pluginId: String, settingUuid: UUID, value: String)
 }

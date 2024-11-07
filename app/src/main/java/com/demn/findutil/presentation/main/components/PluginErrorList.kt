@@ -65,7 +65,7 @@ private fun PluginError(
             )
 
             Text(
-                text = "${stringResource(R.string.plugin_uuid_error_description)}: ${error.pluginUuid ?: stringResource(R.string.unavailable)}",
+                text = "${stringResource(R.string.plugin_uuid_error_description)}: ${error.pluginId ?: stringResource(R.string.unavailable)}",
                 style = MaterialTheme.typography.labelMedium,
             )
 
@@ -87,7 +87,7 @@ fun PluginErrorListPreview(modifier: Modifier = Modifier) {
         PluginErrorList(
             pluginErrorList = listOf(
                 PluginError(
-                    pluginUuid = UUID.randomUUID(),
+                    pluginId = "someid",
                     pluginName = "Foo plugin",
                     type = PluginErrorType.Unloaded,
                     message = """
@@ -96,7 +96,7 @@ fun PluginErrorListPreview(modifier: Modifier = Modifier) {
                     """.trimIndent()
                 ),
                 PluginError(
-                    pluginUuid = UUID.randomUUID(),
+                    pluginId = "someid",
                     pluginName = "Bar plugin",
                     type = PluginErrorType.Other,
                     message = """

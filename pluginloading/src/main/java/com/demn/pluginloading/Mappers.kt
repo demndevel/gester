@@ -6,23 +6,23 @@ import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.plugincore.parcelables.ParcelablePluginCommand
 import com.demn.plugincore.parcelables.ParcelablePluginFallbackCommand
-import java.util.UUID
 
-fun ParcelablePluginCommand.toPluginCommand(pluginUuid: UUID): PluginCommand = PluginCommand(
+fun ParcelablePluginCommand.toPluginCommand(pluginId: String): PluginCommand = PluginCommand(
     uuid = this.uuid,
-    pluginUuid = pluginUuid,
+    pluginId = pluginId,
     name = this.name,
     iconUri = this.iconUri,
     description = this.description
 )
 
-fun ParcelablePluginFallbackCommand.toPluginFallbackCommand(pluginUuid: UUID): PluginFallbackCommand = PluginFallbackCommand(
-    uuid = this.uuid,
-    pluginUuid = pluginUuid,
-    name = this.name,
-    iconUri = this.iconUri,
-    description = this.description
-)
+fun ParcelablePluginFallbackCommand.toPluginFallbackCommand(pluginId: String): PluginFallbackCommand =
+    PluginFallbackCommand(
+        uuid = this.uuid,
+        pluginId = pluginId,
+        name = this.name,
+        iconUri = this.iconUri,
+        description = this.description
+    )
 
 fun ExternalPlugin.toPluginCache(
     commands: List<PluginCommand>,

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
-import com.demn.plugincore.FindUtilPluginUuid
 import com.demn.plugincore.parcelables.PluginMetadata
 import com.demn.plugincore.parcelables.PluginSetting
 import com.demn.plugincore.parcelables.buildPluginMetadata
@@ -14,14 +13,16 @@ import com.demn.plugincore.operationresult.OperationResult
 import com.demn.coreplugins.base.CorePlugin
 import java.util.UUID
 
+const val gesterPluginId = "com.demn.findutil.gester"
+
 private val openSettingsCommandUuid = UUID.fromString("0292e03b-ffa7-406c-a900-78b5f860bb81")
 private val helpCommandUuid = UUID.fromString("ddb2ee6b-8a35-4b56-9278-0594a8ec7b9b")
 private val commandsCommandUuid = UUID.fromString("59655e19-b299-4241-af6a-0ba19e4487c1")
 
 private val findUtilPluginMetadata =
     buildPluginMetadata(
-        FindUtilPluginUuid,
-        "findutilplugin"
+        pluginId = gesterPluginId,
+        pluginName = "findutilplugin"
     ) {
         consumeAnyInput = false
     }
@@ -52,7 +53,7 @@ class FindUtilPlugin(
         listOf(
             PluginCommand(
                 uuid = openSettingsCommandUuid,
-                pluginUuid = metadata.pluginUuid,
+                pluginId = metadata.pluginId,
                 name = "FindUtil settings",
                 iconUri = buildDrawableUri(R.drawable.settings_icon),
                 description = null

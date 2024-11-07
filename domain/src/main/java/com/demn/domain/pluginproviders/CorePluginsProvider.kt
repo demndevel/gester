@@ -10,7 +10,7 @@ import java.util.UUID
 interface CorePluginsProvider {
     fun getPlugins(): List<BuiltInPlugin>
 
-    suspend fun invokeAnyInput(input: String, uuid: UUID): List<OperationResult>
+    suspend fun invokeAnyInput(input: String, pluginId: String): List<OperationResult>
 
     suspend fun getPluginCommands(plugin: BuiltInPlugin): List<PluginCommand>
 
@@ -18,16 +18,16 @@ interface CorePluginsProvider {
 
     suspend fun getAllPluginFallbackCommands(): List<PluginFallbackCommand>
 
-    suspend fun invokePluginCommand(commandUuid: UUID, pluginUuid: UUID)
+    suspend fun invokePluginCommand(commandUuid: UUID, pluginId: String)
 
     suspend fun invokePluginFallbackCommand(
         input: String,
         pluginFallbackCommandId: UUID,
-        pluginUuid: UUID,
+        pluginId: String,
     )
 
     suspend fun getPluginSettings(
-        pluginUuid: UUID
+        pluginUuid: String
     ): List<PluginSetting>
 
     suspend fun setPluginSetting(

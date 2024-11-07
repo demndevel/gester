@@ -15,7 +15,7 @@ import java.util.UUID
 class MockPluginSettingsRepository : PluginSettingsRepository {
     private val settings: MutableList<PluginSetting> = mutableListOf(
         PluginSetting(
-            UUID.randomUUID(),
+            pluginId = "test1",
             UUID.randomUUID(),
             settingName = "Some setting name 1",
             settingDescription = "",
@@ -23,7 +23,7 @@ class MockPluginSettingsRepository : PluginSettingsRepository {
             settingType = PluginSettingType.String
         ),
         PluginSetting(
-            UUID.randomUUID(),
+            pluginId = "test2",
             UUID.randomUUID(),
             settingName = "Some setting name 2",
             settingDescription = "second one",
@@ -31,7 +31,7 @@ class MockPluginSettingsRepository : PluginSettingsRepository {
             settingType = PluginSettingType.Number
         ),
         PluginSetting(
-            UUID.randomUUID(),
+            pluginId = "test3",
             UUID.randomUUID(),
             settingName = "Some setting name 3",
             settingDescription = "third :-/",
@@ -44,9 +44,9 @@ class MockPluginSettingsRepository : PluginSettingsRepository {
         return emptyList()
     }
 
-    override suspend fun set(pluginUuid: UUID, settingUuid: UUID, value: String) {
+    override suspend fun set(pluginId: String, settingUuid: UUID, value: String) {
         val setting = settings
-            .find { it.pluginUuid == pluginUuid && it.pluginSettingUuid == settingUuid }
+            .find { it.pluginId == pluginId && it.pluginSettingUuid == settingUuid }
             ?.copy(
                 settingValue = value
             )
@@ -68,7 +68,7 @@ class PluginSettingsRepositoryImpl(
             corePlugins.map {
                 PluginSettingsInfo(
                     it,
-                    corePluginsProvider.getPluginSettings(it.metadata.pluginUuid)
+                    corePluginsProvider.getPluginSettings(it.metadata.pluginId)
                 )
             }
         val externalPluginsSettingsInfos =
@@ -82,8 +82,8 @@ class PluginSettingsRepositoryImpl(
         return corePluginsSettingsInfos + externalPluginsSettingsInfos
     }
 
-    override suspend fun set(pluginUuid: UUID, settingUuid: UUID, value: String) {
-        val plugin = findPlugin(pluginUuid)
+    override suspend fun set(pluginId: String, settingUuid: UUID, value: String) {
+        val plugin = findPlugin(pluginId)
 
         plugin?.let {
             when (it) {
@@ -106,9 +106,9 @@ class PluginSettingsRepositoryImpl(
         }
     }
 
-    private suspend fun findPlugin(pluginUuid: UUID): Plugin? {
+    private suspend fun findPlugin(pluginId: String): Plugin? {
         val getPluginsResult = pluginRepository.getPluginList()
 
-        return getPluginsResult.plugins.find { it.metadata.pluginUuid == pluginUuid }
+        return getPluginsResult.plugins.find { it.metadata.pluginId == pluginId }
     }
 }

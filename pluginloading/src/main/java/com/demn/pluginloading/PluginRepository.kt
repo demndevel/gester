@@ -16,7 +16,7 @@ class MockPluginRepository : PluginRepository {
 
     override suspend fun getAllCommands(): List<PluginCommand> = emptyList()
 
-    override suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID) = Unit
+    override suspend fun invokeCommand(commandUuid: UUID, pluginId: String) = Unit
 
     override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
         return emptyList()
@@ -69,7 +69,7 @@ class PluginRepositoryImpl(
         input: String,
         plugin: BuiltInPlugin,
     ): List<OperationResult> {
-        val results = corePluginsProvider.invokeAnyInput(input, plugin.metadata.pluginUuid)
+        val results = corePluginsProvider.invokeAnyInput(input, plugin.metadata.pluginId)
 
         return results
     }
@@ -77,11 +77,11 @@ class PluginRepositoryImpl(
     override suspend fun invokeFallbackCommand(input: String, commandUuid: UUID) {
         val commandPluginUuid = getAllFallbackCommands()
             .find { it.uuid == commandUuid }
-            ?.pluginUuid
+            ?.pluginId
 
         val plugin = getPluginList().plugins
             .find {
-                it.metadata.pluginUuid == commandPluginUuid
+                it.metadata.pluginId == commandPluginUuid
             }
 
         if (plugin == null) {
@@ -103,16 +103,16 @@ class PluginRepositoryImpl(
         return corePluginsProvider.getAllPluginCommands() + externalPluginsProvider.getAllPluginCommands()
     }
 
-    override suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID) {
+    override suspend fun invokeCommand(commandUuid: UUID, pluginId: String) {
         val plugin = getPluginList().plugins
-            .find { it.metadata.pluginUuid == pluginUuid }
+            .find { it.metadata.pluginId == pluginId }
 
         if (plugin == null) return
 
         when (plugin) {
-            is BuiltInPlugin -> corePluginsProvider.invokePluginCommand(commandUuid, pluginUuid)
+            is BuiltInPlugin -> corePluginsProvider.invokePluginCommand(commandUuid, pluginId)
 
-            is ExternalPlugin -> externalPluginsProvider.executeCommand(commandUuid, pluginUuid)
+            is ExternalPlugin -> externalPluginsProvider.executeCommand(commandUuid, pluginId)
         }
     }
 
@@ -124,7 +124,7 @@ class PluginRepositoryImpl(
         corePluginsProvider.invokePluginFallbackCommand(
             input = input,
             pluginFallbackCommandId = commandUuid,
-            pluginUuid = plugin.metadata.pluginUuid
+            pluginId = plugin.metadata.pluginId
         )
     }
 

@@ -28,7 +28,7 @@ class UnitCalcCorePlugin() : CorePlugin {
     }
 
     override val metadata: PluginMetadata = buildPluginMetadata(
-        pluginUuid = UUID.fromString("c37012e2-fcf0-457e-9a94-ff00f133f553"),
+        pluginId = "com.demn.unitcalc",
         pluginName = "Unit calc plugin",
     ) {
         version = PluginVersion(0, 0)
