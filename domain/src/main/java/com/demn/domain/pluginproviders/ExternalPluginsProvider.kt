@@ -14,7 +14,7 @@ interface ExternalPluginsProvider {
     /**
      * Gets plugin settings list via IPC
      */
-    suspend fun getPluginSettings(externalPlugin: ExternalPlugin): List<PluginSetting>
+    suspend fun getPluginSettings(plugin: Plugin): List<PluginSetting>
 
     /**
      * Gets all plugin commands from cache
@@ -43,7 +43,7 @@ interface ExternalPluginsProvider {
     ): List<OperationResult>
 
     suspend fun setPluginSetting(
-        externalPlugin: ExternalPlugin,
+        plugin: Plugin,
         settingUuid: UUID,
         newValue: String
     )

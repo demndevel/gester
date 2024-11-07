@@ -17,10 +17,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.demn.applications_core_plugin.appSearchingMetadata
 import com.demn.applications_core_plugin.syncAppsCacheCommandUuid
-import com.demn.domain.pluginproviders.CorePluginsProvider
 import com.demn.findutil.di.appModule
 import com.demn.findutil.di.coreplugins.appSearchingPluginModule
-import com.demn.findutil.di.coreplugins.corePluginsModule
 import com.demn.findutil.di.dataModule
 import com.demn.findutil.di.domainModule
 import com.demn.findutil.di.pluginManagementModule
@@ -33,8 +31,6 @@ import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
-    private val corePluginsProvider: CorePluginsProvider by inject()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,7 +40,6 @@ class MainActivity : ComponentActivity() {
                 modules(
                     listOf(
                         appModule,
-                        corePluginsModule,
                         appSearchingPluginModule,
                         dataModule,
                         pluginManagementModule,
@@ -56,10 +51,10 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                corePluginsProvider.invokePluginCommand(
-                    commandUuid = syncAppsCacheCommandUuid,
-                    pluginId = appSearchingMetadata.pluginId
-                )
+//                corePluginsProvider.invokePluginCommand( TODO
+//                    commandUuid = syncAppsCacheCommandUuid,
+//                    pluginId = appSearchingMetadata.pluginId
+//                )
             }
         }
 

@@ -23,7 +23,7 @@ import com.demn.findutil.presentation.settings.ui.states.HasDataState
 import com.demn.findutil.presentation.settings.ui.states.LoadingState
 import com.demn.findutil.presentation.settings.ui.states.NoDataState
 import com.demn.plugincore.parcelables.PluginMetadata
-import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.models.Plugin
 import com.demn.domain.usecase.MockPluginCacheSyncUseCase
 import com.demn.findutil.app_settings.MockPluginAvailabilityRepository
 import com.demn.pluginloading.MockPluginRepository
@@ -84,7 +84,7 @@ private fun SettingsScreenState(
     onBooleanAppSettingUpdate: OnAppBooleanSettingChange,
     onPluginSettingChange: OnPluginSettingChange,
     onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
-    onPluginUninstall: (ExternalPlugin) -> Unit,
+    onPluginUninstall: (Plugin) -> Unit,
     onPluginCacheSync: () -> Unit,
     modifier: Modifier,
 ) {

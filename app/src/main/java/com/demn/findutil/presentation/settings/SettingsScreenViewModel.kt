@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.demn.domain.models.AppSettingMetadata
 import com.demn.domain.models.AppSettingType
 import com.demn.plugincore.*
-import com.demn.domain.models.ExternalPlugin
 import com.demn.domain.models.Plugin
 import com.demn.domain.pluginmanagement.PluginRepository
 import com.demn.domain.pluginmanagement.PluginSettingsRepository
@@ -398,8 +397,8 @@ class SettingsScreenViewModel(
         return ValidatedField.Valid(newValue)
     }
 
-    fun uninstallPlugin(externalPlugin: ExternalPlugin) {
-        pluginUninstaller.uninstall(externalPlugin)
+    fun uninstallPlugin(plugin: Plugin) {
+        pluginUninstaller.uninstall(plugin)
 
         loadData()
     }

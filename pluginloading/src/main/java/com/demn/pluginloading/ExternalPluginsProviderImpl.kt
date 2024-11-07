@@ -63,7 +63,7 @@ class ExternalPluginsProviderImpl(
                 val pluginCache = externalPluginCacheRepository.getPluginCache(pluginSummary.pluginId)
                 val metadata = pluginCache?.pluginMetadata ?: return@mapNotNull null
 
-                ExternalPlugin(
+                Plugin(
                     pluginService = pluginService,
                     metadata = metadata
                 )
@@ -182,18 +182,18 @@ class ExternalPluginsProviderImpl(
         }
     }
 
-    override suspend fun getPluginSettings(externalPlugin: ExternalPlugin): List<PluginSetting> =
+    override suspend fun getPluginSettings(plugin: Plugin): List<PluginSetting> =
         withContext(Dispatchers.IO) {
             suspendCoroutine { continuation ->
-                performOperationsWithPlugin(externalPlugin.pluginService) { pluginAdapter ->
+                performOperationsWithPlugin(plugin.pluginService) { pluginAdapter ->
                     continuation.resume(pluginAdapter.getPluginSettings())
                 }
             }
         }
 
-    override suspend fun setPluginSetting(externalPlugin: ExternalPlugin, settingUuid: UUID, newValue: String) =
+    override suspend fun setPluginSetting(plugin: Plugin, settingUuid: UUID, newValue: String) =
         withContext(Dispatchers.IO) {
-            performOperationsWithPlugin(externalPlugin.pluginService) { pluginAdapter ->
+            performOperationsWithPlugin(plugin.pluginService) { pluginAdapter ->
                 pluginAdapter.setSetting(settingUuid.toParcelUuid(), newValue)
             }
         }

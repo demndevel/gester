@@ -15,7 +15,7 @@ import com.demn.findutil.presentation.settings.ui.InvalidSettingsError
 import com.demn.findutil.presentation.settings.ui.app_settings.AppSettings
 import com.demn.findutil.presentation.settings.ui.plugin_settings.PluginSettingsSection
 import com.demn.plugincore.parcelables.PluginMetadata
-import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.models.Plugin
 
 @Composable
 fun HasDataState(
@@ -24,7 +24,7 @@ fun HasDataState(
     onAppSettingChange: OnAppSettingChange,
     onBooleanFieldUpdate: OnAppBooleanSettingChange,
     onAvailabilityChange: (metadata: PluginMetadata, available: Boolean) -> Unit,
-    onPluginUninstall: (ExternalPlugin) -> Unit,
+    onPluginUninstall: (Plugin) -> Unit,
     onPluginCacheSync: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

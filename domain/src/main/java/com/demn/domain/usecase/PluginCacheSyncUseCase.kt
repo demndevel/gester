@@ -2,7 +2,7 @@ package com.demn.domain.usecase
 
 import com.demn.domain.data.ExternalPluginCacheRepository
 import com.demn.domain.data.PluginCache
-import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.models.Plugin
 import com.demn.domain.pluginproviders.ExternalPluginsProvider
 
 interface PluginCacheSyncUseCase {
@@ -23,7 +23,7 @@ class PluginCacheSyncUseCaseImpl(
         removeUnusedPluginData(plugins.plugins, pluginsCache)
     }
 
-    private suspend fun removeUnusedPluginData(plugins: List<ExternalPlugin>, pluginsCache: List<PluginCache>) {
+    private suspend fun removeUnusedPluginData(plugins: List<Plugin>, pluginsCache: List<PluginCache>) {
         pluginsCache.forEach { pluginCache ->
             if (!plugins.any { it.metadata.pluginId == pluginCache.pluginMetadata.pluginId }) {
                 externalPluginCacheRepository.removePluginCache(pluginCache.pluginMetadata.pluginId)

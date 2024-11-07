@@ -16,10 +16,10 @@ import org.koin.dsl.module
 
 val pluginManagementModule = module {
     factory<PluginUninstaller> { PluginUninstallerImpl(get()) }
-    factory<PluginSettingsRepository> { PluginSettingsRepositoryImpl(get(), get(), get()) }
+    factory<PluginSettingsRepository> { PluginSettingsRepositoryImpl(get(), get()) }
     factory<OperationResultSorterUseCase> { OperationResultSorterUseCaseImpl(get()) }
 
     single<ExternalPluginsProvider> { ExternalPluginsProviderImpl(get(), get()) }
     single<PluginAvailabilityRepository> { PluginAvailabilityRepositoryImpl(get()) }
-    single<PluginRepository> { PluginRepositoryImpl(get(), get()) }
+    single<PluginRepository> { PluginRepositoryImpl(get()) }
 }

@@ -18,13 +18,13 @@ import com.demn.findutil.presentation.settings.ui.settingErrorMessage
 import com.demn.plugincore.BooleanSettingFalse
 import com.demn.plugincore.BooleanSettingTrue
 import com.demn.plugincore.parcelables.PluginSettingType
-import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.models.Plugin
 
 @Composable
 fun PluginSettingsSection(
     pluginSettingsSection: PluginSettingsSection,
     onSettingChange: OnPluginSettingChange,
-    onUninstall: (ExternalPlugin) -> Unit,
+    onUninstall: (Plugin) -> Unit,
 ) {
     SettingsSection(
         sectionName = "${pluginSettingsSection.plugin.metadata.pluginName} (${pluginSettingsSection.plugin.metadata.version})",
@@ -98,7 +98,7 @@ fun PluginSettingsSection(
                 }
             }
 
-            if (pluginSettingsSection.plugin is ExternalPlugin) {
+            if (pluginSettingsSection.plugin is Plugin) {
                 TextButton(
                     onClick = { onUninstall(pluginSettingsSection.plugin) },
                     modifier = Modifier

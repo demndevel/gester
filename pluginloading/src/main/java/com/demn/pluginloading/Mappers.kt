@@ -1,7 +1,7 @@
 package com.demn.pluginloading
 
 import com.demn.domain.data.PluginCache
-import com.demn.domain.models.ExternalPlugin
+import com.demn.domain.models.Plugin
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.plugincore.parcelables.ParcelablePluginCommand
@@ -24,7 +24,7 @@ fun ParcelablePluginFallbackCommand.toPluginFallbackCommand(pluginId: String): P
         description = this.description
     )
 
-fun ExternalPlugin.toPluginCache(
+fun Plugin.toPluginCache(
     commands: List<PluginCommand>,
     fallbackCommands: List<PluginFallbackCommand>
 ): PluginCache {

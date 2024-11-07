@@ -10,7 +10,6 @@ import com.demn.plugincore.parcelables.PluginMetadata
 import com.demn.plugincore.parcelables.PluginSetting
 import com.demn.plugincore.parcelables.buildPluginMetadata
 import com.demn.plugincore.operationresult.OperationResult
-import com.demn.coreplugins.base.CorePlugin
 import java.util.UUID
 
 const val gesterPluginId = "com.demn.findutil.gester"
@@ -27,48 +26,48 @@ private val findUtilPluginMetadata =
         consumeAnyInput = false
     }
 
-class FindUtilPlugin(
-    private val context: Context
-) : CorePlugin {
-    override val metadata: PluginMetadata = findUtilPluginMetadata
-
-    override suspend fun invokeCommand(uuid: UUID) {
-        if (uuid == openSettingsCommandUuid) {
-            val intent = Intent(context, SettingsActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-
-            context.startActivity(intent)
-        }
-    }
-
-    private fun buildDrawableUri(resourceId: Int): Uri = Uri.Builder()
-        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-        .authority(context.resources.getResourcePackageName(resourceId))
-        .appendPath(context.resources.getResourceTypeName(resourceId))
-        .appendPath(context.resources.getResourceEntryName(resourceId))
-        .build()
-
-    override suspend fun getPluginCommands(): List<PluginCommand> =
-        listOf(
-            PluginCommand(
-                uuid = openSettingsCommandUuid,
-                pluginId = metadata.pluginId,
-                name = "FindUtil settings",
-                iconUri = buildDrawableUri(R.drawable.settings_icon),
-                description = null
-            )
-        )
-
-    override suspend fun getPluginFallbackCommands(): List<PluginFallbackCommand> = emptyList()
-
-    override suspend fun getPluginSettings(): List<PluginSetting> {
-        return emptyList()
-    }
-
-    override suspend fun invokeAnyInput(input: String): List<OperationResult> {
-        return emptyList()
-    }
-
-    override suspend fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit
-}
+//class FindUtilPlugin(
+//    private val context: Context
+//) : CorePlugin {
+//    override val metadata: PluginMetadata = findUtilPluginMetadata
+//
+//    override suspend fun invokeCommand(uuid: UUID) {
+//        if (uuid == openSettingsCommandUuid) {
+//            val intent = Intent(context, SettingsActivity::class.java).apply {
+//                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//            }
+//
+//            context.startActivity(intent)
+//        }
+//    }
+//
+//    private fun buildDrawableUri(resourceId: Int): Uri = Uri.Builder()
+//        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+//        .authority(context.resources.getResourcePackageName(resourceId))
+//        .appendPath(context.resources.getResourceTypeName(resourceId))
+//        .appendPath(context.resources.getResourceEntryName(resourceId))
+//        .build()
+//
+//    override suspend fun getPluginCommands(): List<PluginCommand> =
+//        listOf(
+//            PluginCommand(
+//                uuid = openSettingsCommandUuid,
+//                pluginId = metadata.pluginId,
+//                name = "FindUtil settings",
+//                iconUri = buildDrawableUri(R.drawable.settings_icon),
+//                description = null
+//            )
+//        )
+//
+//    override suspend fun getPluginFallbackCommands(): List<PluginFallbackCommand> = emptyList()
+//
+//    override suspend fun getPluginSettings(): List<PluginSetting> {
+//        return emptyList()
+//    }
+//
+//    override suspend fun invokeAnyInput(input: String): List<OperationResult> {
+//        return emptyList()
+//    }
+//
+//    override suspend fun invokePluginFallbackCommand(input: String, uuid: UUID) = Unit
+//}
