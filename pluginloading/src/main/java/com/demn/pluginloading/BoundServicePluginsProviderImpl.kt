@@ -82,10 +82,27 @@ class BoundServicePluginsProviderImpl(
             }
         }
 
+        removeUnusedPluginCache(pluginList)
+
         return GetBoundServicePluginListInvocationResult(pluginList, pluginErrors)
     }
 
-    private suspend fun cacheIfRequired(pluginSummary: PluginSummary, pluginService: PluginService) {
+    private suspend fun removeUnusedPluginCache(pluginList: List<Plugin>) {
+        val allCachedPlugins = pluginCacheRepository.getAllPlugins()
+
+        allCachedPlugins.forEach { pluginCache ->
+            if (!pluginList.any { it.metadata.pluginId == pluginCache.pluginMetadata.pluginId }) {
+                pluginCacheRepository.removePluginCache(
+                    pluginCache.pluginMetadata.pluginId
+                )
+            }
+        }
+    }
+
+    private suspend fun cacheIfRequired(
+        pluginSummary: PluginSummary,
+        pluginService: PluginService
+    ) {
         val cache = pluginCacheRepository.getPluginCache(pluginSummary.pluginId)
 
         if (cache?.pluginMetadata?.version == pluginSummary.pluginVersion) return
@@ -121,7 +138,12 @@ class BoundServicePluginsProviderImpl(
     ) = withContext(Dispatchers.IO) {
         suspendCoroutine { continuation ->
             performOperationsWithPlugin(pluginService) { adapter ->
-                continuation.resume(adapter.executeFallbackCommand(fallbackCommandUuid.toParcelUuid(), input))
+                continuation.resume(
+                    adapter.executeFallbackCommand(
+                        fallbackCommandUuid.toParcelUuid(),
+                        input
+                    )
+                )
             }
         }
     }
@@ -144,21 +166,22 @@ class BoundServicePluginsProviderImpl(
             }
     }
 
-    override suspend fun executeCommand(uuid: UUID, pluginId: String) = withContext(Dispatchers.IO) {
-        val plugin = getPluginList().plugins
-            .find { it.metadata.pluginId == pluginId }
+    override suspend fun executeCommand(uuid: UUID, pluginId: String) =
+        withContext(Dispatchers.IO) {
+            val plugin = getPluginList().plugins
+                .find { it.metadata.pluginId == pluginId }
 
-        if (plugin == null) return@withContext
+            if (plugin == null) return@withContext
 
-        suspendCoroutine { continuation ->
-            performOperationsWithPlugin(plugin.pluginService) { pluginAdapter ->
-                continuation.resume(
-                    pluginAdapter
-                        .executeCommand(uuid.toParcelUuid())
-                )
+            suspendCoroutine { continuation ->
+                performOperationsWithPlugin(plugin.pluginService) { pluginAdapter ->
+                    continuation.resume(
+                        pluginAdapter
+                            .executeCommand(uuid.toParcelUuid())
+                    )
+                }
             }
         }
-    }
 
     override suspend fun executeAnyInput(
         input: String,
@@ -202,7 +225,10 @@ class BoundServicePluginsProviderImpl(
         override fun onReceive(context: Context?, intent: Intent?) = Unit
     }
 
-    private suspend fun getPluginCommandsIpc(pluginId: String, pluginService: PluginService): List<PluginCommand> =
+    private suspend fun getPluginCommandsIpc(
+        pluginId: String,
+        pluginService: PluginService
+    ): List<PluginCommand> =
         withContext(Dispatchers.IO) {
             suspendCoroutine { continuation ->
                 performOperationsWithPlugin(pluginService) { adapter ->
