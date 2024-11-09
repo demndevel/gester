@@ -2,21 +2,17 @@ package com.demn.domain.usecase
 
 import com.demn.domain.data.ResultFrecencyRepository
 import com.demn.domain.models.ResultFrecency
+import com.demn.domain.util.cyrillicToLatin
 import com.demn.plugincore.operationresult.BasicOperationResult
 import com.demn.plugincore.operationresult.CommandOperationResult
 import com.demn.plugincore.operationresult.IconOperationResult
 import com.demn.plugincore.operationresult.OperationResult
-import com.demn.plugincore.operationresult.ResultType
 import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
 import com.frosch2010.fuzzywuzzy_kotlin.ToStringFunction
-import com.michaeltroger.latintocyrillic.Alphabet
-import com.michaeltroger.latintocyrillic.LatinCyrillicFactory
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 
 interface OperationResultSorterUseCase {
     suspend operator fun invoke(
@@ -35,17 +31,11 @@ class MockOperationResultSorterUseCase : OperationResultSorterUseCase {
 
 class OperationResultFuzzySearcherToString : ToStringFunction<OperationResult> {
     override fun apply(item: OperationResult): String = runBlocking {
-        if (item is CommandOperationResult) return@runBlocking latinise(item.name)
-        if (item is BasicOperationResult) return@runBlocking latinise(item.text)
-        if (item is IconOperationResult) return@runBlocking latinise(item.text)
+        if (item is CommandOperationResult) return@runBlocking cyrillicToLatin(item.name)
+        if (item is BasicOperationResult) return@runBlocking cyrillicToLatin(item.text)
+        if (item is IconOperationResult) return@runBlocking cyrillicToLatin(item.text)
         return@runBlocking ""
     }
-}
-
-private suspend fun latinise(input: String): String {
-    val latinCyrillic = LatinCyrillicFactory.create(Alphabet.RussianIso9)
-
-    return if (latinCyrillic.isCyrillic(input)) latinCyrillic.cyrillicToLatin(input) else input
 }
 
 class OperationResultSorterUseCaseImpl(
@@ -65,7 +55,7 @@ class OperationResultSorterUseCaseImpl(
         results: List<OperationResult>
     ): List<OperationResult> {
         val fuzzyExtracted = FuzzySearch.extractAll(
-            query = latinise(input),
+            query = cyrillicToLatin(input),
             choices = results,
             toStringFunction = OperationResultFuzzySearcherToString()
         )
