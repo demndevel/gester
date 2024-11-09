@@ -8,7 +8,8 @@ import androidx.room.Query
 @Dao
 interface ApplicationsDao {
     @Query("SELECT * FROM applicationdbo")
-    suspend fun getAll(): List<ApplicationDbo>
+//    suspend fun getAll(): List<ApplicationDbo>
+    fun getAll(): List<ApplicationDbo>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(application: ApplicationDbo)

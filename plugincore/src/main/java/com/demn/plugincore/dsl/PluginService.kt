@@ -12,25 +12,15 @@ import com.demn.plugincore.parcelables.ParcelablePluginFallbackCommand
 import com.demn.plugincore.parcelables.PluginMetadata
 import com.demn.plugincore.parcelables.PluginSetting
 import com.demn.plugincore.parcelables.PluginSummary
+import java.util.UUID
 
-data class PluginSetup(
-    val pluginMetadata: PluginMetadata,
-    val executeFallbackCommandHandler: (commandUuid: ParcelUuid, input: String) -> Unit,
-    val executeCommandHandler: (commandUuid: ParcelUuid) -> Unit,
-    val executeAnyInputHandler: (input: String) -> List<OperationResult>,
-    val getAllCommands: () -> List<ParcelablePluginCommand>,
-    val getAllFallbackCommands: () -> List<ParcelablePluginFallbackCommand>,
-    val setSettingsHandler: (settingUuid: ParcelUuid, newValue: String) -> Unit,
-    val getPluginSettings: () -> List<PluginSetting>,
-)
-
-open class PluginService(private val setup: PluginSetup) : Service() {
+open class PluginService(private val metadata: PluginMetadata) : Service() {
     private val summary = PluginSummary(
-        pluginId = setup.pluginMetadata.pluginId,
-        pluginVersion = setup.pluginMetadata.version
+        pluginId = metadata.pluginId,
+        pluginVersion = metadata.version
     )
 
-    override fun onBind(intent: Intent?): IBinder {
+    final override fun onBind(intent: Intent?): IBinder {
         return addBinder()
     }
 
@@ -38,48 +28,65 @@ open class PluginService(private val setup: PluginSetup) : Service() {
         return object : PluginAdapter.Stub() {
             override fun executeFallbackCommand(commandUuid: ParcelUuid?, input: String?) {
                 if (commandUuid != null && input != null) {
-                    setup.executeFallbackCommandHandler(commandUuid, input)
+                    this@PluginService
+                        .executeFallbackCommandHandler(commandUuid, input)
                 }
             }
 
             override fun executeCommand(commandUuid: ParcelUuid?) {
-                if (commandUuid != null) setup.executeCommandHandler(commandUuid)
+                if (commandUuid != null)
+                    this@PluginService
+                        .executeCommandHandler(commandUuid.uuid)
             }
 
             override fun executeAnyInput(input: String?): MutableList<ParcelableOperationResult> {
                 return if (input != null) {
-                    setup.executeAnyInputHandler(input)
+                    this@PluginService.executeAnyInputHandler(input)
                         .map { ParcelableOperationResult.buildParcelableOperationResult(it) }
                         .toMutableList()
                 } else return mutableListOf()
             }
 
             override fun getAllCommands(): MutableList<ParcelablePluginCommand> {
-                return setup
+                return this@PluginService
                     .getAllCommands()
                     .toMutableList()
             }
 
             override fun getAllFallbackCommands(): MutableList<ParcelablePluginFallbackCommand> {
-                return setup
+                return this@PluginService
                     .getAllFallbackCommands()
                     .toMutableList()
             }
 
             override fun getPluginMetadata(): PluginMetadata {
-                return setup.pluginMetadata
+                return this@PluginService.metadata
             }
 
-            override fun getPluginSummary(): PluginSummary = summary
+            override fun getPluginSummary(): PluginSummary = this@PluginService.summary
 
             override fun setSetting(settingUuid: ParcelUuid?, newValue: String?) {
                 if (settingUuid != null && newValue != null)
-                    setup.setSettingsHandler(settingUuid, newValue)
+                    this@PluginService.setSettingsHandler(settingUuid, newValue)
             }
 
             override fun getPluginSettings(): MutableList<PluginSetting> {
-                return setup.getPluginSettings().toMutableList()
+                return this@PluginService.getPluginSettings().toMutableList()
             }
         }
     }
+
+    open fun getPluginSettings(): List<PluginSetting> = emptyList()
+
+    open fun getAllCommands(): List<ParcelablePluginCommand> = emptyList()
+
+    open fun getAllFallbackCommands(): List<ParcelablePluginFallbackCommand> = emptyList()
+
+    open fun executeCommandHandler(commandUuid: UUID) = Unit
+
+    open fun executeAnyInputHandler(input: String): List<OperationResult> = emptyList()
+
+    open fun setSettingsHandler(settingUuid: ParcelUuid, newValue: String) = Unit
+
+    open fun executeFallbackCommandHandler(commandUuid: ParcelUuid, input: String) = Unit
 }

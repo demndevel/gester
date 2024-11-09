@@ -6,9 +6,8 @@ import android.net.Uri
 import com.demn.plugincore.operationresult.OperationResult
 import com.demn.appsearchplugin.database.ApplicationDbo
 import com.demn.appsearchplugin.database.ApplicationsDao
+import com.demn.domain.util.cyrillicToLatin
 import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
-import com.michaeltroger.latintocyrillic.Alphabet
-import com.michaeltroger.latintocyrillic.LatinCyrillicFactory
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +36,7 @@ class ApplicationsRetriever(
         }
     }
 
-    internal suspend fun searchApplications(
+    internal fun searchApplications(
         input: String,
         applications: List<ApplicationInfo>
     ): List<OperationResult> {
@@ -49,13 +48,13 @@ class ApplicationsRetriever(
                     .trimIndent()
                     .replace(" ", "")
                     .lowercase()
-                    .let { convertCyrillicToLatin(it) }
+                    .let { cyrillicToLatin(it) }
 
                 val formattedAppName = application.name
                     .trimIndent()
                     .replace(" ", "")
                     .lowercase()
-                    .let { convertCyrillicToLatin(it) }
+                    .let { cyrillicToLatin(it) }
 
                 val ratio = FuzzySearch.tokenSetPartialRatio(formattedInput, formattedAppName)
 
@@ -64,14 +63,6 @@ class ApplicationsRetriever(
 
         return filteredResults
             .map(ApplicationInfo::toOperationResult)
-    }
-
-    private suspend fun convertCyrillicToLatin(
-        input: String
-    ): String {
-        val latinCyrillic = LatinCyrillicFactory.create(Alphabet.RussianIso9)
-
-        return if (latinCyrillic.isCyrillic(input)) latinCyrillic.cyrillicToLatin(input) else input
     }
 
     suspend fun syncApplicationsCache() = coroutineScope {

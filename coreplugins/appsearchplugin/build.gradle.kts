@@ -36,13 +36,12 @@ dependencies {
 
     api(libs.room.runtime)
     implementation(libs.room.ktx)
-    implementation(project(":domain"))
     ksp(libs.room.compiler)
     implementation(libs.fuzzywuzzy.kotlin)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.latin.to.cyrillic)
 
     implementation(libs.koin.core)
+    implementation(libs.koin.android)
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.junit)

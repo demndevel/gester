@@ -15,6 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.demn.appsearchplugin.appSearchingPluginMetadata
+import com.demn.appsearchplugin.syncAppsCacheCommandUuid
+import com.demn.domain.pluginmanagement.PluginRepository
 import com.demn.findutil.di.appModule
 import com.demn.findutil.di.coreplugins.appSearchingPluginModule
 import com.demn.findutil.di.dataModule
@@ -23,35 +26,23 @@ import com.demn.findutil.di.pluginManagementModule
 import com.demn.findutil.presentation.main.SearchScreen
 import com.demn.findutil.ui.theme.FindUtilTheme
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
+    private val pluginRepository: PluginRepository by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (GlobalContext.getKoinApplicationOrNull() == null) {
-            startKoin {
-                androidContext(applicationContext)
-                modules(
-                    listOf(
-                        appModule,
-                        appSearchingPluginModule,
-                        dataModule,
-                        pluginManagementModule,
-                        domainModule
-                    )
-                )
-            }
-        }
-
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-//                corePluginsProvider.invokePluginCommand( TODO
-//                    commandUuid = syncAppsCacheCommandUuid,
-//                    pluginId = appSearchingMetadata.pluginId
-//                )
+                pluginRepository.invokeCommand(
+                    commandUuid = syncAppsCacheCommandUuid,
+                    pluginId = appSearchingPluginMetadata.pluginId
+                )
             }
         }
 
