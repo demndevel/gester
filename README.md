@@ -2,6 +2,8 @@
 
 Search bar with additional features such as calculator, unit converter, currency converter, internet search and so on. With support for AIDL bound-services based plugins and dynamic sorting of output results.
 
+There is a list of some core plugins like app searcher and unit&currency converter powered by [calkt](https://github.com/y9san9/calkt).
+
 Developers will be able to create their own plugins using the gester-core library with predefined AIDL contracts.
 
 Stack:
