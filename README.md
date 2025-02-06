@@ -6,6 +6,8 @@ There is a list of some core plugins like app searcher and unit&currency convert
 
 Developers will be able to create their own plugins using the gester-core library with predefined AIDL contracts.
 
+There is also a [library](https://github.com/demndevel/gester-core) that allows third party devs to create their own plugins.
+
 Stack:
 
 - Plugins: Bound Services + AIDL
