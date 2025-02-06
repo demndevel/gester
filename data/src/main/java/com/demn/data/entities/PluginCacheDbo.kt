@@ -9,7 +9,7 @@ import java.util.UUID
 @Entity
 data class PluginCacheDbo(
     @PrimaryKey
-    val pluginUuid: UUID,
+    val pluginId: String,
     val pluginName: String,
     val description: String? = null,
     val versionMajor: Int,
@@ -22,14 +22,14 @@ data class PluginWithCommandsDbo(
     val pluginCacheDbo: PluginCacheDbo,
 
     @Relation(
-        parentColumn = "pluginUuid",
-        entityColumn = "pluginUuid"
+        parentColumn = "pluginId",
+        entityColumn = "pluginId"
     )
     val commands: List<PluginCommandCacheDbo>,
 
     @Relation(
-        parentColumn = "pluginUuid",
-        entityColumn = "pluginUuid"
+        parentColumn = "pluginId",
+        entityColumn = "pluginId"
     )
     val fallbackCommands: List<PluginFallbackCommandCacheDbo>
 )
@@ -38,7 +38,7 @@ data class PluginWithCommandsDbo(
 data class PluginCommandCacheDbo(
     @PrimaryKey
     val commandUuid: UUID,
-    val pluginUuid: UUID,
+    val pluginId: String,
     val name: String,
     val iconUri: String,
     val description: String? = null
@@ -48,7 +48,7 @@ data class PluginCommandCacheDbo(
 data class PluginFallbackCommandCacheDbo(
     @PrimaryKey
     val commandUuid: UUID,
-    val pluginUuid: UUID,
+    val pluginId: String,
     val name: String,
     val iconUri: String,
     val description: String? = null

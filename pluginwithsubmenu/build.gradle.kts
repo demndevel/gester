@@ -58,8 +58,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation(project(":plugincore"))
-
     testImplementation(libs.junit.junit)
 
     androidTestImplementation(libs.androidx.junit)

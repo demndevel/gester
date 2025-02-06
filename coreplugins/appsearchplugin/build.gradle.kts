@@ -31,19 +31,16 @@ android {
 }
 
 dependencies {
-    implementation(project(":plugincore"))
     implementation(project(":domain"))
-    implementation(project(":coreplugins:base"))
 
     api(libs.room.runtime)
     implementation(libs.room.ktx)
-    implementation(project(":domain"))
     ksp(libs.room.compiler)
     implementation(libs.fuzzywuzzy.kotlin)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.latin.to.cyrillic)
 
     implementation(libs.koin.core)
+    implementation(libs.koin.android)
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.junit)

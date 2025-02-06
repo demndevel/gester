@@ -1,11 +1,9 @@
 package com.demn.domain.settings
 
-import java.util.UUID
-
 interface PluginAvailabilityRepository {
-    fun enablePlugin(pluginUuid: UUID)
+    fun enablePlugin(pluginId: String)
 
-    fun disablePlugin(pluginUuid: UUID)
+    fun disablePlugin(pluginId: String)
 
-    fun checkPluginEnabled(pluginUuid: UUID): Boolean
+    fun checkPluginEnabled(pluginId: String): Boolean
 }

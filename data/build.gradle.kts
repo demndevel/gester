@@ -35,7 +35,6 @@ dependencies {
     api(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(project(":domain"))
-    implementation(project(":plugincore"))
     ksp(libs.room.compiler)
 
     testImplementation(libs.junit.junit)

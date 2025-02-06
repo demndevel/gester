@@ -6,8 +6,8 @@ import com.demn.domain.data.PluginCache
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.models.ResultFrecency
-import com.demn.plugincore.parcelables.PluginVersion
-import com.demn.plugincore.parcelables.buildPluginMetadata
+import io.github.demndevel.gester.core.parcelables.PluginVersion
+import io.github.demndevel.gester.core.parcelables.buildPluginMetadata
 
 fun ResultFrecencyDbo.toResultFrecency(): ResultFrecency {
     return ResultFrecency(
@@ -21,7 +21,7 @@ fun ResultFrecencyDbo.toResultFrecency(): ResultFrecency {
 fun PluginCommandCacheDbo.toPluginCommand(): PluginCommand {
     return PluginCommand(
         commandUuid,
-        pluginUuid,
+        pluginId,
         Uri.parse(iconUri),
         name,
         description
@@ -31,7 +31,7 @@ fun PluginCommandCacheDbo.toPluginCommand(): PluginCommand {
 fun PluginFallbackCommandCacheDbo.toPluginFallbackCommand(): PluginFallbackCommand {
     return PluginFallbackCommand(
         uuid = commandUuid,
-        pluginUuid = pluginUuid,
+        pluginId = pluginId,
         name = name,
         iconUri = Uri.parse(iconUri),
         description = description
@@ -41,7 +41,7 @@ fun PluginFallbackCommandCacheDbo.toPluginFallbackCommand(): PluginFallbackComma
 fun PluginWithCommandsDbo.toPluginCache(): PluginCache {
     return PluginCache(
         pluginMetadata = buildPluginMetadata(
-            pluginUuid = pluginCacheDbo.pluginUuid,
+            pluginId = pluginCacheDbo.pluginId,
             pluginName = pluginCacheDbo.pluginName
         ) {
             description = pluginCacheDbo.description
@@ -56,7 +56,7 @@ fun PluginWithCommandsDbo.toPluginCache(): PluginCache {
 fun PluginCache.toPluginWithCommandsDbo(): PluginWithCommandsDbo {
     return PluginWithCommandsDbo(
         pluginCacheDbo = PluginCacheDbo(
-            pluginMetadata.pluginUuid,
+            pluginMetadata.pluginId,
             pluginMetadata.pluginName,
             pluginMetadata.description,
             pluginMetadata.version.major,
@@ -71,7 +71,7 @@ fun PluginCache.toPluginWithCommandsDbo(): PluginWithCommandsDbo {
 fun PluginCommand.toPluginCommandDbo(): PluginCommandCacheDbo {
     return PluginCommandCacheDbo(
         commandUuid = uuid,
-        pluginUuid = pluginUuid,
+        pluginId = pluginId,
         name = name,
         description = description,
         iconUri = iconUri.toString(),
@@ -81,7 +81,7 @@ fun PluginCommand.toPluginCommandDbo(): PluginCommandCacheDbo {
 fun PluginFallbackCommand.toFallbackPluginCommandDbo(): PluginFallbackCommandCacheDbo {
     return PluginFallbackCommandCacheDbo(
         commandUuid = uuid,
-        pluginUuid = pluginUuid,
+        pluginId = pluginId,
         name = name,
         iconUri = iconUri.toString(),
         description = description

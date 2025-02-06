@@ -4,7 +4,7 @@ import com.demn.domain.models.GetPluginListInvocationResult
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.models.Plugin
-import com.demn.plugincore.operationresult.OperationResult
+import io.github.demndevel.gester.core.operationresult.OperationResult
 import java.util.UUID
 
 interface PluginRepository {
@@ -17,7 +17,7 @@ interface PluginRepository {
 
     suspend fun getAllCommands(): List<PluginCommand>
 
-    suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID)
+    suspend fun invokeCommand(commandUuid: UUID, pluginId: String)
 
     suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult>
 

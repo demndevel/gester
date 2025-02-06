@@ -1,9 +1,9 @@
 package com.demn.domain.usecase
 
-import com.demn.domain.data.ExternalPluginCacheRepository
+import com.demn.domain.data.PluginCacheRepository
 import com.demn.domain.data.PluginCache
-import com.demn.domain.models.ExternalPlugin
-import com.demn.domain.pluginproviders.ExternalPluginsProvider
+import com.demn.domain.models.Plugin
+import com.demn.domain.pluginproviders.BoundServicePluginsProvider
 
 interface PluginCacheSyncUseCase {
     suspend operator fun invoke()
@@ -14,19 +14,19 @@ class MockPluginCacheSyncUseCase : PluginCacheSyncUseCase {
 }
 
 class PluginCacheSyncUseCaseImpl(
-    private val externalPluginsProvider: ExternalPluginsProvider,
-    private val externalPluginCacheRepository: ExternalPluginCacheRepository
+    private val boundServicePluginsProvider: BoundServicePluginsProvider,
+    private val pluginCacheRepository: PluginCacheRepository
 ) : PluginCacheSyncUseCase {
     override suspend operator fun invoke() {
-        val plugins = externalPluginsProvider.getPluginList()
-        val pluginsCache = externalPluginCacheRepository.getAllPlugins()
+        val plugins = boundServicePluginsProvider.getPluginList()
+        val pluginsCache = pluginCacheRepository.getAllPlugins()
         removeUnusedPluginData(plugins.plugins, pluginsCache)
     }
 
-    private suspend fun removeUnusedPluginData(plugins: List<ExternalPlugin>, pluginsCache: List<PluginCache>) {
+    private suspend fun removeUnusedPluginData(plugins: List<Plugin>, pluginsCache: List<PluginCache>) {
         pluginsCache.forEach { pluginCache ->
-            if (!plugins.any { it.metadata.pluginUuid == pluginCache.pluginMetadata.pluginUuid }) {
-                externalPluginCacheRepository.removePluginCache(pluginCache.pluginMetadata.pluginUuid)
+            if (!plugins.any { it.metadata.pluginId == pluginCache.pluginMetadata.pluginId }) {
+                pluginCacheRepository.removePluginCache(pluginCache.pluginMetadata.pluginId)
             }
         }
     }

@@ -2,9 +2,8 @@ package com.demn.pluginloading
 
 import com.demn.domain.models.*
 import com.demn.domain.pluginmanagement.PluginRepository
-import com.demn.plugincore.operationresult.OperationResult
-import com.demn.domain.pluginproviders.CorePluginsProvider
-import com.demn.domain.pluginproviders.ExternalPluginsProvider
+import com.demn.domain.pluginproviders.BoundServicePluginsProvider
+import io.github.demndevel.gester.core.operationresult.OperationResult
 import java.util.UUID
 
 class MockPluginRepository : PluginRepository {
@@ -16,7 +15,7 @@ class MockPluginRepository : PluginRepository {
 
     override suspend fun getAllCommands(): List<PluginCommand> = emptyList()
 
-    override suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID) = Unit
+    override suspend fun invokeCommand(commandUuid: UUID, pluginId: String) = Unit
 
     override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
         return emptyList()
@@ -26,127 +25,59 @@ class MockPluginRepository : PluginRepository {
 }
 
 class PluginRepositoryImpl(
-    private val corePluginsProvider: CorePluginsProvider,
-    private val externalPluginsProvider: ExternalPluginsProvider,
+    private val boundServicePluginsProvider: BoundServicePluginsProvider,
 ) : PluginRepository {
-    private suspend fun getExternalPlugins(): GetExternalPluginListInvocationResult {
-        return externalPluginsProvider.getPluginList()
-    }
-
     override suspend fun getAnyResults(input: String, plugin: Plugin): List<OperationResult> {
-        return when (plugin) {
-            is ExternalPlugin -> getAnyResultsWithExternalPlugin(plugin, input)
-
-            is BuiltInPlugin -> getAnyResultsWithBuiltInPlugin(input, plugin)
-
-            else -> emptyList()
-        }
-    }
-
-    override suspend fun getAllFallbackCommands(): List<PluginFallbackCommand> {
-        return getAllExternalFallbackCommands() + getAllBuiltInFallbackCommands()
-    }
-
-    private suspend fun getAllExternalFallbackCommands(): List<PluginFallbackCommand> {
-        return externalPluginsProvider.getAllPluginFallbackCommands()
-    }
-
-    private suspend fun getAllBuiltInFallbackCommands(): List<PluginFallbackCommand> {
-        return corePluginsProvider.getAllPluginFallbackCommands()
-    }
-
-    private suspend fun getAnyResultsWithExternalPlugin(
-        plugin: ExternalPlugin,
-        input: String
-    ): List<OperationResult> {
-        return externalPluginsProvider.executeAnyInput(
+        return boundServicePluginsProvider.executeAnyInput(
             input = input,
             pluginService = plugin.pluginService,
         )
     }
 
-    private suspend fun getAnyResultsWithBuiltInPlugin(
-        input: String,
-        plugin: BuiltInPlugin,
-    ): List<OperationResult> {
-        val results = corePluginsProvider.invokeAnyInput(input, plugin.metadata.pluginUuid)
-
-        return results
+    override suspend fun getAllFallbackCommands(): List<PluginFallbackCommand> {
+        return boundServicePluginsProvider.getAllPluginFallbackCommands()
     }
 
     override suspend fun invokeFallbackCommand(input: String, commandUuid: UUID) {
         val commandPluginUuid = getAllFallbackCommands()
             .find { it.uuid == commandUuid }
-            ?.pluginUuid
+            ?.pluginId
 
         val plugin = getPluginList().plugins
             .find {
-                it.metadata.pluginUuid == commandPluginUuid
+                it.metadata.pluginId == commandPluginUuid
             }
 
         if (plugin == null) {
             return
         }
 
-        when (plugin) {
-            is ExternalPlugin -> {
-                invokeExternalPluginFallbackCommand(input, commandUuid, plugin)
-            }
-
-            is BuiltInPlugin -> {
-                invokeBuiltInPluginFallbackCommand(input, commandUuid, plugin)
-            }
-        }
-    }
-
-    override suspend fun getAllCommands(): List<PluginCommand> {
-        return corePluginsProvider.getAllPluginCommands() + externalPluginsProvider.getAllPluginCommands()
-    }
-
-    override suspend fun invokeCommand(commandUuid: UUID, pluginUuid: UUID) {
-        val plugin = getPluginList().plugins
-            .find { it.metadata.pluginUuid == pluginUuid }
-
-        if (plugin == null) return
-
-        when (plugin) {
-            is BuiltInPlugin -> corePluginsProvider.invokePluginCommand(commandUuid, pluginUuid)
-
-            is ExternalPlugin -> externalPluginsProvider.executeCommand(commandUuid, pluginUuid)
-        }
-    }
-
-    private suspend fun invokeBuiltInPluginFallbackCommand(
-        input: String,
-        commandUuid: UUID,
-        plugin: BuiltInPlugin
-    ) {
-        corePluginsProvider.invokePluginFallbackCommand(
-            input = input,
-            pluginFallbackCommandId = commandUuid,
-            pluginUuid = plugin.metadata.pluginUuid
-        )
-    }
-
-    private suspend fun invokeExternalPluginFallbackCommand(
-        input: String,
-        commandUuid: UUID,
-        plugin: ExternalPlugin
-    ) {
-        externalPluginsProvider.executeFallbackCommand(
+        boundServicePluginsProvider.executeFallbackCommand(
             input = input,
             fallbackCommandUuid = commandUuid,
             pluginService = plugin.pluginService
         )
     }
 
+    override suspend fun getAllCommands(): List<PluginCommand> {
+        return boundServicePluginsProvider.getAllPluginCommands()
+    }
+
+    override suspend fun invokeCommand(commandUuid: UUID, pluginId: String) {
+        val plugin = getPluginList().plugins
+            .find { it.metadata.pluginId == pluginId }
+
+        if (plugin == null) return
+
+        boundServicePluginsProvider.executeCommand(commandUuid, pluginId)
+    }
+
     override suspend fun getPluginList(): GetPluginListInvocationResult {
-        val externalPlugins = getExternalPlugins()
-        val corePlugins = corePluginsProvider.getPlugins()
+        val getAllPluginsInvocationResult = boundServicePluginsProvider.getPluginList()
 
         return GetPluginListInvocationResult(
-            plugins = externalPlugins.plugins + corePlugins,
-            pluginErrors = externalPlugins.pluginErrors
+            plugins = getAllPluginsInvocationResult.plugins,
+            pluginErrors = getAllPluginsInvocationResult.pluginErrors
         )
     }
 }

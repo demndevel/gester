@@ -11,7 +11,7 @@ import java.util.UUID
 
 class PluginWithSubmenuService : Service() {
     private val summary = PluginSummary(
-        UUID.fromString("890ec932-ea09-4713-bb2e-674fba343d3f"),
+        "pluginwithsubmenu",
         PluginVersion(0, 0)
     )
 
@@ -50,7 +50,7 @@ class PluginWithSubmenuService : Service() {
 
             override fun getPluginMetadata(): PluginMetadata {
                 return buildPluginMetadata(
-                    pluginUuid = summary.pluginUuid,
+                    pluginId = summary.pluginId,
                     pluginName = "Example plugin with example submenu",
                 ) {
                     version = summary.pluginVersion

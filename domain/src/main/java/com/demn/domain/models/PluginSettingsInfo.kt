@@ -1,6 +1,6 @@
 package com.demn.domain.models
 
-import com.demn.plugincore.parcelables.PluginSetting
+import io.github.demndevel.gester.core.parcelables.PluginSetting
 
 data class PluginSettingsInfo(
     val plugin: Plugin,

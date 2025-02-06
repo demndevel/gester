@@ -2,14 +2,14 @@
   "project_info": {
     "project_number": "485747103465",
     "project_id": "findutil",
-    "storage_bucket": "findutil.appspot.com"
+    "storage_bucket": "findutil.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:485747103465:android:ce0e91c3e714d277794278",
+        "mobilesdk_app_id": "1:485747103465:android:d1066d6ffcbc3712794278",
         "android_client_info": {
-          "package_name": "com.demn.findutil"
+          "package_name": "com.demn.gester"
         }
       },
       "oauth_client": [],
@@ -26,9 +26,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:485747103465:android:43488149b5017e15794278",
+        "mobilesdk_app_id": "1:485747103465:android:e7d359338e812ef3794278",
         "android_client_info": {
-          "package_name": "com.demn.findutil.dev"
+          "package_name": "com.demn.gester.dev"
         }
       },
       "oauth_client": [],
