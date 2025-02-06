@@ -3,12 +3,12 @@ package com.demn.domain.usecase
 import com.demn.domain.data.ResultFrecencyRepository
 import com.demn.domain.models.ResultFrecency
 import com.demn.domain.util.cyrillicToLatin
-import com.demn.plugincore.operationresult.BasicOperationResult
-import com.demn.plugincore.operationresult.CommandOperationResult
-import com.demn.plugincore.operationresult.IconOperationResult
-import com.demn.plugincore.operationresult.OperationResult
 import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
 import com.frosch2010.fuzzywuzzy_kotlin.ToStringFunction
+import io.github.demndevel.gester.core.operationresult.BasicOperationResult
+import io.github.demndevel.gester.core.operationresult.CommandOperationResult
+import io.github.demndevel.gester.core.operationresult.IconOperationResult
+import io.github.demndevel.gester.core.operationresult.OperationResult
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.LocalDateTime

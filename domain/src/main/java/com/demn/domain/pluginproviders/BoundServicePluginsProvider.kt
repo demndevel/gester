@@ -1,8 +1,8 @@
 package com.demn.domain.pluginproviders
 
 import com.demn.domain.models.*
-import com.demn.plugincore.parcelables.PluginSetting
-import com.demn.plugincore.operationresult.OperationResult
+import io.github.demndevel.gester.core.operationresult.OperationResult
+import io.github.demndevel.gester.core.parcelables.PluginSetting
 import java.util.UUID
 
 interface BoundServicePluginsProvider {

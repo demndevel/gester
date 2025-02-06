@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.demn.findutil"
+    namespace = "com.demn.gester"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.demn.findutil"
+        applicationId = "com.demn.gester"
         minSdk = 29
         targetSdk = 33
         versionCode = 1
@@ -57,7 +57,6 @@ android {
 dependencies {
     implementation(project(":coreplugins:appsearchplugin"))
     implementation(project(":coreplugins:unitcalcplugin"))
-    implementation(project(":plugincore"))
     implementation(project(":data"))
     implementation(project(":pluginloading"))
     implementation(project(":domain"))

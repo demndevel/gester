@@ -2,8 +2,8 @@ package com.demn.appsearchplugin
 
 import android.content.Intent
 import android.net.Uri
-import com.demn.plugincore.operationresult.IconOperationResult
-import com.demn.plugincore.operationresult.OperationResult
+import io.github.demndevel.gester.core.operationresult.IconOperationResult
+import io.github.demndevel.gester.core.operationresult.OperationResult
 
 internal data class ApplicationInfo(
     val name: String,

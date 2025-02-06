@@ -2,8 +2,8 @@ package com.demn.pluginloading
 
 import com.demn.domain.models.*
 import com.demn.domain.pluginmanagement.PluginRepository
-import com.demn.plugincore.operationresult.OperationResult
 import com.demn.domain.pluginproviders.BoundServicePluginsProvider
+import io.github.demndevel.gester.core.operationresult.OperationResult
 import java.util.UUID
 
 class MockPluginRepository : PluginRepository {

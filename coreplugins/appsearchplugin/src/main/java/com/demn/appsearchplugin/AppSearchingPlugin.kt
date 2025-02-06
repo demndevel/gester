@@ -2,11 +2,11 @@ package com.demn.appsearchplugin
 
 import android.content.ContentResolver
 import android.net.Uri
-import com.demn.plugincore.dsl.PluginService
-import com.demn.plugincore.operationresult.OperationResult
-import com.demn.plugincore.parcelables.ParcelablePluginCommand
-import com.demn.plugincore.parcelables.PluginVersion
-import com.demn.plugincore.parcelables.buildPluginMetadata
+import io.github.demndevel.gester.core.dsl.PluginService
+import io.github.demndevel.gester.core.operationresult.OperationResult
+import io.github.demndevel.gester.core.parcelables.ParcelablePluginCommand
+import io.github.demndevel.gester.core.parcelables.PluginVersion
+import io.github.demndevel.gester.core.parcelables.buildPluginMetadata
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

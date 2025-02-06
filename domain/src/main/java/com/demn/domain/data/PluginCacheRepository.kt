@@ -2,7 +2,7 @@ package com.demn.domain.data
 
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
-import com.demn.plugincore.parcelables.PluginMetadata
+import io.github.demndevel.gester.core.parcelables.PluginMetadata
 
 interface PluginCacheRepository {
     suspend fun getAllPlugins(): List<PluginCache>

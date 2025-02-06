@@ -31,7 +31,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":plugincore"))
     implementation(project(":domain"))
 
     api(libs.room.runtime)

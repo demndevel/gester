@@ -28,11 +28,10 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "FindUtil"
+rootProject.name = "Gester"
 include(":app")
 include(":coreplugins:appsearchplugin")
 include(":coreplugins:unitcalcplugin")
-include(":plugincore")
 
 include(":fooplugin")
 include(":pluginloading")

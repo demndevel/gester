@@ -33,17 +33,6 @@
             </intent-filter>
         </service>
 
-        <service
-                android:name=".services.ExamplePluginLol"
-                android:exported="true"
-                android:permission="com.demn.PLUGIN_SERVICE_PERMISSION"
-                android:process=":remote">
-            <intent-filter>
-                <action android:name="findutil.intent.action.PICK_PLUGIN" />
-                <category android:name="findutil.intent.category.ADD_PLUGIN" />
-            </intent-filter>
-        </service>
-
     </application>
 
 </manifest>

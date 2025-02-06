@@ -6,8 +6,8 @@ import com.demn.domain.data.PluginCache
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
 import com.demn.domain.models.ResultFrecency
-import com.demn.plugincore.parcelables.PluginVersion
-import com.demn.plugincore.parcelables.buildPluginMetadata
+import io.github.demndevel.gester.core.parcelables.PluginVersion
+import io.github.demndevel.gester.core.parcelables.buildPluginMetadata
 
 fun ResultFrecencyDbo.toResultFrecency(): ResultFrecency {
     return ResultFrecency(

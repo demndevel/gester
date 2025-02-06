@@ -4,8 +4,8 @@ import com.demn.domain.models.Plugin
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.pluginmanagement.PluginRepository
 import com.demn.domain.settings.PluginAvailabilityRepository
-import com.demn.plugincore.operationresult.CommandOperationResult
-import com.demn.plugincore.operationresult.OperationResult
+import io.github.demndevel.gester.core.operationresult.CommandOperationResult
+import io.github.demndevel.gester.core.operationresult.OperationResult
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow

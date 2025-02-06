@@ -4,8 +4,8 @@ import com.demn.domain.data.PluginCache
 import com.demn.domain.models.Plugin
 import com.demn.domain.models.PluginCommand
 import com.demn.domain.models.PluginFallbackCommand
-import com.demn.plugincore.parcelables.ParcelablePluginCommand
-import com.demn.plugincore.parcelables.ParcelablePluginFallbackCommand
+import io.github.demndevel.gester.core.parcelables.ParcelablePluginCommand
+import io.github.demndevel.gester.core.parcelables.ParcelablePluginFallbackCommand
 
 fun ParcelablePluginCommand.toPluginCommand(pluginId: String): PluginCommand = PluginCommand(
     uuid = this.uuid,

@@ -3,10 +3,10 @@ package com.demn.pluginloading
 import com.demn.domain.models.Plugin
 import com.demn.domain.models.PluginSettingsInfo
 import com.demn.domain.pluginmanagement.PluginSettingsRepository
-import com.demn.plugincore.parcelables.PluginSetting
-import com.demn.plugincore.parcelables.PluginSettingType
 import com.demn.domain.pluginmanagement.PluginRepository
 import com.demn.domain.pluginproviders.BoundServicePluginsProvider
+import io.github.demndevel.gester.core.parcelables.PluginSetting
+import io.github.demndevel.gester.core.parcelables.PluginSettingType
 import java.util.UUID
 
 class MockPluginSettingsRepository : PluginSettingsRepository {

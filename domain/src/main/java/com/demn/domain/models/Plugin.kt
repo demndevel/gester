@@ -1,6 +1,6 @@
 package com.demn.domain.models
 
-import com.demn.plugincore.parcelables.PluginMetadata
+import io.github.demndevel.gester.core.parcelables.PluginMetadata
 
 data class Plugin(
     val metadata: PluginMetadata,

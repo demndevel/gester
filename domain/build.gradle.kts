@@ -40,7 +40,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 dependencies {
-    implementation(project(":plugincore"))
+    api(libs.gester.core)
 
     implementation(libs.fuzzywuzzy.kotlin)
 

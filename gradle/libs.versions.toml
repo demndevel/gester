@@ -27,8 +27,11 @@ googleServicesPlugin = "4.4.2"
 firebaseBom = "33.2.0"
 firebaseCrashlyticsPlugin = "3.0.2"
 kotlinxCoroutinesCore = "1.9.0-RC.2"
+gesterCore = "0.0.11"
 
 [libraries]
+gester-core = { group = "io.github.demndevel", name = "gester-core", version.ref = "gesterCore" }
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 glide = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glide-compose" }
 fuzzywuzzy-kotlin = { group = "com.github.jens-muenker", name = "fuzzywuzzy-kotlin", version.ref = "fuzzywuzzyKotlin" }

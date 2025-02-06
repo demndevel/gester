@@ -3,11 +3,11 @@ package com.demn.appsearchplugin
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.demn.plugincore.operationresult.OperationResult
 import com.demn.appsearchplugin.database.ApplicationDbo
 import com.demn.appsearchplugin.database.ApplicationsDao
 import com.demn.domain.util.cyrillicToLatin
 import com.frosch2010.fuzzywuzzy_kotlin.FuzzySearch
+import io.github.demndevel.gester.core.operationresult.OperationResult
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

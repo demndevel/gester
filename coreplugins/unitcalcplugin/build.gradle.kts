@@ -31,7 +31,6 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":plugincore"))
 
     implementation(libs.calkt)
 
